@@ -1,0 +1,2 @@
+<?php ?>
+Login was successful.

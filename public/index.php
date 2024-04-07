@@ -1,15 +1,21 @@
 <?php
 
-$site='test-site';
+$site='example';
 require('../web-app/prep.php');
 
-$entry=new WebApp\Entry();
+// do not edit below this line
+$baseURL=$_SERVER['SCRIPT_NAME'];
+$i=stripos($baseURL,basename( __FILE__));
+$baseURL=substr($baseURL,0,$i);
+error_log('baseURL='.$baseURL);
 
 
-$res = $_SERVER['PATH_INFO'] ?? '_nothing_';
+$res = $_SERVER['PATH_INFO'] ?? '/home';
 try { match ($res) {
-        '/upgrade' => $entry->Upgrade(),
-        default => $entry->Default(),
+        '/upgrade' => WebApp\Db\DbCtx::GetInstance()->Upgrade(),
+        '/home' => (new WebApp\Entry())->Home(),
+        '/login' => (new WebApp\Login())->Login(),
+        default => (new WebApp\Entry())->Unknown($res),
     };
 } catch (Exception $ex) {
     error_log("got exception $ex");

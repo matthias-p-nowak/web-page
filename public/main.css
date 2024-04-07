@@ -61,4 +61,75 @@ h1 {
   font-size: 1.5rem;
 }
 
+div#admin_bar {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 100svh;
+  display: block;
+  padding: 5px;
+  z-index: 5;
+  min-width: 1rem;
+}
+div#admin_bar div {
+  padding: 0.5rem;
+  display: none;
+}
+div#admin_bar:hover div {
+  display: block;
+}
+div#admin_bar a {
+  text-decoration: none;
+  border: thin solid blue;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: beige;
+}
+
+@media (max-width: 50rem) {
+  #admin_bar {
+    display: none;
+  }
+}
+dialog.sendpw {
+  margin: auto;
+  padding: 1rem;
+  border: thin solid #f0f0f0;
+  border-radius: 10px;
+  display: block;
+  background-color: white;
+  max-width: 100%;
+  translate: 0 20vh;
+}
+dialog.sendpw:focus-within {
+  box-shadow: 0 0 100px 100svh rgba(0, 0, 0, 0.1);
+  border: none;
+}
+dialog.sendpw h2 {
+  margin-top: 0;
+}
+dialog.sendpw form {
+  width: 100%;
+}
+dialog.sendpw form label {
+  display: block;
+  color: #555;
+  margin-top: 0.2rem;
+  margin-bottom: 0.1rem;
+}
+dialog.sendpw form input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid rgba(204, 204, 204, 0.8);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+dialog.sendpw form input[type=submit] {
+  background-color: #4caf50;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 5px;
+  height: 2rem;
+}
+
 /*# sourceMappingURL=main.css.map */

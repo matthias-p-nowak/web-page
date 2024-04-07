@@ -1,0 +1,34 @@
+div#admin_bar {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    height: 100svh;
+    display: block;
+    padding: 5px;
+    z-index: 5;
+    min-width: 1rem;
+
+    div {
+        padding: 0.5rem;
+        display: none;
+    }
+    &:hover {
+        div {
+            display: block;
+        }
+    }
+    a {
+        text-decoration: none;
+        border: thin solid blue;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: beige;
+    }
+}
+
+
+@media (max-width: 50rem) {
+    #admin_bar{
+        display: none; // hiding on small screens
+    }
+}

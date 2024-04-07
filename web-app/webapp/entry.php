@@ -9,8 +9,13 @@ class Entry
         error_log('Entry controller constructed');
     }
 
-    function Default(){
+    function Home(){
         $view= new ShowView();
-        $view->ShowHomePage();
+        $view->ShowPage('home');
+    }
+
+    function Unknown($res){
+        error_log('no handler for path_info '.$res);
+        $this->Home();
     }
 }
