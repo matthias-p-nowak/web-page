@@ -85,6 +85,9 @@ Greetings from the admin
 MESSAGE_END;
             $r = \mail($_POST['email'], 'password provided', $message);
             error_log("mail returned with ${r}");
+            $sv=new ShowView();
+            $sv->ShowForm('PasswordSent');
+            return;
         }
         http_response_code(401);
         header('www-authenticate: Basic realm="' . $config->title . '", charset="UTF-8"');
