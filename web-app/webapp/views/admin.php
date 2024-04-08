@@ -1,14 +1,12 @@
 <?php
-if (!isset($_SESSION)) {
-    session_start();
-}
 ?>
 <div id="admin_bar">
 <div >
-<?php if ($_SESSION['editor'] ?? 0 > 0): ?>
-    already logged in
+<?php if (($_SESSION['Level'] ?? -1) > -1): ?>
+   <a href="<?= $scriptURL ?>/logout">logout</a>
+   <a href="<?= $scriptURL ?>/permissions">permissions</a>
 <?php else: ?>
-    <a href="<?= $baseURL ?>index.php/login">login</a>
+    <a href="<?= $scriptURL ?>/login">login</a>
 <?php endif;?>
 </div>
 </div>

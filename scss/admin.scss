@@ -9,7 +9,6 @@ div#admin_bar {
     min-width: 1rem;
 
     div {
-        padding: 0.5rem;
         display: none;
     }
     &:hover {
@@ -18,11 +17,13 @@ div#admin_bar {
         }
     }
     a {
+        display: block;
         text-decoration: none;
         border: thin solid blue;
-        padding: 0.5rem;
+        padding: 0.3rem;
         border-radius: 0.5rem;
         background-color: beige;
+        margin: 0.5rem;
     }
 }
 

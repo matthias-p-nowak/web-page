@@ -152,8 +152,7 @@ class DbCtx
         $r = $stmt->execute();
     }
 
-    public function FindRows(string $tableName, array $criteria)
-    {
+    private function FetchStmt(string $tableName, array $criteria){
         $keys = array_keys($criteria);
         $clause = MakeClause($keys);
         $sql = 'select * from `' . $this->prefix . $tableName . '` where ' . implode(' and ', $clause);
@@ -162,9 +161,19 @@ class DbCtx
             $stmt->bindParam(':' . $key, $value);
         }
         $stmt->execute();
+        return $stmt;
+    }
+
+    public function FindRows(string $tableName, array $criteria)
+    {
+        $stmt=$this->FetchStmt($tableName, $criteria);
         while ($res = $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName)) {
             $res->ctx = $this;
             yield $res;
         }
+    }
+    public function FindRow(string $tableName, array $criteria){
+        $stmt=$this->FetchStmt($tableName, $criteria);
+        return $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
     }
 }
