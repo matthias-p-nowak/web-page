@@ -18,10 +18,12 @@ if (isset($_COOKIE[session_name()])) {
 $res = $_SERVER['PATH_INFO'] ?? '/home';
 try {match ($res) {
     '/upgrade' => WebApp\Db\DbCtx::GetInstance()->Upgrade(),
-    '/home' => (new ShowView())->ShowPage('home'),
+    '/home' => (new WebApp\ShowView())->ShowPage('home'),
     '/login' => (new WebApp\Login())->Login(),
     '/logout' => (new WebApp\Login())->Logout(),
     '/permissions' => (new WebApp\Login())->Permissions(),
+    '/useradmin' => (new WebApp\Admin())->UserAdmin(),
+    '/pg' => (new WebApp\Entry())->Page($_SERVER['QUERY_STRING']),
     default =>(new WebApp\Entry())->Unknown($res),
 };} catch (Exception $ex) {
     error_log("got exception $ex");

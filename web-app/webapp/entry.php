@@ -18,4 +18,14 @@ class Entry
         error_log('no handler for path_info '.$res);
         $this->Home();
     }
+    function Page($page){
+        $pat='/([a-zA-Z0-9_]+)/';
+        if(preg_match($pat,$page,$matches)){
+            error_log(print_r($matches,true));
+            $view=new ShowView();
+            $view->ShowPage($matches[1]);
+        }else{
+            $this->Home();
+        }
+    }
 }

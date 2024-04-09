@@ -11,11 +11,12 @@ dialog.sendpw {
     background-color: white;
     max-width: 100%;
     translate: 0 20vh;
-    
-    &:focus-within{
+
+    &:focus-within {
         box-shadow: 0 0 100px 100svh rgba(0, 0, 0, 0.1);
         border: none;
     }
+
     h2 {
         margin-top: 0;
     }
@@ -46,4 +47,26 @@ dialog.sendpw {
             height: 2rem;
         }
     }
+}
+
+table.thinborder {
+    border-collapse: collapse;
+    border: thin gray solid;
+
+    th,
+    td {
+        padding: 0.5rem;
+        border: thin lightgray solid;
+
+        select {
+            padding: 0.2rem;
+            background-color: inherit;
+            border-radius: 0.3rem;
+        }
+
+        .requested {
+            font-style: italic;
+        }
+    }
+
 }

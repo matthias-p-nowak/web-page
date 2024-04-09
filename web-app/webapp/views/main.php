@@ -15,7 +15,7 @@
 <title><?= $arg->title ?? '-no title set-' ?></title>
 </head>
 <body>
-    <?= view('admin', $arg) ?>
+    <?= view('adminbar', $arg) ?>
     <?=  isset($arg->content)? show($arg->content):
          (isset($arg->view,$arg) ? view($arg->view,$arg) : '### nothing to show' )?>
 </body>

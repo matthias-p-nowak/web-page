@@ -12,7 +12,7 @@ class Login
 
     function Login()
     {
-        global $config;
+        global $config,$scriptURL;
         error_log('considering login');
         if (!isset($_SESSION)) {
             session_start();
@@ -36,9 +36,9 @@ class Login
                     $db->StoreRow($foundRow);
                     $_SESSION['Level'] = $user->Level;
                     $_SESSION['UserId'] = $user->UserId;
-                    $sv = new ShowView();
-                    $sv->ShowForm('LoginSuccess');
-                    return;
+                    header("Refresh: 5; URL=".$scriptURL);
+                    echo('Login was successful');
+                    exit(0);
                 }
             }
         }
@@ -98,10 +98,12 @@ MESSAGE_END;
 
     function Logout()
     {
+        global $scriptURL;
         session_destroy();
         setcookie(session_name(), '', 0, '/');
-        (new ShowView())->ShowPage('home');
-        return;
+        header("Refresh: 5; URL=".$scriptURL);
+        echo('Logout was successful');
+        exit(0);
     }
     function Permissions()
     {

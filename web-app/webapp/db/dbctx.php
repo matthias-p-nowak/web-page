@@ -172,8 +172,18 @@ class DbCtx
             yield $res;
         }
     }
+
     public function FindRow(string $tableName, array $criteria){
         $stmt=$this->FetchStmt($tableName, $criteria);
         return $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
+    }
+
+    public function FetchRows(string $sql){
+        $sql = str_replace('${prefix}', $this->prefix, $sql);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        while ($res = $stmt->fetchObject()) {
+            yield $res;
+        }
     }
 }

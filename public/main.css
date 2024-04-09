@@ -133,4 +133,24 @@ dialog.sendpw form input[type=submit] {
   height: 2rem;
 }
 
+table.thinborder {
+  border-collapse: collapse;
+  border: thin gray solid;
+}
+table.thinborder th,
+table.thinborder td {
+  padding: 0.5rem;
+  border: thin lightgray solid;
+}
+table.thinborder th select,
+table.thinborder td select {
+  padding: 0.2rem;
+  background-color: inherit;
+  border-radius: 0.3rem;
+}
+table.thinborder th .requested,
+table.thinborder td .requested {
+  font-style: italic;
+}
+
 /*# sourceMappingURL=main.css.map */
