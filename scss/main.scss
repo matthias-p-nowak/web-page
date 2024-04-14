@@ -66,6 +66,11 @@ table.thinborder {
 
         .requested {
             font-style: italic;
+            color: green;
+        }
+        .failed {
+            font-style: bold;
+            color: red;
         }
     }
 

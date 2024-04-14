@@ -20,4 +20,9 @@ function view($fn, $arg)
     throw new \Exception("file $fn not found");
 }
 
+function idHash($arg)
+{
+    return \hash('xxh64',$arg);
+}
+
 error_log('showview functions loaded');

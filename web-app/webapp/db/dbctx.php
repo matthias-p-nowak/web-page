@@ -152,6 +152,25 @@ class DbCtx
         $r = $stmt->execute();
     }
 
+    public function DeleteRow($row)
+    {
+        $tableName = basename(str_replace('\\', '/', get_class($row)));
+        $rowDetails = $this->GetRowDetails($tableName);
+        $columns2store = array_keys($rowDetails);
+        foreach ($columns2store as $propName) {
+            if (!property_exists($row, $propName)) {
+                unset($columns2store[$propName]);
+            }
+        }
+        // constructing the SQL
+        $sql = 'DELETE FROM `' . $this->prefix . $tableName . '` where ' . implode(' and ', MakeClause($columns2store));
+        $stmt = $this->pdo->prepare($sql);
+        foreach($columns2store as $col){
+            $stmt->bindParam(':'.$col, $row->$col);
+        }
+        $stmt->execute();
+    }
+
     private function FetchStmt(string $tableName, array $criteria){
         $keys = array_keys($criteria);
         $clause = MakeClause($keys);
@@ -186,4 +205,5 @@ class DbCtx
             yield $res;
         }
     }
+
 }

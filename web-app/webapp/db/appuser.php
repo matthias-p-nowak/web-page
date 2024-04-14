@@ -6,6 +6,8 @@ class AppUser{
     const Editor=1;
     const Admin=2;
 
+    const Levels = array ( -1 => 'Removed', self::Newbie => 'Newbie', self::Editor => 'Editor', self::Admin => 'Admin');
+
     static function AdminCheck(){
         global $scriptURL;
         if($_SESSION['Level']< self::Admin){

@@ -151,6 +151,12 @@ table.thinborder td select {
 table.thinborder th .requested,
 table.thinborder td .requested {
   font-style: italic;
+  color: green;
+}
+table.thinborder th .failed,
+table.thinborder td .failed {
+  font-style: bold;
+  color: red;
 }
 
 /*# sourceMappingURL=main.css.map */
