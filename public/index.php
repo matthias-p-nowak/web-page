@@ -16,6 +16,7 @@ if (isset($_COOKIE[session_name()])) {
 }
 
 $res = $_SERVER['PATH_INFO'] ?? '/home';
+error_log('routing event');
 try {match ($res) {
     '/upgrade' => WebApp\Db\DbCtx::GetInstance()->Upgrade(),
     '/home' => (new WebApp\ShowView())->ShowPage('home'),
@@ -23,6 +24,7 @@ try {match ($res) {
     '/logout' => (new WebApp\Login())->Logout(),
     '/permissions' => (new WebApp\Login())->Permissions(),
     '/useradmin' => (new WebApp\Admin())->UserAdmin(),
+    '/siteconfig' => (new WebApp\Admin())->SiteConfig(),
     '/pg' => (new WebApp\Entry())->Page($_SERVER['QUERY_STRING']),
     default =>(new WebApp\Entry())->Unknown($res),
 };} catch (Exception $ex) {

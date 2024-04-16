@@ -137,3 +137,5 @@ MESSAGE_END;
         $sv->ShowForm('rights');
     }
 }
+
+error_log(__FILE__ .' read');

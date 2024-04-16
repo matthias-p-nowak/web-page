@@ -207,3 +207,6 @@ class DbCtx
     }
 
 }
+
+
+error_log(__FILE__ .' read');

@@ -3,8 +3,12 @@ namespace WebApp;
 
 class Admin{
 
-    function UserAdmin(){
+    function __construct(){
+        // all admin functions require admin priviledges
         Db\AppUser::AdminCheck();
+    }
+
+    function UserAdmin(){
         if(isset($_POST['UserId'])){
             $this->ChangeUser();
             return;
@@ -21,7 +25,7 @@ class Admin{
         $sv->ShowForm('admin/UserAdminView');
     }
     
-    function ChangeUser(){
+    private function ChangeUser(){
         error_log(print_r($_POST,true));
         $db = Db\DbCtx::GetInstance();
         $userId=$_POST['UserId'];
@@ -43,5 +47,10 @@ class Admin{
             $uv->ShowUpdate('admin/updateuserlevel');
             exit(0);
         }
+    }
+
+    function SiteConfig(){
+        $sv=new ShowView();
+        $sv->ShowForm('admin/SiteConfig');
     }
 }

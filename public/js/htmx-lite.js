@@ -1,15 +1,12 @@
-
-
 function hxl_submit_form(event) {
-    let form = event.target.form ?? event.target.closest('form');
-    let action=form.action;
-    let formData = new FormData(form);
-    if(event.target.hasAttribute('name')){
-        formData.append('name',event.target.getAttribute('name'));
-    }
     event.target.classList.add('requested');
-    fetch(action, { method: "POST", body: formData })
-        .then(response => {
+    let form = event.target.form ?? event.target.closest('form');
+    let action = form.action;
+    let formData = new FormData(form);
+    if (event.target.hasAttribute('name')) {
+        formData.append('name', event.target.getAttribute('name'));
+    }
+    fetch(action, { method: "POST", body: formData }).then(response => {
             if (response.status == 200) {
                 event.target.classList.remove('requested');
                 event.target.classList.remove('failed');
@@ -19,25 +16,25 @@ function hxl_submit_form(event) {
                 event.target.classList.add('failed');
                 throw new Error('Network response was not ok');
             }
-        })
-        .then(data => {
+    }).then(data => {
             if (data.trim().length > 0) {
                 hxl_process_body(data);
             } else {
                 console.log('empty body returned');
             }
-        })
-        .catch(error => { console.error("An error occurred:", error); })
-        ;
+    }).catch(error => {
+        console.error("An error occurred:", error);
+    });
 }
 
 function hxl_process_body(body) {
     const div = document.createElement('div');
     div.innerHTML = body;
-    var nodes = div.querySelectorAll("[x-action]");
-    for (const n of nodes) {
+    for (const n of div.querySelectorAll("[x-action]")) {
             let attr = n.getAttribute('x-action');
-            let sameId = document.getElementById(n.id);
+        if (n.id) {
+            var sameId = document.getElementById(n.id);
+        }
         n.removeAttribute('x-action');
             if (n.hasAttribute('x-id')) {
                 let oid = n.getAttribute('x-id');
@@ -67,7 +64,9 @@ function hxl_process_body(body) {
                     console.log('had no action defined for ', n);
         }
     }
-
+    for (const n of div.getElementsByTagName('script')) {
+        eval(n.innerText);
+    }
 }
 
 console.log('htmx-lite loaded');

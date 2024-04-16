@@ -34,3 +34,4 @@ foreach (spl_autoload_functions() as $f) {
 spl_autoload_extensions('.php');
 spl_autoload_register();
 
+error_log(__FILE__ .' read');

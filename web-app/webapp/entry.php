@@ -29,3 +29,5 @@ class Entry
         }
     }
 }
+
+error_log(__FILE__ .' read');
