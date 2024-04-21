@@ -27,6 +27,16 @@ div#admin_bar {
     }
 }
 
+div.tableform{
+    margin: auto;
+    padding: 1rem;
+    border: thin solid #f0f0f0;
+    label {
+        display: block;
+        margin-top: 0.2rem;
+        margin-bottom: 0.1rem;
+    }
+}
 
 @media (max-width: 50rem) {
     #admin_bar{

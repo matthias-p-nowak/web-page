@@ -2,6 +2,9 @@
 
 namespace WebApp;
 
+/**
+ * intentionally lean class that comprises useful methods
+ */
 class Entry
 {
     function __construct()
@@ -9,6 +12,9 @@ class Entry
         error_log('Entry controller constructed');
     }
 
+    /**
+     * show home page
+     */
     function Home(){
         $view= new ShowView();
         $view->ShowPage('home');

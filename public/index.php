@@ -1,32 +1,39 @@
 <?php
-
-$site = 'example';
-require '../web-app/prep.php';
+/**
+ * the only accessible php page in the public directory
+ */
+$site = 'example'; // determines the name of the ini-file
+require '../web-app/bootstrap.php';
 
 // do not edit below this line
 $scriptURL = $_SERVER['SCRIPT_NAME'];
 $i = stripos($scriptURL, basename(__FILE__));
 $baseURL = substr($scriptURL, 0, $i);
-// error_log('baseURL=' . $baseURL);
 
+// if the session cookie is set, the session is started
 if (isset($_COOKIE[session_name()])) {
     error_log('starting session due to cookie');
     error_log(print_r($_COOKIE, true));
     session_start();
 }
 
+// routing section
 $res = $_SERVER['PATH_INFO'] ?? '/home';
-error_log('routing event');
-try {match ($res) {
-    '/upgrade' => WebApp\Db\DbCtx::GetInstance()->Upgrade(),
-    '/home' => (new WebApp\ShowView())->ShowPage('home'),
-    '/login' => (new WebApp\Login())->Login(),
-    '/logout' => (new WebApp\Login())->Logout(),
-    '/permissions' => (new WebApp\Login())->Permissions(),
-    '/useradmin' => (new WebApp\Admin())->UserAdmin(),
-    '/siteconfig' => (new WebApp\Admin())->SiteConfig(),
-    '/pg' => (new WebApp\Entry())->Page($_SERVER['QUERY_STRING']),
-    default =>(new WebApp\Entry())->Unknown($res),
-};} catch (Exception $ex) {
+try {
+    match ($res) {
+        '/upgrade' => WebApp\Db\DbCtx::GetInstance()->Upgrade(),
+        '/home' => (new WebApp\ShowView())->ShowPage('home'),
+        '/login' => (new WebApp\Login())->Login(),
+        '/logout' => (new WebApp\Login())->Logout(),
+        '/permissions' => (new WebApp\Login())->Permissions(),
+        '/useradmin' => (new WebApp\Admin())->UserAdmin(),
+        '/siteconfig' => (new WebApp\Admin())->SiteConfig(),
+        '/pg' => (new WebApp\Entry())->Page($_SERVER['QUERY_STRING']),
+        default =>(new WebApp\Entry())->Unknown($res),
+    };
+} catch (Exception $ex) {
     error_log("got exception $ex");
+}finally{
+    $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
+    error_log("used $time seconds");
 }

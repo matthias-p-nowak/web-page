@@ -87,6 +87,17 @@ div#admin_bar a {
   margin: 0.5rem;
 }
 
+div.tableform {
+  margin: auto;
+  padding: 1rem;
+  border: thin solid #f0f0f0;
+}
+div.tableform label {
+  display: block;
+  margin-top: 0.2rem;
+  margin-bottom: 0.1rem;
+}
+
 @media (max-width: 50rem) {
   #admin_bar {
     display: none;

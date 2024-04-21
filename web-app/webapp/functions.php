@@ -1,16 +1,24 @@
 <?php
 
+/**
+ * Safe function that emits the content of an HTML file within content
+ */
 function show($fn)
 {
     $fn = strtolower($fn);
     $fn = __DIR__ . '/content/' . $fn . '.html';
     if (file_exists($fn)) {
+        echo ('<article>');
         echo (file_get_contents($fn, false));
+        echo ('</article>');
         return;
     }
     throw new \Exception("file $fn.html not found");
 }
 
+/**
+ * Shows a PHP file from views and also offers $baseURL, $scriptURL and $config
+ */
 function view($fn, $arg)
 {
     global $baseURL, $scriptURL, $config;
