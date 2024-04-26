@@ -2,7 +2,7 @@
 // just in case http2 is supported
 header('Link: <' . $baseURL . 'main.css>; rel=preload; as=style', false);
 header('Link: <' . $baseURL . 'js/htmx-lite.js>; rel=preload; as=script', false);
-$site = \WebApp\Config::GetConfig();
+$sc = \WebApp\Config::GetConfig();
 ?>
 <!DOCTYPE html>
 <html>
@@ -14,16 +14,19 @@ $site = \WebApp\Config::GetConfig();
 <meta name="HandheldFriendly" content="True" />
 <meta name="MobileOptimized" content="320" />
 <link rel="stylesheet" type="text/css" href="<?=$baseURL?>main.css" />
+<?php if($arg->htmx_lite): ?><script src="<?=$baseURL?>js/htmx-lite.js"></script><?php endif; ?>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/x-icon" href="<?=$baseURL?>favicon.ico" />
-<title><?=$arg->title ?? $site->title ?? '-no title set-'?></title>
+<title><?=$sc->title ?? $arg->title ?? '-no title set-'?></title>
 </head>
 <body>
     <?=view('admin/adminbar', $arg)?>
  <header><?=view('header', $arg)?></header>
- <main><?=isset($arg->content) ? show($arg->content) :
+ <main>
+<?=isset($arg->content) ? show($arg->content) :
     (isset($arg->view, $arg) ? view($arg->view, $arg) : 
-    '### nothing to show')?></main>
+    '### nothing to show')?>
+</main>
 <footer><?= view('footer',$arg) ?></footer>
 </body>
 </html> 

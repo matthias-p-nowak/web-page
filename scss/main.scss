@@ -1,6 +1,5 @@
 @import 'reset.scss';
 @import 'font+sizes.scss';
-@import 'admin.scss';
 
 dialog.sendpw {
     margin: auto;
@@ -49,29 +48,134 @@ dialog.sendpw {
     }
 }
 
-table.thinborder {
-    border-collapse: collapse;
-    border: thin gray solid;
+html {
+    min-height: 100svh;
+    background-color: rgb(250, 250, 240);
+}
 
-    th,
-    td {
-        padding: 0.5rem;
-        border: thin lightgray solid;
+$sep: 0.5rem;
 
-        select {
-            padding: 0.2rem;
-            background-color: inherit;
-            border-radius: 0.3rem;
+body {
+    padding: $sep;
+}
+
+h2,
+h3 {
+    margin-top: 0.5rem;
+}
+
+header {
+    div.logoline {
+        img {
+            height: 6rem;
         }
 
-        .requested {
-            font-style: italic;
-            color: green;
-        }
-        .failed {
-            font-style: bold;
-            color: red;
+        h1 {
+            display: inline;
+            margin-top: auto;
+            margin-bottom: auto;
         }
     }
-
 }
+
+
+div.tableform {
+    // margin-left: auto;
+    // margin-right: auto;
+    margin-top: 0.5rem;
+    display: table;
+    border-collapse: collapse;
+    $border: thin #a0a0a0 solid;
+    // border: $border;
+    * {
+        padding: 0.2rem;
+    }
+    form{
+        display: table-row;
+        >* {
+            border: $border;
+            display: table-cell;
+            // padding: 0.5rem;
+        }
+        label {
+            text-align: right;
+        }
+        input{
+            border: none;
+            border-radius: 0.2rem;
+        }
+    }
+    >div {
+        display: table-row;
+        >* {
+            display: table-cell;
+            text-align: center;
+            // border: $border;
+            font-weight: bold;
+        }
+    }
+}
+
+footer {
+    margin-top: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tinyfooter {
+    font-size: smaller;
+
+    hr {
+        border-top: thin solid red;
+        border-bottom: none;
+        width: 75%;
+    }
+}
+
+
+@media (min-width: 60rem) {
+    body {
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: 1fr [bigger-start] 1fr [middle-start] clamp(10rem, 80svw, 60rem) [middle-end] 1fr [bigger-end] 1fr;
+
+        >* {
+            grid-column: middle;
+        }
+
+        main {
+
+            display: grid;
+            // place-items: center;
+            grid-template-areas: "stack";
+
+            >* {
+                grid-area: stack;
+            }
+
+            img {
+                max-width: 100%;
+                height: auto;
+                display: inline;
+
+                &.background_picture {
+                    filter: brightness(2);
+                    opacity: 0.5;
+                    z-index: 2;
+                }
+            }
+
+            article {
+                padding: 1rem;
+                opacity: 0.7;
+                z-index: 3;
+
+                em {
+                    font-style: italic;
+                }
+            }
+        }
+    }
+}
+
+@import 'admin.scss';

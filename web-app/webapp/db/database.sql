@@ -55,3 +55,16 @@ create table if not exists `${prefix}UserPassword` (
 );
 
 -- 2024-04-07 user created
+
+create table if not exists `${prefix}SiteConfig` (
+    `Name` varchar(64) primary key not null,
+    `Value` varchar(255),
+    `Modified` timestamp not null default current_timestamp
+);
+
+if ${prefix}ColumnCount('${prefix}Siteconfig','Modified') < 1 then
+alter table `${prefix}SiteConfig` add column `Modified` timestamp not null default current_timestamp ;
+end if;
+
+-- 2024-04-19 SiteConfig
+

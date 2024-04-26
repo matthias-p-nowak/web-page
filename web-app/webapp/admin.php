@@ -1,5 +1,10 @@
 <?php
+
 namespace WebApp;
+
+require_once 'functions.php';
+
+use WebApp\Db\SiteConfig;
 
 class Admin{
 
@@ -50,7 +55,41 @@ class Admin{
     }
 
     function SiteConfig(){
+        if(sizeof($_POST)>0){
+            $db = Db\DbCtx::GetInstance();
+            error_log('got a posting');
+            if(isset($_POST['title'])){
+                $configValue=$db->FindRow('SiteConfig',['Name'=> 'title']);
+                error_log(print_r($configValue,true));
+                if(!$configValue){
+                    $configValue=new SiteConfig();
+                    $configValue->Name='title';
+                }
+                $configValue->Value=htmlspecialchars( $_POST['title'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 , 'UTF-8');
+                $configValue->Modified=date('Y-m-d H:i:s');
+                $db->StoreRow($configValue);
+                $sc=\WebApp\Config::CreateInstance();
+                \view('admin/titleupdate',$sc);
+                return;
+            }
+            if(isset($_POST['logo'])){
+                $configValue=$db->FindRow('SiteConfig',['Name'=> 'logo']);
+                error_log(print_r($configValue,true));
+                if(!$configValue){
+                    $configValue=new SiteConfig();
+                    $configValue->Name='logo';
+                }
+                $configValue->Value=htmlspecialchars( $_POST['logo'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 , 'UTF-8');
+                $configValue->Modified=date('Y-m-d H:i:s');
+                $db->StoreRow($configValue);
+                $sc=\WebApp\Config::CreateInstance();
+                \view('admin/logoupdate',$sc);
+                return;
+            }
+
+        }
         $sv=new ShowView();
+        $sv->htmx_lite=true;
         $sv->ShowForm('admin/SiteConfig');
     }
 }

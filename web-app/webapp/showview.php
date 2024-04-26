@@ -10,6 +10,10 @@ class ShowView
         global $config;
         $this->title=$config->title;
     }
+
+    /**
+     * Shows a static page as content
+     */
     function ShowPage($page)
     {
         // error_log(__FILE__ .':'.__LINE__ .' showing page: '.$page);
@@ -17,6 +21,10 @@ class ShowView
         // allways start with the main stuff
         \view('main', $this);
     }
+
+    /**
+     * Shows a whole form starting with main
+     */
     function ShowForm($form)
     {
         global $config;

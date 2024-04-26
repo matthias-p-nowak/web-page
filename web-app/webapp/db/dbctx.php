@@ -48,11 +48,17 @@ class DbCtx
     // keeping a single instance
     private static $instance;
 
+    /**
+     * returns the same instance
+     */
     public static function GetInstance()
     {
         return static::$instance ?? new static();
     }
 
+    /**
+     * use GetInstance instead
+     */
     private function __construct()
     {
         global $config;
@@ -98,11 +104,14 @@ class DbCtx
                 try {
                     $this->pdo->exec($sqlParts);
                 } catch (\PDOException $e) {
-                    error_log("got an exception $e->Message");
+                    $msg=$e->getMessage();
+                    error_log("got an exception $msg");
+                    error_log($sqlParts);
                     break;
                 }
             }
         }
+        echo('database upgraded');
         error_log('database update complete');
     }
 
@@ -128,9 +137,14 @@ class DbCtx
         return $rowDetails;
     }
 
+    /**
+     * Requires the row to be a class instance of the same name as the table.
+     * Executes a replace in the database.
+     */
     public function StoreRow($row)
     {
         $tableName = basename(str_replace('\\', '/', get_class($row)));
+        // find out what to store
         $rowDetails = $this->GetRowDetails($tableName);
         $columns2store = array_keys($rowDetails);
         foreach ($columns2store as $propName) {
@@ -152,6 +166,9 @@ class DbCtx
         $r = $stmt->execute();
     }
 
+    /**
+     * deletes the rows that match the details
+     */
     public function DeleteRow($row)
     {
         $tableName = basename(str_replace('\\', '/', get_class($row)));
@@ -171,10 +188,17 @@ class DbCtx
         $stmt->execute();
     }
 
+    /**
+     * Executes select and returns statement to read from
+     */
     private function FetchStmt(string $tableName, array $criteria){
-        $keys = array_keys($criteria);
-        $clause = MakeClause($keys);
-        $sql = 'select * from `' . $this->prefix . $tableName . '` where ' . implode(' and ', $clause);
+
+        $sql = 'select * from `' . $this->prefix . $tableName .'`' ;
+        if(count($criteria)>0){
+            $keys = array_keys($criteria);
+            $clause = MakeClause($keys);
+            $sql .=  ' where ' . implode(' and ', $clause);
+        }
         $stmt = $this->pdo->prepare($sql);
         foreach ($criteria as $key => $value) {
             $stmt->bindParam(':' . $key, $value);
@@ -183,7 +207,10 @@ class DbCtx
         return $stmt;
     }
 
-    public function FindRows(string $tableName, array $criteria)
+    /**
+     * Basically a select, returns objects.
+     */
+    public function FindRows(string $tableName, array $criteria=[])
     {
         $stmt=$this->FetchStmt($tableName, $criteria);
         while ($res = $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName)) {
@@ -192,11 +219,17 @@ class DbCtx
         }
     }
 
+    /**
+     * Returns a single matching object - does not check if more match.
+     */
     public function FindRow(string $tableName, array $criteria){
         $stmt=$this->FetchStmt($tableName, $criteria);
         return $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
     }
 
+    /**
+     * Fetches from database, need ${prefix} before table names.
+     */
     public function FetchRows(string $sql){
         $sql = str_replace('${prefix}', $this->prefix, $sql);
         $stmt = $this->pdo->prepare($sql);

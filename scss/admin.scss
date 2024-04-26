@@ -7,9 +7,18 @@ div#admin_bar {
     padding: 5px;
     z-index: 5;
     min-width: 1rem;
+    $sep: 0.5rem;
 
     div {
         display: none;
+        margin-left: $sep;
+        box-shadow: 0 0 $sep $sep #f0f0f0;
+        background-color: gray ;
+        border-radius: $sep;
+        padding: $sep;
+        h3 {
+            color: white
+        }
     }
     &:hover {
         div {
@@ -19,22 +28,15 @@ div#admin_bar {
     a {
         display: block;
         text-decoration: none;
-        border: thin solid blue;
-        padding: 0.3rem;
-        border-radius: 0.5rem;
-        background-color: beige;
-        margin: 0.5rem;
-    }
-}
-
-div.tableform{
-    margin: auto;
-    padding: 1rem;
-    border: thin solid #f0f0f0;
-    label {
-        display: block;
-        margin-top: 0.2rem;
-        margin-bottom: 0.1rem;
+        color: black;
+        border: thin solid gray; 
+        padding: $sep;
+        border-radius: $sep;
+        background-color: #f0f0f0;
+        margin: $sep;
+        &:hover {
+            box-shadow: 0 0 1rem 1rem #f0f0f0;
+        }
     }
 }
 

@@ -2,6 +2,7 @@
 ?>
 <div id="admin_bar">
 <div >
+   <h3>Admin menu</h3>
 <?php if (($_SESSION['Level'] ?? -1) > -1): ?>
    <a href="<?= $scriptURL ?>/logout">logout</a>
    <a href="<?= $scriptURL ?>/permissions">permissions</a>
