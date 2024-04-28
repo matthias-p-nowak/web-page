@@ -41,7 +41,7 @@ div#admin_bar {
 }
 
 @media (max-width: 50rem) {
-    #admin_bar{
+    div#admin_bar{
         display: none; // hiding on small screens
     }
 }

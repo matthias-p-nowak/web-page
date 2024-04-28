@@ -118,9 +118,33 @@ header div.logoline h1 {
   margin-top: auto;
   margin-bottom: auto;
 }
+header div.topnav {
+  display: flex;
+}
+header div.topnav nav {
+  margin-left: auto;
+}
+header div.topnav nav a {
+  text-decoration: none;
+  color: darkgreen;
+  padding: 0.2rem;
+  transition: 0.3s;
+}
+header div.topnav nav a + a {
+  border-left: 1px solid darkgreen;
+}
+header details summary {
+  display: block;
+  margin-left: auto;
+}
+header details a {
+  text-decoration: none;
+  display: block;
+}
 
 div.tableform {
   margin-top: 0.5rem;
+  margin-bottom: 1rem;
   display: table;
   border-collapse: collapse;
 }
@@ -141,7 +165,13 @@ div.tableform form input {
   border: none;
   border-radius: 0.2rem;
 }
+div.tableform form select {
+  border: none;
+  border-radius: 0.2rem;
+  background-color: #f0f0f0;
+}
 div.tableform > div {
+  /* works as a header row */
   display: table-row;
 }
 div.tableform > div > * {
@@ -155,16 +185,34 @@ footer {
   margin-left: auto;
   margin-right: auto;
 }
+footer hr {
+  border-top: thin solid #a0a0a0;
+  border-bottom: none;
+  width: 75%;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
 
 .tinyfooter {
   font-size: smaller;
 }
-.tinyfooter hr {
-  border-top: thin solid red;
-  border-bottom: none;
-  width: 75%;
-}
 
+@media (min-width: 50rem) {
+  div.logoline {
+    display: flex;
+  }
+  header details {
+    display: none;
+  }
+}
+@media not all and (min-width: 50rem) {
+  div.logoline h1 {
+    font-size: 1rem;
+  }
+  div.topnav nav {
+    display: none;
+  }
+}
 @media (min-width: 60rem) {
   body {
     padding: 1rem;
@@ -239,7 +287,7 @@ div#admin_bar a:hover {
 }
 
 @media (max-width: 50rem) {
-  #admin_bar {
+  div#admin_bar {
     display: none;
   }
 }

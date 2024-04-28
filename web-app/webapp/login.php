@@ -46,6 +46,7 @@ class Login
             && ($_POST['magic'] ?? -1) == ($config->magic_number ?? 0)
             && isset($_POST['email'])
         ) {
+            $email = Sanitizer::SanitizeEmail($_POST['email']);
             error_log('consider sending email with password');
             $_SESSION['loginRN'] = 'used';
             $db = Db\DbCtx::GetInstance();
@@ -59,12 +60,12 @@ class Login
             }
             $pw_hash = \password_hash($pw, PASSWORD_BCRYPT);
             for ($trial = 0; $trial < 2; ++$trial) {
-                $user = $db->FindRow('AppUser', ['Email' => $_POST['email']]);
+                $user = $db->FindRow('AppUser', ['Email' => $email]);
                 if ($user) {
                     break;
                 } else {
                     $user = new Db\AppUser();
-                    $user->Email = $_POST['email'];
+                    $user->Email = $email;
                     $user->Level = Db\AppUser::Newbie;
                     $db->StoreRow($user);
                     // need to fetch row anew to get the right id...
@@ -81,7 +82,7 @@ please use the following password next time '$pw'. (Remove the quotes).
 
 Greetings from the admin
 MESSAGE_END;
-            $r = \mail($_POST['email'], 'password provided', $message);
+            $r = \mail($email, 'password provided', $message);
             error_log("mail returned with ${r}");
             $sv = new ShowView();
             $sv->ShowForm('PasswordSent');

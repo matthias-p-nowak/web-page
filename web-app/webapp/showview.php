@@ -16,8 +16,10 @@ class ShowView
      */
     function ShowPage($page)
     {
-        // error_log(__FILE__ .':'.__LINE__ .' showing page: '.$page);
-        $this->content = $page;
+        error_log(__FILE__ .':'.__LINE__ .' showing page: '.print_r($page,true));
+        $this->content = $page->Hash;
+        $this->title .= ' '.$page->Name;
+        $this->background=$page->Picture;
         // allways start with the main stuff
         \view('main', $this);
     }
@@ -34,4 +36,5 @@ class ShowView
         // allways start with the main stuff
         \view('main', $this);
     }
+
 }

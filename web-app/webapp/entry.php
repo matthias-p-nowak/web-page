@@ -12,28 +12,30 @@ class Entry
         error_log('Entry controller constructed');
     }
 
-    /**
-     * show home page
-     */
-    function Home(){
-        $view= new ShowView();
-        $view->ShowPage('home');
+    function Unknown($res)
+    {
+        error_log('no handler for path_info ' . $res);
+        $this->Page('');
     }
 
-    function Unknown($res){
-        error_log('no handler for path_info '.$res);
-        $this->Home();
-    }
-    function Page($page){
-        $pat='/([a-zA-Z0-9_]+)/';
-        if(preg_match($pat,$page,$matches)){
-            error_log(print_r($matches,true));
-            $view=new ShowView();
-            $view->ShowPage($matches[1]);
-        }else{
-            $this->Home();
+    function Page($hash)
+    {
+        $sc = Config::GetConfig();
+        $view = new ShowView();
+        if ($res = Sanitizer::CheckHash($hash)) {
+            foreach ($sc->pages as $page) {
+                if ($page->Hash === $hash) {
+                    $view->ShowPage($res);
+                }
+            }
+        } else {
+            foreach ($sc->pages as $page) {
+                $view->ShowPage($page);
+                return;
+            }
         }
     }
 }
 
-error_log(__FILE__ .' read');
+error_log(__FILE__ . ' read');
+

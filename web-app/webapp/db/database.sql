@@ -68,3 +68,21 @@ end if;
 
 -- 2024-04-19 SiteConfig
 
+create table if not exists `${prefix}Page` (
+    `Position` int primary key not null,
+    `Name` varchar(255),
+    `Hash` char(16),
+    `Picture` varchar(255)
+);
+
+if ${prefix}ColumnCount('${prefix}Page','Picture') < 1 then
+alter table `${prefix}Page` add column `Picture` varchar(255) ;
+end if;
+
+create table if not exists `${prefix}PageContent` (
+    `Hash` char(16) primary key,
+    `BackgroundPic` varchar(255),
+    `Content` text
+);
+
+-- 2024-04-27 Pages

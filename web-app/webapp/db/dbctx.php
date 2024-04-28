@@ -51,7 +51,7 @@ class DbCtx
     /**
      * returns the same instance
      */
-    public static function GetInstance()
+    public static function GetInstance(): DbCtx
     {
         return static::$instance ?? new static();
     }
@@ -104,14 +104,14 @@ class DbCtx
                 try {
                     $this->pdo->exec($sqlParts);
                 } catch (\PDOException $e) {
-                    $msg=$e->getMessage();
+                    $msg = $e->getMessage();
                     error_log("got an exception $msg");
                     error_log($sqlParts);
                     break;
                 }
             }
         }
-        echo('database upgraded');
+        header('web-page: database upgraded');
         error_log('database update complete');
     }
 
@@ -147,9 +147,9 @@ class DbCtx
         // find out what to store
         $rowDetails = $this->GetRowDetails($tableName);
         $columns2store = array_keys($rowDetails);
-        foreach ($columns2store as $propName) {
+        foreach ($columns2store as $pos => $propName) {
             if (!property_exists($row, $propName)) {
-                unset($columns2store[$propName]);
+                unset($columns2store[$pos]);
             }
         }
         // constructing the SQL
@@ -174,30 +174,35 @@ class DbCtx
         $tableName = basename(str_replace('\\', '/', get_class($row)));
         $rowDetails = $this->GetRowDetails($tableName);
         $columns2store = array_keys($rowDetails);
-        foreach ($columns2store as $propName) {
+        foreach ($columns2store as $pos => $propName) {
             if (!property_exists($row, $propName)) {
-                unset($columns2store[$propName]);
+                unset($columns2store[$pos]);
+            }else if(\is_null($row->$propName)){
+                unset($columns2store[$pos]);
             }
         }
         // constructing the SQL
         $sql = 'DELETE FROM `' . $this->prefix . $tableName . '` where ' . implode(' and ', MakeClause($columns2store));
         $stmt = $this->pdo->prepare($sql);
-        foreach($columns2store as $col){
-            $stmt->bindParam(':'.$col, $row->$col);
+        foreach ($columns2store as $col) {
+            $stmt->bindParam(':' . $col, $row->$col);
         }
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            error_log('deleting row failed ' . $sql . ' row=' . print_r($row, true));
+        }
     }
 
     /**
      * Executes select and returns statement to read from
      */
-    private function FetchStmt(string $tableName, array $criteria){
+    private function FetchStmt(string $tableName, array $criteria)
+    {
 
-        $sql = 'select * from `' . $this->prefix . $tableName .'`' ;
-        if(count($criteria)>0){
+        $sql = 'select * from `' . $this->prefix . $tableName . '`';
+        if (count($criteria) > 0) {
             $keys = array_keys($criteria);
             $clause = MakeClause($keys);
-            $sql .=  ' where ' . implode(' and ', $clause);
+            $sql .= ' where ' . implode(' and ', $clause);
         }
         $stmt = $this->pdo->prepare($sql);
         foreach ($criteria as $key => $value) {
@@ -210,9 +215,9 @@ class DbCtx
     /**
      * Basically a select, returns objects.
      */
-    public function FindRows(string $tableName, array $criteria=[])
+    public function FindRows(string $tableName, array $criteria = [])
     {
-        $stmt=$this->FetchStmt($tableName, $criteria);
+        $stmt = $this->FetchStmt($tableName, $criteria);
         while ($res = $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName)) {
             $res->ctx = $this;
             yield $res;
@@ -222,15 +227,17 @@ class DbCtx
     /**
      * Returns a single matching object - does not check if more match.
      */
-    public function FindRow(string $tableName, array $criteria){
-        $stmt=$this->FetchStmt($tableName, $criteria);
+    public function FindRow(string $tableName, array $criteria)
+    {
+        $stmt = $this->FetchStmt($tableName, $criteria);
         return $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
     }
 
     /**
      * Fetches from database, need ${prefix} before table names.
      */
-    public function FetchRows(string $sql){
+    public function FetchRows(string $sql)
+    {
         $sql = str_replace('${prefix}', $this->prefix, $sql);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
@@ -241,5 +248,4 @@ class DbCtx
 
 }
 
-
-error_log(__FILE__ .' read');
+error_log(__FILE__ . ' read');

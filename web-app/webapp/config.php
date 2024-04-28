@@ -27,6 +27,8 @@ class Config{
             return $instance;
         }
         error_log('no cached instance');
+        $db = Db\DbCtx::GetInstance();
+        $db->Upgrade();
         return;
     }
 
@@ -45,6 +47,10 @@ class Config{
             $instance->$n = $cfg->Value;
             $n .= 'Date';
             $instance->$n = $cfg->Modified;
+        }
+        $sql='SELECT * FROM `${prefix}Page` order by Position';
+        foreach($db->FetchRows($sql) as $page){
+            $instance->pages[$page->Position]=(object)$page;
         }
         file_put_contents(__DIR__. self::CacheFile, serialize($instance));
         self::$instance=$instance;

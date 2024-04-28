@@ -1,8 +1,9 @@
 <?php
 ?>
+<!-- sendpasswd view -->
 <dialog class="sendpw">
 <h2>Send me a password</h2>
-<form method="post" action="<?=$baseURL?>/login">
+<form method="post" action="<?=$scriptURL?>/login">
 <label for="email">email:</label>
 <input type="email" id="email" name="email"
   placeholder="your email address" required autofocus>
