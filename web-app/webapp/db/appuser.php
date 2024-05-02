@@ -17,4 +17,13 @@ class AppUser{
         }
     }
 
+    static function  EditorCheck(){
+        global $scriptURL;
+        if($_SESSION['Level']< self::Editor){
+            header("Refresh: 5; URL=".$scriptURL);
+            echo('Request was not authorized');
+            exit(0);
+        }
+    }
+
 }

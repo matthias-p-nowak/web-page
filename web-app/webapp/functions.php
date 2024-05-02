@@ -3,17 +3,22 @@
 /**
  * Safe function that emits the content of an HTML file within content
  */
-function show($fn)
+function show($page)
 {
-    $fn = strtolower($fn);
+    $fn = strtolower($page);
     $fn = __DIR__ . '/content/' . $fn . '.html';
     if (file_exists($fn)) {
         echo ('<article>');
         echo (file_get_contents($fn, false));
         echo ('</article>');
         return;
+    }else{
+        \WebApp\Db\AppUser::EditorCheck();
+        $arg= \WebApp\Config::GetConfig();
+        $arg->page2edit=$page;
+        $arg->pageFile=$fn;
+        view('admin/editpage',$arg);
     }
-    throw new \Exception("file $fn.html not found");
 }
 
 /**

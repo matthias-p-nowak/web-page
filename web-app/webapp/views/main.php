@@ -14,7 +14,6 @@ $sc = \WebApp\Config::GetConfig();
 <meta name="HandheldFriendly" content="True" />
 <meta name="MobileOptimized" content="320" />
 <link rel="stylesheet" type="text/css" href="<?=$baseURL?>main.css" />
-<?php if($arg->htmx_lite): ?><script src="<?=$baseURL?>js/htmx-lite.js"></script><?php endif; ?>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/x-icon" href="<?=$baseURL?>favicon.ico" />
 <title><?=$sc->title ?? $arg->title ?? '-no title set-'?></title>

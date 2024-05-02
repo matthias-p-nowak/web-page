@@ -2,6 +2,7 @@
 $sc = \WebApp\Config::GetConfig();
 ?>
 <div>
+<script src="<?=$baseURL?>js/htmx-lite.js"></script>
 <h2>Site config</h2>
 
 <div class="tableform">

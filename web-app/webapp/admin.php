@@ -137,7 +137,6 @@ class Admin
         }
         \WebApp\Config::CreateInstance();
         $sv = new ShowView();
-        $sv->htmx_lite = true;
         $sv->ShowForm('admin/SiteConfig');
     }
 }

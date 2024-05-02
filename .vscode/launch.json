@@ -16,7 +16,7 @@
             ],
             "program": "",
             // "cwd": "${fileDirname}",
-            "cwd": "${workspaceRoot}/public",
+            "cwd": "${workspaceRoot}",
             "port": 9003,
             "serverReadyAction": {
                 "pattern": "Development Server \\(http://0.0.0.0:([0-9]+)\\) started",

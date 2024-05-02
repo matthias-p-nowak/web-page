@@ -28,6 +28,7 @@ try {
         '/siteconfig' => (new WebApp\Admin())->SiteConfig(),
         '/home' => (new WebApp\Entry())->Page(''),
         '/pg' => (new WebApp\Entry())->Page($_SERVER['QUERY_STRING']),
+        '/editpage' => (new WebApp\EditPage())->EditPage(),
         default =>(new WebApp\Entry())->Unknown($res),
     };
 } catch (Exception $ex) {

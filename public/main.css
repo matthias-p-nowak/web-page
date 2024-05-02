@@ -142,6 +142,19 @@ header details a {
   display: block;
 }
 
+body#tinymce {
+  width: 100svw;
+  height: 100svh;
+  display: block;
+  background-color: #fafafa;
+  padding: 0.5rem;
+}
+
+div.tox {
+  border-radius: 0.5rem;
+  border: none;
+}
+
 div.tableform {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
@@ -195,6 +208,47 @@ footer hr {
 
 .tinyfooter {
   font-size: smaller;
+}
+
+form input.right_align {
+  display: block;
+  margin-left: auto;
+  margin-top: 0.2rem;
+  border: thin solid #a0a0a0;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+fieldset {
+  padding: 0.5rem;
+  border: thin solid #a0a0a0;
+  border-radius: 0.5rem;
+}
+fieldset legend {
+  padding: 0.3rem;
+  border: none;
+  border-radius: inherit;
+}
+
+main,
+body#tinymce {
+  font: inherit;
+  padding: 0.5rem;
+}
+main strong,
+body#tinymce strong {
+  font-weight: bold;
+}
+main em,
+body#tinymce em {
+  font-style: italic;
+}
+main blockquote,
+body#tinymce blockquote {
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: thin solid #a0a0a0;
 }
 
 @media (min-width: 50rem) {

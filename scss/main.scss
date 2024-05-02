@@ -76,17 +76,21 @@ header {
             margin-bottom: auto;
         }
     }
+
     div.topnav {
         display: flex;
+
         nav {
             margin-left: auto;
-            a{
+
+            a {
                 text-decoration: none;
                 color: darkgreen;
                 padding: 0.2rem;
                 transition: 0.3s;
             }
-            a + a {
+
+            a+a {
                 border-left: 1px solid darkgreen;
             }
         }
@@ -105,6 +109,20 @@ header {
     }
 }
 
+body#tinymce {
+    width: 100svw;
+    height: 100svh;
+    display: block;
+    background-color: #fafafa;
+    padding: 0.5rem;
+}
+
+div.tox {
+    // background-color: red;
+    border-radius: 0.5rem;
+    border: none;
+    //thin solid red;
+}
 
 div.tableform {
     // margin-left: auto;
@@ -114,33 +132,41 @@ div.tableform {
     display: table;
     border-collapse: collapse;
     $border: thin #a0a0a0 solid;
+
     // border: $border;
     * {
         padding: 0.2rem;
     }
-    form{
+
+    form {
         display: table-row;
+
         >* {
             border: $border;
             display: table-cell;
             // padding: 0.5rem;
         }
+
         label {
             text-align: right;
         }
-        input{
+
+        input {
             border: none;
             border-radius: 0.2rem;
         }
+
         select {
             border: none;
             border-radius: 0.2rem;
             background-color: #f0f0f0;
         }
     }
+
     >div {
         /* works as a header row */
         display: table-row;
+
         >* {
             display: table-cell;
             text-align: center;
@@ -153,12 +179,13 @@ footer {
     margin-top: 1rem;
     margin-left: auto;
     margin-right: auto;
+
     hr {
         border-top: thin solid #a0a0a0;
         border-bottom: none;
         width: 75%;
         margin-bottom: 0.5rem;
-        margin-top:0.5rem
+        margin-top: 0.5rem
     }
 }
 
@@ -167,6 +194,49 @@ footer {
 
 }
 
+form {
+    input.right_align {
+        display: block;
+        margin-left: auto;
+        margin-top: 0.2rem;
+        border: thin solid #a0a0a0;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        box-sizing: border-box;
+    }
+}
+
+fieldset {
+    padding: 0.5rem;
+    border: thin solid #a0a0a0;
+    border-radius: 0.5rem;
+
+    legend {
+        padding: 0.3rem;
+        border: none;
+        border-radius: inherit;
+    }
+}
+
+main,
+body#tinymce {
+    font: inherit;
+    padding: 0.5rem;
+
+    strong {
+        font-weight: bold;
+    }
+
+    em {
+        font-style: italic;
+    }
+
+    blockquote {
+        margin-left: 0.5rem;
+        padding-left: 0.5rem;
+        border-left: thin solid #a0a0a0;
+    }
+}
 
 @media (min-width: 50rem) {
     div.logoline {
@@ -189,6 +259,7 @@ footer {
         display: none;
     }
 }
+
 
 @media (min-width: 60rem) {
     body {

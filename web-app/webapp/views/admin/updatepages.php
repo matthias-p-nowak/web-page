@@ -1,4 +1,5 @@
 <?php
+$pages=$arg->pages ?? [];
 if(isset($arg->newPage)):
 $page=$arg->newPage;
 ?>
@@ -14,14 +15,18 @@ $page=$arg->newPage;
 <input type="hidden" name="page_hash" value="new">
 <span><input type="text" name="page_name" id="<?=$page->Hash?>" onchange="hxl_submit_form(event);"></span>
 </form>
-<!-- appending nav items -->
-<a x-action="append" x-id="menu_details" id="nav-<?= $page->Hash ?>" href="<?= $scriptURL.'/pg?'.$page->Hash ?>"><?= $page->Name ?></a>
-<a x-action="append" x-id="nav-page-list" id="menu-<?= $page->Hash ?>" href="<?= $scriptURL.'/pg?'.$page->Hash ?>"><?= $page->Name ?></a>
 <?php endif;
 if(isset($arg->deletedPage)):
     $page=$arg->deletedPage;
 ?>
-<div id="menu-<?= $page->Hash ?>" x-action="remove">remove</div>
-<div id="nav-<?= $page->Hash ?>" x-action="remove">remove</div>
+<!-- remove the form with that id -->
 <div id="<?= $page->Hash ?>" x-action="remove">remove</div>
 <?php endif; ?>
+<!-- always replace the nav items -->
+<details id="menu_details" x-action="replace">
+    <summary><img src="<?= $baseURL ?>assets/Hamburger_icon.png" alt="menu"></summary>
+    <?php foreach($pages as $page): ?><a href="<?= $scriptURL.'/pg?'.$page->Hash ?>"><?= $page->Name ?></a><?php endforeach;?>
+</details>
+<nav id="nav-page-list" x-action="replace"> 
+<?php foreach($pages as $page): ?><a href="<?= $scriptURL.'/pg?'.$page->Hash ?>"><?= $page->Name ?></a><?php endforeach;?>
+</nav>
