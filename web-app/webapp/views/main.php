@@ -22,6 +22,12 @@ $sc = \WebApp\Config::GetConfig();
     <?=view('admin/adminbar', $arg)?>
  <header><?=view('header', $arg)?></header>
  <main>
+ <?php
+ if (!isset($arg->view) && isset($_SESSION['Level']) && ($_SESSION['Level']>0)){
+    error_log('editor?');
+    echo '<div class=autohide>hidden</div>';
+ } 
+ ?>
 <?=isset($arg->content) ? show($arg->content) :
     (isset($arg->view, $arg) ? view($arg->view, $arg) : 
     '### nothing to show')?>

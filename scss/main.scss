@@ -302,6 +302,20 @@ body#tinymce {
                     font-style: italic;
                 }
             }
+            div.autohide {
+                background-color: aquamarine;
+                // position: absolute;
+                // top: -1rem;
+                // left: 0.5rem;
+                // grid-area: unset;
+                width: fit-content;
+                height: fit-content;
+                display: none;
+            }
+            &:hover div.autohide {
+                background-color: antiquewhite;
+                display: block;
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ try {
         '/home' => (new WebApp\Entry())->Page(''),
         '/pg' => (new WebApp\Entry())->Page($_SERVER['QUERY_STRING']),
         '/editpage' => (new WebApp\EditPage())->EditPage(),
+        '/upgradedb' => (new WebApp\Entry())->UpgradeDb(),
         default =>(new WebApp\Entry())->Unknown($res),
     };
 } catch (Exception $ex) {

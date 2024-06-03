@@ -63,7 +63,7 @@ create table if not exists `${prefix}SiteConfig` (
 );
 
 if ${prefix}ColumnCount('${prefix}Siteconfig','Modified') < 1 then
-alter table `${prefix}SiteConfig` add column `Modified` timestamp not null default current_timestamp ;
+    alter table `${prefix}SiteConfig` add column `Modified` timestamp not null default current_timestamp ;
 end if;
 
 -- 2024-04-19 SiteConfig
@@ -75,14 +75,27 @@ create table if not exists `${prefix}Page` (
     `Picture` varchar(255)
 );
 
+
 if ${prefix}ColumnCount('${prefix}Page','Picture') < 1 then
-alter table `${prefix}Page` add column `Picture` varchar(255) ;
+    alter table `${prefix}Page` add column `Picture` varchar(255) ;
 end if;
 
-create table if not exists `${prefix}PageContent` (
-    `Hash` char(16) primary key,
-    `BackgroundPic` varchar(255),
-    `Content` text
-);
+if ${prefix}IndexCount('${prefix}Page','HashIdx') < 1 then
+    alter table `${prefix}Page` add index `HashIdx`(`Hash`);
+end if;
 
 -- 2024-04-27 Pages
+
+create table if not exists `${prefix}PageContent` (
+    
+    `Hash` char(16),
+    `BackgroundPic` varchar(255),
+    `Content` text,
+     `Created` timestamp not null default current_timestamp
+);
+
+-- 2025-05-31 PageContent
+
+if ${prefix}IndexCount('${prefix}PageContent','fk_hash') < 1 then
+    alter table `${prefix}PageContent` add  constraint `fk_hash` foreign key (`Hash`) references `${prefix}Page`(`HASH`);
+end if;

@@ -301,6 +301,16 @@ body#tinymce blockquote {
   body main article em {
     font-style: italic;
   }
+  body main div.autohide {
+    background-color: aquamarine;
+    width: fit-content;
+    height: fit-content;
+    display: none;
+  }
+  body main:hover div.autohide {
+    background-color: antiquewhite;
+    display: block;
+  }
 }
 div#admin_bar {
   position: fixed;

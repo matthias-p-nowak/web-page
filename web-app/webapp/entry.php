@@ -25,7 +25,8 @@ class Entry
         if ($res = Sanitizer::CheckHash($hash)) {
             foreach ($sc->pages as $page) {
                 if ($page->Hash === $hash) {
-                    $view->ShowPage($res);
+                    $view->ShowPage($page);
+                    return;
                 }
             }
         } else {
@@ -34,6 +35,12 @@ class Entry
                 return;
             }
         }
+    }
+
+    function UpgradeDb()
+    {
+        $db = Db\DbCtx::GetInstance();
+        $db->Upgrade();
     }
 }
 

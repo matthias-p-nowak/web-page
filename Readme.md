@@ -10,6 +10,8 @@ The root folder of this project comprises three crucial components:
 2. The *web-app* folder, ideally located outside the web root but still accessible to the PHP server process.
 3. Auxiliary items such as the *Readme.md* file or the source files for *Sass*.
 
+If a new version is installed, remove the `content.data` in the `cache` folder and the database will get upgraded.
+
 ## Modification
 
 The top of the `index.php` file contains the location of of the *bootstrap* file which then makes the arrangements (aka autoloading) for the remaining php file. The `favicon.ico` file needs to be replaced manually.

@@ -1,5 +1,6 @@
 <?php
-foreach($arg->pages as $page){
+$sc = \WebApp\Config::GetConfig();
+foreach($sc->pages as $page){
     if($page->Hash === $arg->page2edit){
         break;
     }
@@ -8,6 +9,11 @@ if(file_exists($arg->pageFile)){
     $content=file_get_contents($arg->pageFile);
 }else{
     $content='';
+    $db=\WebApp\Db\DbCtx::GetInstance();
+    $d=0;
+    foreach($db->FindRows('PageContent',['Hash' => $arg->page2edit]) as $row){
+
+    }
 }
 ?>
 <div>
