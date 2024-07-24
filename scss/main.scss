@@ -311,6 +311,7 @@ body#tinymce {
                 width: fit-content;
                 height: fit-content;
                 display: none;
+                z-index: 5;
             }
             &:hover div.autohide {
                 background-color: antiquewhite;

@@ -5,6 +5,7 @@ header('Link: <' . $baseURL . 'js/htmx-lite.js>; rel=preload; as=script', false)
 $sc = \WebApp\Config::GetConfig();
 ?>
 <!DOCTYPE html>
+<!-- main.php -->
 <html>
 <head>
 <meta charset="utf-8" />
@@ -23,9 +24,9 @@ $sc = \WebApp\Config::GetConfig();
  <header><?=view('header', $arg)?></header>
  <main>
  <?php
- if (!isset($arg->view) && isset($_SESSION['Level']) && ($_SESSION['Level']>0)){
+ if (!isset($arg->view) && isset($arg->content) && isset($_SESSION['Level']) && ($_SESSION['Level']>0)){
     error_log('editor?');
-    echo '<div class=autohide>hidden</div>';
+    echo '<div class=autohide><a href="' . $scriptURL . '/editpage?pg=' . $arg->content . '">edit</a></div>';
  } 
  ?>
 <?=isset($arg->content) ? show($arg->content) :

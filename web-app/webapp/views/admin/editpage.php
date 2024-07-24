@@ -10,12 +10,17 @@ if(file_exists($arg->pageFile)){
 }else{
     $content='';
     $db=\WebApp\Db\DbCtx::GetInstance();
-    $d=0;
+    $d='';
     foreach($db->FindRows('PageContent',['Hash' => $arg->page2edit]) as $row){
-
+        error_log(print_r($row,true));
+        if(strcmp($d, $row->Created) < 0){
+            $d=$row->Created;
+            $content=$row->Content;
+        }
     }
 }
 ?>
+<!-- editpage.php -->
 <div>
 <h2>Editing page &raquo;<?= $page->Name ?>&laquo;</h2>
 <script src="<?=$baseURL?>js/htmx-lite.js"></script>

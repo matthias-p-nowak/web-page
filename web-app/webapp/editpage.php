@@ -73,11 +73,8 @@ class EditPage
             }
             $res = \implode('', $res);
             $db = Db\DbCtx::GetInstance();
-            $pc = $db->FindRow('PageContent', ['Hash' => $hash]);
-            if (!$pc) {
-                $pc = new Db\PageContent();
-                $pc->Hash = $hash;
-            }
+            $pc = new Db\PageContent();
+            $pc->Hash = $hash;
             $pc->Content = $res;
             $db->StoreRow($pc);
             $fn = strtolower($hash);

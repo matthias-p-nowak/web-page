@@ -3,6 +3,8 @@
 drop function if exists ${prefix}ColumnCount;
 
 create function `${prefix}ColumnCount` (tabName varchar(64), colName varchar(64)) returns int
+READS SQL DATA
+DETERMINISTIC
 begin
     declare result int;
     set result = (select count(1) from information_schema.columns  
@@ -15,6 +17,8 @@ end;
 drop function if exists ${prefix}IndexCount;
 
 create function `${prefix}IndexCount` (tabName varchar(64), idxName varchar(64)) returns int
+READS SQL DATA
+DETERMINISTIC
 begin
     declare result int;
     set result = (select count(1) from information_schema.statistics  
@@ -27,6 +31,8 @@ end;
 drop function if exists ${prefix}ColumnType;
 
 create function `${prefix}ColumnType` (tabName varchar(64), colName varchar(64)) returns varchar(64)
+READS SQL DATA
+DETERMINISTIC
 begin
     declare result varchar(64);
     set result = (
@@ -62,9 +68,8 @@ create table if not exists `${prefix}SiteConfig` (
     `Modified` timestamp not null default current_timestamp
 );
 
-if ${prefix}ColumnCount('${prefix}Siteconfig','Modified') < 1 then
-    alter table `${prefix}SiteConfig` add column `Modified` timestamp not null default current_timestamp ;
-end if;
+alter table `${prefix}SiteConfig` add column if not exists `Modified` timestamp not null default current_timestamp ;
+
 
 -- 2024-04-19 SiteConfig
 
@@ -76,9 +81,7 @@ create table if not exists `${prefix}Page` (
 );
 
 
-if ${prefix}ColumnCount('${prefix}Page','Picture') < 1 then
-    alter table `${prefix}Page` add column `Picture` varchar(255) ;
-end if;
+alter table `${prefix}Page` add column if not exists `Picture` varchar(255) ;
 
 if ${prefix}IndexCount('${prefix}Page','HashIdx') < 1 then
     alter table `${prefix}Page` add index `HashIdx`(`Hash`);

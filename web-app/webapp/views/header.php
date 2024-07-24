@@ -2,6 +2,7 @@
 $sc = \WebApp\Config::GetConfig();
 $pages=$sc->pages ?? [];
 ?>
+<!-- header.php -->
 <div class="logoline"><h1 id="logolinelogo"><?= $sc->logo ?></h1></div>
 <details id="menu_details">
     <summary><img src="<?= $baseURL ?>assets/Hamburger_icon.png" alt="menu"></summary>

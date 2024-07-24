@@ -1,6 +1,7 @@
 <?php
 $sc = \WebApp\Config::GetConfig();
 ?>
+<!-- siteconfig.php -->
 <div>
 <script src="<?=$baseURL?>js/htmx-lite.js"></script>
 <h2>Site config</h2>

@@ -306,6 +306,7 @@ body#tinymce blockquote {
     width: fit-content;
     height: fit-content;
     display: none;
+    z-index: 5;
   }
   body main:hover div.autohide {
     background-color: antiquewhite;

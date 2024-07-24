@@ -21,15 +21,16 @@ if (isset($_COOKIE[session_name()])) {
 $res = $_SERVER['PATH_INFO'] ?? '/home';
 try {
     match ($res) {
+        '/editpage' => (new WebApp\EditPage())->EditPage(),
+        '/home' => (new WebApp\Entry())->Page(''),
         '/login' => (new WebApp\Login())->Login(),
         '/logout' => (new WebApp\Login())->Logout(),
         '/permissions' => (new WebApp\Login())->Permissions(),
-        '/useradmin' => (new WebApp\Admin())->UserAdmin(),
-        '/siteconfig' => (new WebApp\Admin())->SiteConfig(),
-        '/home' => (new WebApp\Entry())->Page(''),
+        '/pictures' => (new WebApp\Admin())->Pictures(),
         '/pg' => (new WebApp\Entry())->Page($_SERVER['QUERY_STRING']),
-        '/editpage' => (new WebApp\EditPage())->EditPage(),
+        '/siteconfig' => (new WebApp\Admin())->SiteConfig(),
         '/upgradedb' => (new WebApp\Entry())->UpgradeDb(),
+        '/useradmin' => (new WebApp\Admin())->UserAdmin(),
         default =>(new WebApp\Entry())->Unknown($res),
     };
 } catch (Exception $ex) {

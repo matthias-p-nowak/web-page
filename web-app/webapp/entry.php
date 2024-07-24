@@ -30,11 +30,12 @@ class Entry
                 }
             }
         } else {
-            foreach ($sc->pages as $page) {
+            foreach (($sc->pages ?? []) as $page) {
                 $view->ShowPage($page);
                 return;
             }
         }
+        $view->ShowPage(null);
     }
 
     function UpgradeDb()
@@ -45,4 +46,3 @@ class Entry
 }
 
 error_log(__FILE__ . ' read');
-

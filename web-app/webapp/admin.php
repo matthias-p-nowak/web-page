@@ -139,4 +139,10 @@ class Admin
         $sv = new ShowView();
         $sv->ShowForm('admin/SiteConfig');
     }
+
+    function Pictures(){
+        \WebApp\Config::CreateInstance();
+        $sv = new ShowView();
+        $sv->ShowForm('admin/Pictures');
+    }
 }

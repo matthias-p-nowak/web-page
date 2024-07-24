@@ -1,6 +1,7 @@
 <?php
 
 ?>
+<!-- footer.php -->
 <hr />
 <div class="tinyfooter">
 <?php $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]; ?>
