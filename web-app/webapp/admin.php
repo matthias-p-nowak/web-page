@@ -142,6 +142,7 @@ class Admin
 
     function Pictures(){
         \WebApp\Config::CreateInstance();
+        // TODO: handling uploaded pictures
         $sv = new ShowView();
         $sv->ShowForm('admin/Pictures');
     }

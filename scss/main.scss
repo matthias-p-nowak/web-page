@@ -218,6 +218,28 @@ fieldset {
     }
 }
 
+table.cfgTable {
+    background-color: antiquewhite;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    display: table;
+    border-collapse: collapse;
+    $border: thin #a0a0a0 solid;
+    border: $border;
+    width: 100%;
+    input { 
+        width: 100%;
+        border: none;
+    }
+    td {
+        border: $border;
+        padding: 0.2rem;
+    }
+    .right {
+        text-align: right;
+    }
+}
+
 main,
 body#tinymce {
     font: inherit;

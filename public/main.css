@@ -231,6 +231,27 @@ fieldset legend {
   border-radius: inherit;
 }
 
+table.cfgTable {
+  background-color: antiquewhite;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  display: table;
+  border-collapse: collapse;
+  border: thin #a0a0a0 solid;
+  width: 100%;
+}
+table.cfgTable input {
+  width: 100%;
+  border: none;
+}
+table.cfgTable td {
+  border: thin #a0a0a0 solid;
+  padding: 0.2rem;
+}
+table.cfgTable .right {
+  text-align: right;
+}
+
 main,
 body#tinymce {
   font: inherit;

@@ -36,7 +36,7 @@ class Login
                     $db->StoreRow($foundRow);
                     $_SESSION['Level'] = $user->Level;
                     $_SESSION['UserId'] = $user->UserId;
-                    header("Refresh: 5; URL=".$scriptURL);
+                    header("Refresh: 2; URL=".$scriptURL);
                     echo('Login was successful');
                     exit(0);
                 }
@@ -102,7 +102,7 @@ MESSAGE_END;
         global $scriptURL;
         session_destroy();
         setcookie(session_name(), '', 0, '/');
-        header("Refresh: 5; URL=".$scriptURL);
+        header("Refresh: 2; URL=".$scriptURL);
         echo('Logout was successful');
         exit(0);
     }

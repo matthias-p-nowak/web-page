@@ -24,7 +24,7 @@ $sc = \WebApp\Config::GetConfig();
 <h2>Pages</h2>
 
 <div id="site_pages" class="tableform">
-<div><span>Name</span><span>Background picture</span><span>Thumbnail</span></div>
+<div><span>Name</span></div>
 <?php foreach ($sc->pages as $pos => $page): ?>
 <form id="<?= $page->Hash ?>" action="<?=$scriptURL . '/siteconfig'?>" onsubmit="return false;">
 <input type="hidden" name="page_hash" value="<?=$page->Hash?>">

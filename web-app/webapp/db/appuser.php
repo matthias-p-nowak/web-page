@@ -11,7 +11,7 @@ class AppUser{
     static function AdminCheck(){
         global $scriptURL;
         if($_SESSION['Level']< self::Admin){
-            header("Refresh: 5; URL=".$scriptURL);
+            header("Refresh: 2; URL=".$scriptURL);
             echo('Request was not authorized');
             exit(0);
         }
@@ -20,7 +20,7 @@ class AppUser{
     static function  EditorCheck(){
         global $scriptURL;
         if($_SESSION['Level']< self::Editor){
-            header("Refresh: 5; URL=".$scriptURL);
+            header("Refresh: 2; URL=".$scriptURL);
             echo('Request was not authorized');
             exit(0);
         }

@@ -68,7 +68,8 @@ create table if not exists `${prefix}SiteConfig` (
     `Modified` timestamp not null default current_timestamp
 );
 
-alter table `${prefix}SiteConfig` add column if not exists `Modified` timestamp not null default current_timestamp ;
+alter table `${prefix}SiteConfig` add column if not exists `Modified` 
+    timestamp not null default current_timestamp ;
 
 
 -- 2024-04-19 SiteConfig
@@ -93,12 +94,16 @@ create table if not exists `${prefix}PageContent` (
     
     `Hash` char(16),
     `BackgroundPic` varchar(255),
+    `Description` varchar(512),
     `Content` text,
      `Created` timestamp not null default current_timestamp
 );
 
+alter table `${prefix}PageContent` add column if not exists `Description` varchar(512);
+
 -- 2025-05-31 PageContent
 
 if ${prefix}IndexCount('${prefix}PageContent','fk_hash') < 1 then
-    alter table `${prefix}PageContent` add  constraint `fk_hash` foreign key (`Hash`) references `${prefix}Page`(`HASH`);
+    alter table `${prefix}PageContent` add  constraint `fk_hash` foreign key (`Hash`) 
+    references `${prefix}Page`(`HASH`) on delete cascade;
 end if;
