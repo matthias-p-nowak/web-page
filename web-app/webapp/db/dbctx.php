@@ -1,6 +1,12 @@
 <?php
 namespace WebApp\Db;
 
+use Generator;
+use PDO;
+use PDOStatement;
+use stdClass;
+
+
 /**
  * adding backquotes so the items can be used in an SQL
  */
@@ -47,6 +53,7 @@ class DbCtx
 
     // keeping a single instance
     private static $instance;
+    private $prefix;
 
     /**
      * returns the same instance
@@ -78,8 +85,9 @@ class DbCtx
      * This takes the database.sql file in the same directory divides it into chunks.
      * Chunks are separated by lines of the form "-- 2022-01-01 comment" with the appropriate date and comment
      * Chunks are executed in separate queries, hence not all of them will fail
+     * @return void
      */
-    public function Upgrade()
+    public function Upgrade(): void
     {
         global $config;
         $content = file_get_contents(__DIR__ . '/database.sql');
@@ -117,6 +125,7 @@ class DbCtx
 
     /**
      * For storing, we need to know what can be stored in the database
+     * @return <missing>|array<<missing>,object>
      */
     public function GetRowDetails(string $tableName)
     {
@@ -140,8 +149,10 @@ class DbCtx
     /**
      * Requires the row to be a class instance of the same name as the table.
      * Executes a replace in the database.
+     * @return void
+     * @param mixed $row
      */
-    public function StoreRow($row)
+    public function StoreRow($row): void
     {
         $tableName = basename(str_replace('\\', '/', get_class($row)));
         // find out what to store
@@ -163,13 +174,16 @@ class DbCtx
                 return;
             }
         }
+        error_log("storing into $tableName using $sql");
         $r = $stmt->execute();
     }
 
     /**
      * deletes the rows that match the details
+     * @return void
+     * @param mixed $row
      */
-    public function DeleteRow($row)
+    public function DeleteRow($row): void
     {
         $tableName = basename(str_replace('\\', '/', get_class($row)));
         $rowDetails = $this->GetRowDetails($tableName);
@@ -194,8 +208,10 @@ class DbCtx
 
     /**
      * Executes select and returns statement to read from
+     * @return PDOStatement|bool
+     * @param array<int,mixed> $criteria
      */
-    private function FetchStmt(string $tableName, array $criteria)
+    private function FetchStmt(string $tableName, array $criteria): PDOStatement|bool
     {
 
         $sql = 'select * from `' . $this->prefix . $tableName . '`';
@@ -214,8 +230,9 @@ class DbCtx
 
     /**
      * Basically a select, returns objects.
+     * @return Generator<<missing>|stdClass|null>@param array<int,mixed> $criteria
      */
-    public function FindRows(string $tableName, array $criteria = [])
+    public function FindRows(string $tableName, array $criteria = []): Generator
     {
         $stmt = $this->FetchStmt($tableName, $criteria);
         while ($res = $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName)) {
@@ -226,16 +243,19 @@ class DbCtx
 
     /**
      * Returns a single matching object - does not check if more match.
+     * @param array<int,mixed> $criteria
+     * @return stdClass|null
      */
     public function FindRow(string $tableName, array $criteria)
     {
         $stmt = $this->FetchStmt($tableName, $criteria);
-        return $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
+        $obj=$stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
+        return $obj;
     }
 
     /**
      * Fetches from database, need ${prefix} before table names.
-     */
+     * @return Generator<<missing>|stdClass|null>*/
     public function FetchRows(string $sql)
     {
         $sql = str_replace('${prefix}', $this->prefix, $sql);

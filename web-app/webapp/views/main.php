@@ -1,4 +1,9 @@
 <?php
+/**
+ * @var $baseURL is the base of the sites url
+ * @var $arg is from the including script
+ * @var $scriptURL is the url of index.php
+ */
 // just in case http2 is supported
 header('Link: <' . $baseURL . 'main.css>; rel=preload; as=style', false);
 header('Link: <' . $baseURL . 'js/htmx-lite.js>; rel=preload; as=script', false);
@@ -18,21 +23,26 @@ $sc = \WebApp\Config::GetConfig();
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/x-icon" href="<?=$baseURL?>favicon.ico" />
 <title><?=$sc->title ?? $arg->title ?? '-no title set-'?></title>
+<?php if(isset($arg->Description)): ?>
+<meta name="description" content="<?= \htmlentities($arg->Description) ?>" />
+<?php endif; ?>
 </head>
 <body>
     <?=view('admin/adminbar', $arg)?>
  <header><?=view('header', $arg)?></header>
  <main>
  <?php
- if (!isset($arg->view) && isset($arg->content) && isset($_SESSION['Level']) && ($_SESSION['Level']>0)){
+if (!isset($arg->view) && isset($arg->content) && isset($_SESSION['Level']) && ($_SESSION['Level'] > 0)) {
     error_log('editor?');
     echo '<div class=autohide><a href="' . $scriptURL . '/editpage?pg=' . $arg->content . '">edit</a></div>';
- } 
- ?>
+}
+
+?>
 <?=isset($arg->content) ? show($arg->content) :
-    (isset($arg->view, $arg) ? view($arg->view, $arg) : 
+(isset($arg->view) ?
+    view($arg->view, $arg) :
     '### nothing to show')?>
 </main>
-<footer><?= view('footer',$arg) ?></footer>
+<footer><?=view('footer', $arg)?></footer>
 </body>
-</html> 
+</html>

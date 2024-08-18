@@ -5,6 +5,12 @@ require_once 'functions.php';
 
 class ShowView
 {
+    /** the title to show in the browser */
+    public $title;
+    public  $content;
+    public  $background;
+    public  $view;
+
     function __construct()
     {
         global $config;
@@ -13,8 +19,9 @@ class ShowView
 
     /**
      * Shows a static page as content
+     * @param mixed $page a data structure containing name, hash and more
      */
-    function ShowPage($page)
+    function ShowPage($page): void
     {
         error_log(__FILE__ .':'.__LINE__ .' showing page: '.print_r($page,true));
         $this->content = $page->Hash;
@@ -26,8 +33,9 @@ class ShowView
 
     /**
      * Shows a whole form starting with main
+     * @param mixed $form
      */
-    function ShowForm($form)
+    function ShowForm($form): void
     {
         global $config;
         // error_log(__FILE__ .':'.__LINE__ .' showing form: '.$form);

@@ -1,6 +1,9 @@
 <?php
 namespace WebApp;
 
+use stdClass;
+
+
 /**
  * general cached configuration for easy fill of all pages
  */
@@ -12,14 +15,14 @@ class Config{
     /**
      * returns site values from memory, cached or created
      */
-    public static function GetConfig(){
+    public static function GetConfig(): stdClass{
         return static::$instance ?? static::readInstance() ?? static::CreateInstance();
     }
 
     /**
      * tries to read from cache file
      */
-    private static function readInstance(){
+    private static function readInstance(): mixed{
         $content=file_get_contents(__DIR__. self::CacheFile);
         if($content){
             error_log('unserialzing cached instance');
@@ -29,14 +32,14 @@ class Config{
         error_log('no cached instance');
         $db = Db\DbCtx::GetInstance();
         $db->Upgrade();
-        return;
+        return null;
     }
 
     /**
      * Creates a new instance from values in the database and stores a cached version.
      * Intended to be called from admin functions.
      */
-    public static function CreateInstance(){
+    public static function CreateInstance(): stdClass{
         error_log('creating a new config instance');
         $instance=new \stdClass();
         // TODO read related info from database

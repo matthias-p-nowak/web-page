@@ -37,5 +37,9 @@ try {
     error_log("got exception $ex");
 }finally{
     $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
-    error_log("used $time seconds");
+    $time = number_format($time,4) ;
+    $included = \get_included_files();
+    $included= \count($included);
+    error_log("used  $time seconds and $included files");
+
 }

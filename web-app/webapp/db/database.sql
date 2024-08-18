@@ -1,5 +1,6 @@
 -- 2024-03-07 start and defining functions
 
+/*
 drop function if exists ${prefix}ColumnCount;
 
 create function `${prefix}ColumnCount` (tabName varchar(64), colName varchar(64)) returns int
@@ -13,6 +14,7 @@ begin
         );
     return result; 
 end;
+*/
 
 drop function if exists ${prefix}IndexCount;
 
@@ -78,11 +80,8 @@ create table if not exists `${prefix}Page` (
     `Position` int primary key not null,
     `Name` varchar(255),
     `Hash` char(16),
-    `Picture` varchar(255)
+    `Created` timestamp not null default current_timestamp
 );
-
-
-alter table `${prefix}Page` add column if not exists `Picture` varchar(255) ;
 
 if ${prefix}IndexCount('${prefix}Page','HashIdx') < 1 then
     alter table `${prefix}Page` add index `HashIdx`(`Hash`);
@@ -93,17 +92,23 @@ end if;
 create table if not exists `${prefix}PageContent` (
     
     `Hash` char(16),
-    `BackgroundPic` varchar(255),
+    `Picture` varchar(255),
     `Description` varchar(512),
     `Content` text,
-     `Created` timestamp not null default current_timestamp
+    `Created` timestamp not null default current_timestamp
 );
 
 alter table `${prefix}PageContent` add column if not exists `Description` varchar(512);
 
--- 2025-05-31 PageContent
+-- 2024-05-31 PageContent
 
 if ${prefix}IndexCount('${prefix}PageContent','fk_hash') < 1 then
     alter table `${prefix}PageContent` add  constraint `fk_hash` foreign key (`Hash`) 
     references `${prefix}Page`(`HASH`) on delete cascade;
 end if;
+
+-- 2024-08-11 Description to PageContent
+
+alter table `${prefix}PageContent` add column if not exists `Picture` varchar(255);
+
+

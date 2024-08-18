@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @var $baseURL the url without the script name
+ * @var $arg from the calling script
+ * @var $scriptURL the url of the index.php
+ */
 ?>
 <script src="<?=$baseURL?>/js/htmx-lite.js"></script>
 <div>

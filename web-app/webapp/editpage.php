@@ -1,4 +1,7 @@
 <?php
+/**
+ * 
+ */
 
 namespace WebApp;
 
@@ -55,11 +58,14 @@ class EditPage
     {
         Db\AppUser::EditorCheck();
     }
-    public function EditPage()
+    /**
+     * @return void
+     */
+    public function EditPage(): void
     {
-        if (isset($_POST['content'])) {
+        if (isset($_POST['newContent'])) {
             error_log(print_r($_POST, true));
-            $raw = $_POST['content'];
+            $raw = $_POST['newContent'];
             $hash = $_POST['page2edit'];
             $temp_dom = new \DOMDocument('1.0', 'UTF-8');
             $temp_dom->loadHTML('<?xml encoding="UTF-8">' . $raw);
@@ -76,6 +82,8 @@ class EditPage
             $pc = new Db\PageContent();
             $pc->Hash = $hash;
             $pc->Content = $res;
+            $pc->Description=$_POST['Description'];
+            $pc->Picture=$_POST['Picture'];
             $db->StoreRow($pc);
             $fn = strtolower($hash);
             $fn = __DIR__ . '/content/' . $fn . '.html';
@@ -84,8 +92,13 @@ class EditPage
         } else {
             Db\AppUser::EditorCheck();
             $view = new ShowView();
-            $view->page2edit=$_GET['pg'];
-            $view->ShowForm('admin/editpage');
+            if(isset($_GET['pg'])){
+
+                $view->page2edit=$_GET['pg'];
+                $view->ShowForm('admin/editpage');
+            }else{
+                error_log('not enough');
+            }
         }
     }
 }

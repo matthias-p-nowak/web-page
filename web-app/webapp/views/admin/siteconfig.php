@@ -1,4 +1,8 @@
 <?php
+/**
+ * @var $baseURL is the base URL
+ * @var $scriptURL is the url of the index.php script
+ */
 $sc = \WebApp\Config::GetConfig();
 ?>
 <!-- siteconfig.php -->

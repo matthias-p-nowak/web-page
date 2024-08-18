@@ -12,6 +12,8 @@ use WebApp\Db\SiteConfig;
 class Admin
 {
 
+    private  $good_types= ['image/svg+xml', 'image/png', 'image/jpeg','application/pdf'];
+
     // TODO: remove old users
 
     function __construct()
@@ -22,8 +24,9 @@ class Admin
 
     /**
      * retrieve users and their levels
+     * @return void
      */
-    function UserAdmin()
+    function UserAdmin(): void
     {
         if (isset($_POST['UserId'])) {
             $this->ChangeUser();
@@ -34,7 +37,7 @@ class Admin
         $sv = new ShowView();
         foreach ($db->FetchRows($sql) as $userRow) {
             error_log(print_r($userRow, true));
-            $userRow->LevelStr = Db\Appuser::Levels[$userRow->Level];
+            $userRow->LevelStr = Db\AppUser::Levels[$userRow->Level];
             $sv->users[] = $userRow;
             // $sv->levels=['Newbie','Editor','Administrator','Remove account'];
         }
@@ -43,8 +46,9 @@ class Admin
 
     /**
      * Reaction to post, change user level accordingly or remove user
+     * @return void
      */
-    private function ChangeUser()
+    private function ChangeUser(): void
     {
         error_log(print_r($_POST, true));
         $db = Db\DbCtx::GetInstance();
@@ -67,8 +71,10 @@ class Admin
             exit(0);
         }
     }
-
-    function SiteConfig()
+    /**
+     * @return void
+     */
+    function SiteConfig(): void
     {
         if (sizeof($_POST) > 0) {
             $db = Db\DbCtx::GetInstance();
@@ -120,7 +126,7 @@ class Admin
                     return;
                 } else if ($pageHash = Sanitizer::CheckHash($_POST['page_hash'])) {
                     $name = trim($_POST['page_name']);
-                    if ( $name === '') {
+                    if ($name === '') {
                         $row = $db->FindRow('Page', ['Hash' => $pageHash]);
                         $db->DeleteRow($row);
                         $sc = \WebApp\Config::CreateInstance();
@@ -140,9 +146,32 @@ class Admin
         $sv->ShowForm('admin/SiteConfig');
     }
 
-    function Pictures(){
-        \WebApp\Config::CreateInstance();
+    /**
+     * @return void
+     */
+    function Pictures(): void
+    {
+        // \WebApp\Config::CreateInstance();
         // TODO: handling uploaded pictures
+        error_log(print_r($_POST, true));
+        if (isset($_FILES['files'])) {
+            $files = $_FILES['files']; // same name as the file-input field
+            $l = count($files['tmp_name']);
+            $destDir=dirname($_SERVER["SCRIPT_FILENAME"]). DIRECTORY_SEPARATOR . 'media';
+            mkdir($destDir,0511, true);
+            for ($i = 0; $i < $l; $i++) {
+                if(in_array($files['type'][$i],$this->good_types)){
+                    $dest=$destDir. DIRECTORY_SEPARATOR. $files['name'][$i];
+                    copy($files['tmp_name'][$i],$dest);
+                    error_log('copied file '.$dest);
+                }else{
+                    $msg='ignoring file '. $files['name'][$i] .', type='.$files['type'][$i];
+                    error_log($msg);
+                }
+            }
+            // TODO adapt the views
+            return;
+        }
         $sv = new ShowView();
         $sv->ShowForm('admin/Pictures');
     }

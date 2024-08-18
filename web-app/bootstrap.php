@@ -1,7 +1,7 @@
 <?php
-
 /**
  * Contains the site configuration
+ * @var $site contains the name
  */
 $config = __DIR__ . '/' . $site . '.ini';
 // reading config file from a secure location

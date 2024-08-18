@@ -64,6 +64,16 @@ h3 {
     margin-top: 0.5rem;
 }
 
+h4,
+h5 {
+    margin-top: 0.3rem;
+}
+
+h2 { margin-left: 0.2rem;}
+h3 { margin-left: 0.4rem;}
+h4 { margin-left: 0.6rem;}
+h5 { margin-left: 0.8rem;}
+
 header {
     div.logoline {
         img {
@@ -219,7 +229,6 @@ fieldset {
 }
 
 table.cfgTable {
-    background-color: antiquewhite;
     margin-top: 0.5rem;
     margin-bottom: 1rem;
     display: table;
@@ -227,16 +236,49 @@ table.cfgTable {
     $border: thin #a0a0a0 solid;
     border: $border;
     width: 100%;
-    input { 
+
+    input {
         width: 100%;
         border: none;
     }
+
     td {
         border: $border;
         padding: 0.2rem;
     }
+
     .right {
         text-align: right;
+    }
+}
+
+.borderbox {
+    border: thin #a0a0a0 solid;
+    padding: 0.5rem;
+    margin:0.5rem;
+    box-shadow: 0 0 0.2rem 0.1rem #a0a0a0 ;
+    border-radius: 0.5rem;
+    * {
+        margin: 0.2rem;
+    }
+}
+
+.dragHigh {
+    background-color: rgb(230, 255, 230);;
+}
+
+input[type="submit"].requested {
+    font-style: italic;
+    color: green;
+    background-color: #fafafa;
+}
+
+input[type="submit"].failed {
+    font-weight: bold;
+    color: red;
+    &::before {
+        content: "upload error";
+        border: solid thick red;
     }
 }
 
@@ -324,6 +366,7 @@ body#tinymce {
                     font-style: italic;
                 }
             }
+
             div.autohide {
                 background-color: aquamarine;
                 // position: absolute;
@@ -335,6 +378,7 @@ body#tinymce {
                 display: none;
                 z-index: 5;
             }
+
             &:hover div.autohide {
                 background-color: antiquewhite;
                 display: block;

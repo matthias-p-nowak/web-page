@@ -10,7 +10,7 @@ class Login
         error_log('Entry controller constructed');
     }
 
-    function Login()
+    function Login(): void
     {
         global $config,$scriptURL;
         error_log('considering login');
@@ -97,7 +97,7 @@ MESSAGE_END;
         $sv->ShowForm('SendPasswd');
     }
 
-    function Logout()
+    function Logout(): void
     {
         global $scriptURL;
         session_destroy();
@@ -106,7 +106,7 @@ MESSAGE_END;
         echo('Logout was successful');
         exit(0);
     }
-    function Permissions()
+    function Permissions(): void
     {
         global $config;
         if (($_SESSION['Level'] ?? -1) < 0) {
@@ -123,7 +123,7 @@ MESSAGE_END;
                         $db->StoreRow($user);
                     }
                 }
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 error_log('could not determine admin rights due to' . $ex);
             }
         }
