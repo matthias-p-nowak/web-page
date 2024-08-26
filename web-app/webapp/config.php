@@ -45,13 +45,13 @@ class Config{
         // TODO read related info from database
         $db = Db\DbCtx::GetInstance();
         foreach($db->FindRows('SiteConfig') as $cfg){
-            error_log(print_r($cfg,true));
+            // error_log(print_r($cfg,true));
             $n=$cfg->Name;
             $instance->$n = $cfg->Value;
             $n .= 'Date';
             $instance->$n = $cfg->Modified;
         }
-        $sql='SELECT * FROM `${prefix}Page` order by Position';
+        $sql='SELECT `PageId`, `Position`, `Name`, `Picture`, `Description` FROM `${prefix}Page` where IsActive > 0 order by `Position`';
         foreach($db->FetchRows($sql) as $page){
             $instance->pages[$page->Position]=(object)$page;
         }

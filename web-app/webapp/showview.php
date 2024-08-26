@@ -19,7 +19,7 @@ class ShowView
 
     /**
      * Shows a static page as content
-     * @param mixed $page a data structure containing name, hash and more
+     * @param mixed $page a data structure containing pageId, name, and more
      */
     function ShowPage($page): void
     {

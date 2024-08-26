@@ -39,7 +39,8 @@ try {
     $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
     $time = number_format($time,4) ;
     $included = \get_included_files();
-    $included= \count($included);
-    error_log("used  $time seconds and $included files");
+    $incCnt= \count($included);
+    $files=\print_r($included,true);
+    error_log("used  $time seconds and $incCnt files: $files");
 
 }

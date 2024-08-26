@@ -5,7 +5,7 @@
  */
 $sc = \WebApp\Config::GetConfig();
 ?>
-<!-- siteconfig.php -->
+<!-- web-app/webapp/views/admin/siteconfig.php:<?= __LINE__ ?> 1724178372 -->
 <div>
 <script src="<?=$baseURL?>js/htmx-lite.js"></script>
 <h2>Site config</h2>
@@ -30,14 +30,15 @@ $sc = \WebApp\Config::GetConfig();
 <div id="site_pages" class="tableform">
 <div><span>Name</span></div>
 <?php foreach ($sc->pages as $pos => $page): ?>
-<form id="<?= $page->Hash ?>" action="<?=$scriptURL . '/siteconfig'?>" onsubmit="return false;">
-<input type="hidden" name="page_hash" value="<?=$page->Hash?>">
-<span><input type="text" name="page_name" id="<?=$page->Hash?>" value="<?=$page->Name?>" onchange="hxl_submit_form(event);"></span>
+<form id="pi-<?= $page->PageId ?>" action="<?=$scriptURL . '/siteconfig'?>" onsubmit="return false;">
+<input type="hidden" name="pageid" value="<?= $page->PageId ?>">
+<span><input type="text" name="page_name" id="<?=$page->PageId?>" value="<?=$page->Name?>" onchange="hxl_submit_form(event);"></span>
 </form>
 <?php endforeach;?>
 <form id="new_page" action="<?=$scriptURL . '/siteconfig'?>" onsubmit="return false;">
-<input type="hidden" name="page_hash" value="new">
-<span><input type="text" name="page_name" id="<?=$page->Hash?>" onchange="hxl_submit_form(event);"></span>
+<!-- web-app/webapp/views/admin/siteconfig.php:<?= __LINE__ ?> 1724178301 -->
+<input type="hidden" name="pageid" value="new">
+<span><input type="text" name="page_name" id="new-page-id" onchange="hxl_submit_form(event);"></span>
 </form>
 </div>
 

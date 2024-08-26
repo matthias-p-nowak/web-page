@@ -14,6 +14,8 @@ if (file_exists($config)) {
 
 /**
  * turning the nested array into a nested object
+ * @param $array recursively turn that array into a nested object
+ * @return an equivalent objectt
  */ 
 function TurnIntoObject(array $array): object
 {

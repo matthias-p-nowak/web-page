@@ -1,11 +1,12 @@
 <?php
+/**
+ * 
+ */
 namespace WebApp\Db;
 
 use Generator;
 use PDO;
 use PDOStatement;
-use stdClass;
-
 
 /**
  * adding backquotes so the items can be used in an SQL
@@ -125,9 +126,10 @@ class DbCtx
 
     /**
      * For storing, we need to know what can be stored in the database
-     * @return <missing>|array<<missing>,object>
+     * @param string $tableName name of table to get details of
+     * @return <mixed>,object>
      */
-    public function GetRowDetails(string $tableName)
+    public function GetRowDetails(string $tableName): mixed
     {
         if (isset($this->allRowDetails[$tableName])) {
             return $this->allRowDetails[$tableName];
@@ -230,7 +232,9 @@ class DbCtx
 
     /**
      * Basically a select, returns objects.
-     * @return Generator<<missing>|stdClass|null>@param array<int,mixed> $criteria
+     * @param array<int,mixed> $criteria
+     * @param string $tableName the table to get the rows from
+     * @return Generator<mixed> of Objects with a classname equal to that tableName
      */
     public function FindRows(string $tableName, array $criteria = []): Generator
     {
@@ -244,9 +248,9 @@ class DbCtx
     /**
      * Returns a single matching object - does not check if more match.
      * @param array<int,mixed> $criteria
-     * @return stdClass|null
+     * @return mixed an object of the class with the same name
      */
-    public function FindRow(string $tableName, array $criteria)
+    public function FindRow(string $tableName, array $criteria): mixed
     {
         $stmt = $this->FetchStmt($tableName, $criteria);
         $obj=$stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
@@ -255,8 +259,10 @@ class DbCtx
 
     /**
      * Fetches from database, need ${prefix} before table names.
-     * @return Generator<<missing>|stdClass|null>*/
-    public function FetchRows(string $sql)
+     * @param string $sql sql-statement to use
+     * @return Generator<mixed> of objects
+     */
+    public function FetchRows(string $sql): Generator
     {
         $sql = str_replace('${prefix}', $this->prefix, $sql);
         $stmt = $this->pdo->prepare($sql);
@@ -266,6 +272,24 @@ class DbCtx
         }
     }
 
+    /**
+     * @param string $sql SQL statement to execute
+     * @param array<int,mixed> $criteria
+     * @return void
+     */
+    public function ExecuteSQL(string $sql, array $criteria): void {
+        $sql = str_replace('${prefix}', $this->prefix, $sql);
+        if (count($criteria) > 0) {
+            $keys = array_keys($criteria);
+            $clause = MakeClause($keys);
+            $sql .= ' where ' . implode(' and ', $clause);
+        }
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($criteria as $key => $value) {
+            $stmt->bindParam(':' . $key, $value);
+        }
+        $stmt->execute();
+    }
 }
 
 error_log(__FILE__ . ' read');

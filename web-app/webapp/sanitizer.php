@@ -9,6 +9,7 @@ class Sanitizer
 {
     /**
      * only allowing text that matches emails
+     * @param $input email to sanitize
      */
     public static function SanitizeEmail($input): string
     {
@@ -22,6 +23,7 @@ class Sanitizer
 
     /**
      * first iteration at a plain text document
+     * @param $input turn string into an html-string
      */
     public static function PlainText($input): string
     {
@@ -30,16 +32,6 @@ class Sanitizer
             die();
         }
         return htmlspecialchars($input, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8');
-    }
-
-    /**
-     * only return if it is a hash value
-     */
-    public static function CheckHash($input): string|false {
-        if(preg_match('/^([0-9a-f]{16})$/',$input,$matches)){
-            return $matches[1];
-        }
-        return false;
     }
 
 }

@@ -12,7 +12,7 @@ use WebApp\Db\SiteConfig;
 class Admin
 {
 
-    private  $good_types= ['image/svg+xml', 'image/png', 'image/jpeg','application/pdf'];
+    private $good_types = ['image/svg+xml', 'image/png', 'image/jpeg', 'application/pdf'];
 
     // TODO: remove old users
 
@@ -79,6 +79,7 @@ class Admin
         if (sizeof($_POST) > 0) {
             $db = Db\DbCtx::GetInstance();
             if (isset($_POST['title'])) {
+                error_log(__FILE__.':'.__LINE__);
                 $configValue = $db->FindRow('SiteConfig', ['Name' => 'title']);
                 error_log(print_r($configValue, true));
                 if (!$configValue) {
@@ -93,6 +94,7 @@ class Admin
                 \view('admin/titleupdate', $sc);
                 return;
             } else if (isset($_POST['logo'])) {
+                error_log(__FILE__.':'.__LINE__);
                 $configValue = $db->FindRow('SiteConfig', ['Name' => 'logo']);
                 error_log(print_r($configValue, true));
                 if (!$configValue) {
@@ -106,29 +108,43 @@ class Admin
                 $sc = \WebApp\Config::CreateInstance();
                 \view('admin/logoupdate', $sc);
                 return;
-            } else if (isset($_POST['page_hash'])) {
-                if ($_POST['page_hash'] === 'new') {
+            } else if (isset($_POST['pageid'])) {
+                error_log(__FILE__.':'.__LINE__);
+                if ($_POST['pageid'] === 'new') {
+                    error_log(__FILE__ . ':' . __LINE__);
+                    $page = new Db\Page();
                     $sql = 'SELECT max(Position) as `pos` FROM `${prefix}Page`';
                     foreach ($db->FetchRows($sql) as $max) {
                         $maxPos = $max->pos;
                     }
-                    $page = new Db\Page();
                     $page->Position = $maxPos + 1;
+                    $sql = 'SELECT max(PageId) as `pageId` FROM `${prefix}Page`';
+                    foreach ($db->FetchRows($sql) as $max) {
+                        $maxPageId = $max->pageId;
+                    }
+                    $page->PageId = $maxPageId + 1;
+                    $page->IsActive=1;
                     $name = trim($_POST['page_name']);
                     $name = Sanitizer::PlainText($name);
                     $page->Name = $name;
-                    $page->Hash = \hash('xxh64', $name . date('YmdHis'));
                     $db->StoreRow($page);
                     // recreates from db
                     $sc = \WebApp\Config::CreateInstance();
                     $sc->newPage = $page;
                     \view('admin/updatepages', $sc);
                     return;
-                } else if ($pageHash = Sanitizer::CheckHash($_POST['page_hash'])) {
+                } else if (is_numeric($_POST['pageid'])) {
+                    error_log(__FILE__.':'.__LINE__);
                     $name = trim($_POST['page_name']);
                     if ($name === '') {
-                        $row = $db->FindRow('Page', ['Hash' => $pageHash]);
+                        $pageId=(int) $_POST['pageid'];
+                        $criteria=['PageId' =>  $pageId];
+                        $row = $db->FindRow('Page', $criteria);
+                        $sql = 'DELETE from `${prefix}Page`';
+                        $db->ExecuteSQL($sql, $criteria);
+                        /*
                         $db->DeleteRow($row);
+                        */
                         $sc = \WebApp\Config::CreateInstance();
                         $sc->deletedPage = $row;
                         \view('admin/updatepages', $sc);
@@ -157,15 +173,15 @@ class Admin
         if (isset($_FILES['files'])) {
             $files = $_FILES['files']; // same name as the file-input field
             $l = count($files['tmp_name']);
-            $destDir=dirname($_SERVER["SCRIPT_FILENAME"]). DIRECTORY_SEPARATOR . 'media';
-            mkdir($destDir,0511, true);
+            $destDir = dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
+            mkdir($destDir, 0511, true);
             for ($i = 0; $i < $l; $i++) {
-                if(in_array($files['type'][$i],$this->good_types)){
-                    $dest=$destDir. DIRECTORY_SEPARATOR. $files['name'][$i];
-                    copy($files['tmp_name'][$i],$dest);
-                    error_log('copied file '.$dest);
-                }else{
-                    $msg='ignoring file '. $files['name'][$i] .', type='.$files['type'][$i];
+                if (in_array($files['type'][$i], $this->good_types)) {
+                    $dest = $destDir . DIRECTORY_SEPARATOR . $files['name'][$i];
+                    copy($files['tmp_name'][$i], $dest);
+                    error_log('copied file ' . $dest);
+                } else {
+                    $msg = 'ignoring file ' . $files['name'][$i] . ', type=' . $files['type'][$i];
                     error_log($msg);
                 }
             }

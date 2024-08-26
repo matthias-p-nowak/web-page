@@ -1,6 +1,7 @@
--- 2024-03-07 start and defining functions
+-- 2024-03-07 defining test functions
 
-/*
+-- function that detects the presence of a column
+
 drop function if exists ${prefix}ColumnCount;
 
 create function `${prefix}ColumnCount` (tabName varchar(64), colName varchar(64)) returns int
@@ -14,7 +15,8 @@ begin
         );
     return result; 
 end;
-*/
+
+-- function that detects the presence of an index
 
 drop function if exists ${prefix}IndexCount;
 
@@ -30,6 +32,8 @@ begin
     return result; 
 end;
 
+-- function that returns the column type 
+
 drop function if exists ${prefix}ColumnType;
 
 create function `${prefix}ColumnType` (tabName varchar(64), colName varchar(64)) returns varchar(64)
@@ -44,7 +48,10 @@ begin
     return result; 
 end;
 
--- 2024-03-08 end of test functions
+-- 2024-03-07 test functions created
+-- 2024-03-08 tables for user management
+
+-- user table without history
 
 create table if not exists `${prefix}AppUser` (
     `UserId` int primary key not null auto_increment,
@@ -54,15 +61,18 @@ create table if not exists `${prefix}AppUser` (
     unique (`Email`)
 );
 
+-- separate password table, so users can use several passwords
+
 create table if not exists `${prefix}UserPassword` (
     `UserId` int not null,
-    `Password` varchar(64),
+    `Password` varchar(64), -- hashed, not plain
     `Created` timestamp not null default current_timestamp,
     `Used` timestamp,
     unique (`UserId`, `Password`)
 );
 
--- 2024-04-07 user created
+-- 2024-03-08 user table created
+-- 2024-04-07 SiteConfig functions
 
 create table if not exists `${prefix}SiteConfig` (
     `Name` varchar(64) primary key not null,
@@ -70,45 +80,20 @@ create table if not exists `${prefix}SiteConfig` (
     `Modified` timestamp not null default current_timestamp
 );
 
-alter table `${prefix}SiteConfig` add column if not exists `Modified` 
-    timestamp not null default current_timestamp ;
+-- 2024-04-19 SiteConfig created
 
-
--- 2024-04-19 SiteConfig
+-- 2024-08-18 Pages
 
 create table if not exists `${prefix}Page` (
-    `Position` int primary key not null,
+    `PageId` int not null,
+    `Position` int not null,
     `Name` varchar(255),
-    `Hash` char(16),
-    `Created` timestamp not null default current_timestamp
-);
-
-if ${prefix}IndexCount('${prefix}Page','HashIdx') < 1 then
-    alter table `${prefix}Page` add index `HashIdx`(`Hash`);
-end if;
-
--- 2024-04-27 Pages
-
-create table if not exists `${prefix}PageContent` (
-    
-    `Hash` char(16),
     `Picture` varchar(255),
     `Description` varchar(512),
     `Content` text,
+    `IsActive` TINYINT(1) NOT NULL DEFAULT 0,
     `Created` timestamp not null default current_timestamp
-);
+)
 
-alter table `${prefix}PageContent` add column if not exists `Description` varchar(512);
-
--- 2024-05-31 PageContent
-
-if ${prefix}IndexCount('${prefix}PageContent','fk_hash') < 1 then
-    alter table `${prefix}PageContent` add  constraint `fk_hash` foreign key (`Hash`) 
-    references `${prefix}Page`(`HASH`) on delete cascade;
-end if;
-
--- 2024-08-11 Description to PageContent
-
-alter table `${prefix}PageContent` add column if not exists `Picture` varchar(255);
-
+-- 2024-08-18 Pages created
 

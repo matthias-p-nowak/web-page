@@ -41,7 +41,7 @@ if (!isset($arg->view) && isset($arg->content) && isset($_SESSION['Level']) && (
 <?=isset($arg->content) ? show($arg->content) :
 (isset($arg->view) ?
     view($arg->view, $arg) :
-    '### nothing to show')?>
+    'nothing to show')?>
 </main>
 <footer><?=view('footer', $arg)?></footer>
 </body>

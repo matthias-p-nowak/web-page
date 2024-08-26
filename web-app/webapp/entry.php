@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @var string $scriptURL url to index.php
+ */
 namespace WebApp;
 
 /**
@@ -11,37 +13,55 @@ class Entry
     {
         error_log('Entry controller constructed');
     }
-
-    function Unknown($res)
+    /**
+     * @param mixed $res
+     * @return void
+     */
+    function Unknown($res): void
     {
         error_log('no handler for path_info ' . $res);
         $this->Page('');
     }
-
-    function Page($hash)
+    /**
+     * @param int $pageId id of the page
+     * @return void shows the page on output
+     */
+    function Page($pageId): void
     {
         $sc = Config::GetConfig();
         $view = new ShowView();
-        if ($res = Sanitizer::CheckHash($hash)) {
+        if (is_int($pageId)) {
             foreach ($sc->pages as $page) {
-                if ($page->Hash === $hash) {
+                if ($page->PageId === $pageId) {
                     $view->ShowPage($page);
                     return;
                 }
             }
-        } else {
-            foreach (($sc->pages ?? []) as $page) {
-                $view->ShowPage($page);
-                return;
+        } 
+        $pages=$sc->pages ?? [];
+        if(count($pages)>0)
+        {
+            $showPage=$pages[0];
+            foreach ($pages as $page) {
+                if($showPage->PageId > $page->PageId)
+                $showPage=$page;
             }
+            $view->ShowPage($showPage);
+            return;
         }
         $view->ShowPage(null);
     }
-
-    function UpgradeDb()
+    /**
+     * @return void
+     */
+    function UpgradeDb(): void
     {
+        global $scriptURL;
         $db = Db\DbCtx::GetInstance();
         $db->Upgrade();
+        error_log(__FILE__.':'.__LINE__. ' upgrade completed');
+        header("Refresh: 10; URL=".$scriptURL);
+        echo ('db upgrade completed');
     }
 }
 
