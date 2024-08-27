@@ -66,7 +66,7 @@ class EditPage
         if (isset($_POST['newContent'])) {
             error_log(print_r($_POST, true));
             $raw = $_POST['newContent'];
-            $hash = $_POST['page2edit'];
+            $pageId = $_POST['page2edit'];
             $temp_dom = new \DOMDocument('1.0', 'UTF-8');
             $temp_dom->loadHTML('<?xml encoding="UTF-8">' . $raw);
             $temp_dom->normalize();
@@ -80,13 +80,13 @@ class EditPage
             $res = \implode('', $res);
             $db = Db\DbCtx::GetInstance();
             $pc = new Db\PageContent();
-            $pc->Hash = $hash;
+            $pc->PageId = $pageId;
             $pc->Content = $res;
             $pc->Description=$_POST['Description'];
             $pc->Picture=$_POST['Picture'];
             $db->StoreRow($pc);
-            $fn = strtolower($hash);
-            $fn = __DIR__ . '/content/' . $fn . '.html';
+            $fn = strtolower($pageId);
+            $fn = __DIR__ . '/content/page-' . $fn . '.html';
             file_put_contents($fn, $res);
             echo '<div x-action="replace" id="preview">' . $res . '</div>';
         } else {

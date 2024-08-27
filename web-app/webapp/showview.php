@@ -24,9 +24,10 @@ class ShowView
     function ShowPage($page): void
     {
         error_log(__FILE__ .':'.__LINE__ .' showing page: '.print_r($page,true));
-        $this->content = $page->Hash;
+        $this->content = $page->PageId;
         $this->title .= ' '.$page->Name;
         $this->background=$page->Picture;
+        $this->description=$page->Description;
         // allways start with the main stuff
         \view('main', $this);
     }

@@ -6,7 +6,7 @@
 function show($page)
 {
     $fn = strtolower($page);
-    $fn = __DIR__ . '/content/' . $fn . '.html';
+    $fn = __DIR__ . '/content/page-' . $fn . '.html';
     if (file_exists($fn)) {
         echo ('<article>');
         echo (file_get_contents($fn, false));

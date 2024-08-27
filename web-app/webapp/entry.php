@@ -41,10 +41,10 @@ class Entry
         $pages=$sc->pages ?? [];
         if(count($pages)>0)
         {
-            $showPage=$pages[0];
-            foreach ($pages as $page) {
-                if($showPage->PageId > $page->PageId)
-                $showPage=$page;
+            $showPage=$pages[$pageId];
+            if(is_null($showPage)){
+                $firstPos=\min(\array_keys($pages));
+                $showPage=$pages[$firstPos];
             }
             $view->ShowPage($showPage);
             return;

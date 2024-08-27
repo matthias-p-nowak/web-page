@@ -7,7 +7,7 @@
  */
 $sc = \WebApp\Config::GetConfig();
 foreach ($sc->pages as $page) {
-    if ($page->Hash === $arg->page2edit) {
+    if ($page->PageId === $arg->page2edit) {
         break;
     }
 }
@@ -19,7 +19,7 @@ if (file_exists($arg->pageFile)) {
     $d = '';
     $bgPic = '';
     $description = '';
-    foreach ($db->FindRows('PageContent', ['Hash' => $arg->page2edit]) as $row) {
+    foreach ($db->FindRows('Page', ['PageId' => $arg->page2edit]) as $row) {
         error_log(print_r($row, true));
         if (strcmp($d, $row->Created) < 0) {
             $d = $row->Created;
