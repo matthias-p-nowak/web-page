@@ -171,7 +171,7 @@ class DbCtx
         ' values ( ' . implode(', ', PrependColon($columns2store)) . ' )';
         $stmt = $this->pdo->prepare($sql);
         foreach ($columns2store as $name) {
-            if (!$stmt->bindParam(':' . $name, $row->$name, $rowDetails[$name]->pdo_type)) {
+            if (!$stmt->bindValue(':' . $name, $row->$name, $rowDetails[$name]->pdo_type)) {
                 error_log('error in parameter binding in DbCtx StoreRow name=' . $name);
                 return;
             }
@@ -201,7 +201,7 @@ class DbCtx
         $sql = 'DELETE FROM `' . $this->prefix . $tableName . '` where ' . implode(' and ', MakeClause($columns2store));
         $stmt = $this->pdo->prepare($sql);
         foreach ($columns2store as $col) {
-            $stmt->bindParam(':' . $col, $row->$col);
+            $stmt->bindValue(':' . $col, $row->$col);
         }
         if (!$stmt->execute()) {
             error_log('deleting row failed ' . $sql . ' row=' . print_r($row, true));
@@ -224,7 +224,11 @@ class DbCtx
         }
         $stmt = $this->pdo->prepare($sql);
         foreach ($criteria as $key => $value) {
-            $stmt->bindParam(':' . $key, $value);
+            if($stmt->bindValue(':' . $key, $value)){
+
+            }else{
+                error_log(__FILE__.':'.__LINE__.' binding parameter '.$key.' failed');
+            };
         }
         $stmt->execute();
         return $stmt;
@@ -286,7 +290,7 @@ class DbCtx
         }
         $stmt = $this->pdo->prepare($sql);
         foreach ($criteria as $key => $value) {
-            $stmt->bindParam(':' . $key, $value);
+            $stmt->bindValue(':' . $key, $value);
         }
         $stmt->execute();
     }

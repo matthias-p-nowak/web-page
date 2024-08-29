@@ -31,6 +31,7 @@ try {
         '/siteconfig' => (new WebApp\Admin())->SiteConfig(),
         '/upgradedb' => (new WebApp\Entry())->UpgradeDb(),
         '/useradmin' => (new WebApp\Admin())->UserAdmin(),
+        '/testing' => (new WebApp\Testing())->Test(),
         default =>(new WebApp\Entry())->Unknown($res),
     };
 } catch (Exception $ex) {

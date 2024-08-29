@@ -11,32 +11,32 @@ foreach ($sc->pages as $page) {
         break;
     }
 }
-if (file_exists($arg->pageFile)) {
-    $content = file_get_contents($arg->pageFile);
-} else {
-    $content = '';
-    $db = \WebApp\Db\DbCtx::GetInstance();
-    $d = '';
-    $bgPic = '';
-    $description = '';
-    foreach ($db->FindRows('Page', ['PageId' => $arg->page2edit]) as $row) {
-        error_log(print_r($row, true));
-        if (strcmp($d, $row->Created) < 0) {
-            $d = $row->Created;
-            $content = $row->Content;
-            $bgPic = $row->BackgroundPic;
-            $description = $row->Description;
-        }
+$content = '';
+$db = \WebApp\Db\DbCtx::GetInstance();
+$created = '';
+$bgPic = '';
+$description = '';
+foreach ($db->FindRows('Page', ['PageId' => $arg->page2edit]) as $row) {
+    error_log(print_r($row, true));
+    if (strcmp($created, $row->Created) < 0) {
+        $created = $row->Created;
+        $content = $row->Content;
+        $bgPic = $row->BackgroundPic;
+        $description = $row->Description;
+        $pagename = $row->Name;
     }
 }
-$mediaDir=\dirname($_SERVER["SCRIPT_FILENAME"]). DIRECTORY_SEPARATOR . 'media';
-$allFiles=\scandir($mediaDir);
-$approved_PictureExt=['png','jpg','jpeg'];
-$mediaFiles=[];
-foreach($allFiles as $mf){
+
+$mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
+$allFiles = \scandir($mediaDir);
+$approved_PictureExt = ['png', 'jpg', 'jpeg'];
+$mediaFiles = [];
+foreach ($allFiles as $mf) {
     $ext = \pathinfo($mf, PATHINFO_EXTENSION);
-    if(in_array($ext,$approved_PictureExt))
-        $mediaFiles[]=$mf;
+    if (in_array($ext, $approved_PictureExt)) {
+        $mediaFiles[] = $mf;
+    }
+
 }
 ?>
 <div>
@@ -47,6 +47,7 @@ foreach($allFiles as $mf){
 <form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
 <!-- web-app/webapp/views/admin/editpage.php 1723382684 -->
 <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
+<input type="hidden" name="created" value="<?=$created?>">
 <table class="cfgTable">
     <tr><td class="right">Description</td>
     <td>
@@ -57,9 +58,9 @@ foreach($allFiles as $mf){
     <tr><td class="right">Background picture</td><td>
         <select name="Picture" id="bgPic"
             onchange="hxl_submit_form(event)">
-        <?php foreach($mediaFiles as $mf): ?>
-            <option value="<?= $mf ?>"><?= $mf ?></option>
-        <?php endforeach; ?>
+        <?php foreach ($mediaFiles as $mf): ?>
+            <option value="<?=$mf?>"><?=$mf?></option>
+        <?php endforeach;?>
     </select></td></tr>
 </table>
 <h3>Content:</h3>

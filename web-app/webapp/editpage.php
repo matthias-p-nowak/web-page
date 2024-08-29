@@ -63,13 +63,16 @@ class EditPage
      */
     public function EditPage(): void
     {
+        error_log(__FILE__.':'.__LINE__);
         if (isset($_POST['newContent'])) {
             error_log(print_r($_POST, true));
             $raw = $_POST['newContent'];
             $pageId = $_POST['page2edit'];
+            $created = $_POST['created'];
             $temp_dom = new \DOMDocument('1.0', 'UTF-8');
             $temp_dom->loadHTML('<?xml encoding="UTF-8">' . $raw);
             $temp_dom->normalize();
+            $res=[];
             foreach ($temp_dom->getElementsByTagName('body') as $body) {
                 cleanNodes($body);
                 foreach ($body->childNodes as $node) {
@@ -79,8 +82,12 @@ class EditPage
             }
             $res = \implode('', $res);
             $db = Db\DbCtx::GetInstance();
-            $pc = new Db\PageContent();
-            $pc->PageId = $pageId;
+            $pc = $db->FindRow('Page', ['PageId'=> $pageId, 'Created' => $created]);
+            if (! $pc){
+                error_log(__FILE__.':'.__LINE__ . ' ### need to rethink, page does not yet exist');
+                $pc = new Db\Page();
+                $pc->PageId = $pageId;
+            }
             $pc->Content = $res;
             $pc->Description=$_POST['Description'];
             $pc->Picture=$_POST['Picture'];
