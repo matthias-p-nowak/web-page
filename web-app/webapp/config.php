@@ -16,7 +16,8 @@ class Config{
      * returns site values from memory, cached or created
      */
     public static function GetConfig(): stdClass{
-        return static::$instance ?? static::readInstance() ?? static::CreateInstance();
+        return static::$instance ?? static::readInstance() ?? static::CreateInstance()
+        ;
     }
 
     /**
@@ -25,9 +26,9 @@ class Config{
     private static function readInstance(): mixed{
         $content=file_get_contents(__DIR__. self::CacheFile);
         if($content){
-            error_log('unserialzing cached instance');
-            $instance=unserialize($content);
-            return $instance;
+            // error_log('unserialzing cached instance');
+            self::$instance=unserialize($content);
+            return self::$instance;
         }
         error_log('no cached instance');
         $db = Db\DbCtx::GetInstance();
@@ -45,7 +46,7 @@ class Config{
         // TODO read related info from database
         $db = Db\DbCtx::GetInstance();
         foreach($db->FindRows('SiteConfig') as $cfg){
-            // error_log(print_r($cfg,true));
+            // error_log(__FILE__.':'.__LINE__ .' '. print_r($cfg,true));
             $n=$cfg->Name;
             $instance->$n = $cfg->Value;
             $n .= 'Date';

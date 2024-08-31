@@ -74,7 +74,7 @@ class DbCtx
             error_log('config does not exist');
             die('no config found');
         }
-        error_log('constructing a DbCtx');
+        // error_log('constructing a DbCtx');
         $dbCfg = $config->database;
         $this->pdo = new \PDO('mysql:host=' . $dbCfg->server . ';dbname=' . $dbCfg->database,
             $dbCfg->user, $dbCfg->password);
@@ -204,7 +204,7 @@ class DbCtx
             $stmt->bindValue(':' . $col, $row->$col);
         }
         if (!$stmt->execute()) {
-            error_log('deleting row failed ' . $sql . ' row=' . print_r($row, true));
+            error_log(__FILE__.':'.__LINE__ .' deleting row failed ' . $sql . ' row=' . print_r($row, true));
         }
     }
 
@@ -296,4 +296,4 @@ class DbCtx
     }
 }
 
-error_log(__FILE__ . ' read');
+// error_log(__FILE__ . ' read');

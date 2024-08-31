@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $scriptURL the url of index.php
+ */
 ?>
 <!-- adminbar.php -->
 <div id="admin_bar">

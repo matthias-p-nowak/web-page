@@ -6,25 +6,21 @@
  * @var $arg - the page structure
  */
 $sc = \WebApp\Config::GetConfig();
-foreach ($sc->pages as $page) {
-    if ($page->PageId === $arg->page2edit) {
-        break;
-    }
-}
+// foreach ($sc->pages as $page) {
+//     if ($page->PageId === $arg->page2edit) {
+//         break;
+//     }
+// }
 $content = '';
 $db = \WebApp\Db\DbCtx::GetInstance();
-$created = '';
 $bgPic = '';
 $description = '';
-foreach ($db->FindRows('Page', ['PageId' => $arg->page2edit]) as $row) {
-    error_log(print_r($row, true));
-    if (strcmp($created, $row->Created) < 0) {
-        $created = $row->Created;
-        $content = $row->Content;
-        $bgPic = $row->BackgroundPic;
-        $description = $row->Description;
-        $pagename = $row->Name;
-    }
+foreach ($db->FindRows('Page', ['PageId' => $arg->page2edit, 'IsActive' => 1]) as $row) {
+    error_log(__FILE__ . ':' . __LINE__ . ' ' . print_r($row, true));
+    $content = $row->Content;
+    $bgPic = $row->BackgroundPic ?? '';
+    $description = $row->Description;
+    $pagename = $row->Name;
 }
 
 $mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
@@ -40,33 +36,43 @@ foreach ($allFiles as $mf) {
 }
 ?>
 <div>
-<h2>Editing page &raquo;<?=$page->Name?>&laquo;</h2>
+<h2>Editing page &raquo;<?=$pagename?>&laquo;</h2>
 <script src="<?=$baseURL?>js/htmx-lite.js"></script>
 <script src="<?=$baseURL?>js/editor.js"></script>
 <script src="<?=$baseURL?>js/tinymce/tinymce.min.js"></script>
-<form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
 <!-- web-app/webapp/views/admin/editpage.php 1723382684 -->
+<form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
 <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
-<input type="hidden" name="created" value="<?=$created?>">
 <table class="cfgTable">
     <tr><td class="right">Description</td>
     <td>
+        <!-- web-app/webapp/views/admin/editpage.php:<?=__LINE__?> 1724939984 -->
+    <form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
+        <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
         <input type="text" name="Description"
             placeholder="a good description what can be found on this page" value="<?=$description?>"
             onchange="hxl_submit_form(event)">
+    </form>
     </td></tr>
     <tr><td class="right">Background picture</td><td>
+        <!-- web-app/webapp/views/admin/editpage.php:<?=__LINE__?> 1724939993 -->
+    <form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
+        <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
         <select name="Picture" id="bgPic"
             onchange="hxl_submit_form(event)">
         <?php foreach ($mediaFiles as $mf): ?>
             <option value="<?=$mf?>"><?=$mf?></option>
         <?php endforeach;?>
-    </select></td></tr>
+    </select></form>
+</td></tr>
 </table>
 <h3>Content:</h3>
-<textarea name="newContent" id="content" ><?=$content?></textarea>
-<input class="right_align" type="submit" value="update page" onclick="editor_submit(event);">
-</form>
+    <!-- web-app/webapp/views/admin/editpage.php:<?=__LINE__?> 1724939999 -->
+    <form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
+        <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
+        <textarea name="content" id="content" ><?=$content?></textarea>
+        <input class="right_align" type="submit" value="update page" onclick="editor_submit(event);">
+    </form>
 <fieldset><legend>Saved version</legend><div id="preview">nothing saved yet</div></fieldset>
 <script>
 tinymce.init({
@@ -83,5 +89,7 @@ tinymce.init({
     content_css: '<?=$baseURL?>main.css',
     promotion: false,
     branding: false });
+    var edithint = document.getElementById('edithint');
+    edithint.remove();
 </script>
 </div>

@@ -16,7 +16,7 @@ class Sanitizer
         if (preg_match('/^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|localhost)$/', $input)) {
             return $input;
         } else {
-            error_log('attempt to hack - email =', print_r($input, true));
+            error_log(__FILE__.':'.__LINE__ .' attempt to hack - email =', print_r($input, true));
             die();
         }
     }

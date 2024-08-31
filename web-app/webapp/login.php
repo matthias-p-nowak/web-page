@@ -7,7 +7,7 @@ class Login
 
     function __construct()
     {
-        error_log('Entry controller constructed');
+        error_log('Login controller constructed');
     }
 
     function Login(): void

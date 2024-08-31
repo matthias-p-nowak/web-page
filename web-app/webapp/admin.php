@@ -36,7 +36,7 @@ class Admin
         $sql = 'SELECT au.* FROM ${prefix}AppUser au LEFT JOIN ( SELECT * FROM ${prefix}UserPassword ORDER BY Used desc LIMIT 1 ) up ON au.UserId = up.UserId ORDER by au.Created';
         $sv = new ShowView();
         foreach ($db->FetchRows($sql) as $userRow) {
-            error_log(print_r($userRow, true));
+            error_log(__FILE__.':'.__LINE__ .' '. print_r($userRow, true));
             $userRow->LevelStr = Db\AppUser::Levels[$userRow->Level];
             $sv->users[] = $userRow;
             // $sv->levels=['Newbie','Editor','Administrator','Remove account'];
@@ -50,24 +50,24 @@ class Admin
      */
     private function ChangeUser(): void
     {
-        error_log(print_r($_POST, true));
+        error_log(__FILE__.':'.__LINE__ .' '. print_r($_POST, true));
         $db = Db\DbCtx::GetInstance();
         $userId = intval($_POST['UserId']);
         $userRow = $db->FindRow('AppUser', ['UserId' => $userId]);
-        error_log(print_r($userRow, true));
+        error_log(__FILE__.':'.__LINE__ .' '. print_r($userRow, true));
         $newLevel = array_search($_POST['NewLevel'], Db\AppUser::Levels, true);
         $uv = new ShowUpdates();
         if ($newLevel === -1) {
             $db->DeleteRow($userRow);
             $uv->UserId = $userId;
-            $uv->ShowUpdate('admin/deleteuserrow');
+            $uv->ShowUpdate('updates/deleteuserrow');
             exit(0);
         } else {
             $userRow->Level = $newLevel;
             $db->StoreRow($userRow);
             $uv->UserId = $userId;
             $uv->LevelStr = Db\AppUser::Levels[$newLevel];
-            $uv->ShowUpdate('admin/updateuserlevel');
+            $uv->ShowUpdate('updates/updateuserlevel');
             exit(0);
         }
     }
@@ -81,7 +81,7 @@ class Admin
             if (isset($_POST['title'])) {
                 error_log(__FILE__.':'.__LINE__);
                 $configValue = $db->FindRow('SiteConfig', ['Name' => 'title']);
-                error_log(print_r($configValue, true));
+                error_log(__FILE__.':'.__LINE__ .' '. print_r($configValue, true));
                 if (!$configValue) {
                     $configValue = new SiteConfig();
                     $configValue->Name = 'title';
@@ -91,12 +91,12 @@ class Admin
                 $db->StoreRow($configValue);
                 // recreates from db
                 $sc = \WebApp\Config::CreateInstance();
-                \view('admin/titleupdate', $sc);
+                \view('updates/titleupdate', $sc);
                 return;
             } else if (isset($_POST['logo'])) {
                 error_log(__FILE__.':'.__LINE__);
                 $configValue = $db->FindRow('SiteConfig', ['Name' => 'logo']);
-                error_log(print_r($configValue, true));
+                error_log(__FILE__.':'.__LINE__ .' '. print_r($configValue, true));
                 if (!$configValue) {
                     $configValue = new SiteConfig();
                     $configValue->Name = 'logo';
@@ -106,7 +106,7 @@ class Admin
                 $db->StoreRow($configValue);
                 // recreates from db
                 $sc = \WebApp\Config::CreateInstance();
-                \view('admin/logoupdate', $sc);
+                \view('updates/logoupdate', $sc);
                 return;
             } else if (isset($_POST['pageid'])) {
                 error_log(__FILE__.':'.__LINE__);
@@ -131,7 +131,7 @@ class Admin
                     // recreates from db
                     $sc = \WebApp\Config::CreateInstance();
                     $sc->newPage = $page;
-                    \view('admin/updatepages', $sc);
+                    \view('updates/updatepages', $sc);
                     return;
                 } else if (is_numeric($_POST['pageid'])) {
                     error_log(__FILE__.':'.__LINE__);
@@ -147,7 +147,7 @@ class Admin
                         */
                         $sc = \WebApp\Config::CreateInstance();
                         $sc->deletedPage = $row;
-                        \view('admin/updatepages', $sc);
+                        \view('updates/updatepages', $sc);
                         return;
                     }
                     $name = Sanitizer::PlainText($name);
@@ -169,7 +169,7 @@ class Admin
     {
         // \WebApp\Config::CreateInstance();
         // TODO: handling uploaded pictures
-        error_log(print_r($_POST, true));
+        error_log(__FILE__.':'.__LINE__ .' '. print_r($_POST, true));
         if (isset($_FILES['files'])) {
             $files = $_FILES['files']; // same name as the file-input field
             $l = count($files['tmp_name']);

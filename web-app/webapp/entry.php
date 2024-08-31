@@ -11,7 +11,7 @@ class Entry
 {
     function __construct()
     {
-        error_log('Entry controller constructed');
+        // error_log('Entry controller constructed');
     }
     /**
      * @param mixed $res

@@ -97,3 +97,14 @@ create table if not exists `${prefix}Page` (
 
 -- 2024-08-18 Pages created
 
+-- 2024-08-31 create View for PageUpdates
+drop view if exists `${prefix}PageRang`;
+
+create view `${prefix}PageRang`  AS 
+SELECT 
+    `PageId`, 
+    `Created`,
+    ROW_NUMBER() OVER (PARTITION BY `PageId` ORDER BY `Created` DESC) AS `rn`
+FROM `${prefix}Page`;
+
+-- 2024-08-31 view created

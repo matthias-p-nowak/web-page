@@ -23,9 +23,9 @@ $sc = \WebApp\Config::GetConfig();
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/x-icon" href="<?=$baseURL?>favicon.ico" />
 <title><?=$sc->title ?? $arg->title ?? '-no title set-'?></title>
-<?php if(isset($arg->Description)): ?>
+<?php if(isset($arg->description)): ?>
 <!-- web-app/webapp/views/main.php:<?= __LINE__ ?> 1724779439 -->
-<meta name="description" content="<?= \htmlentities($arg->Description) ?>" />
+<meta name="description" content="<?= \htmlentities($arg->description) ?>" />
 <?php endif; ?>
 </head>
 <body>
@@ -34,8 +34,7 @@ $sc = \WebApp\Config::GetConfig();
  <main>
  <?php
 if (!isset($arg->view) && isset($arg->content) && isset($_SESSION['Level']) && ($_SESSION['Level'] > 0)) {
-    error_log('editor?');
-    echo '<div class=autohide><a href="' . $scriptURL . '/editpage?pg=' . $arg->content . '">edit</a></div>';
+    echo '<div id="edithint" class=autohide><a href="' . $scriptURL . '/editpage?pg=' . $arg->content . '">edit</a></div>';
 }
 
 ?>
