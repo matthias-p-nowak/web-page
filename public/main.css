@@ -262,7 +262,6 @@ table.cfgTable {
   display: table;
   border-collapse: collapse;
   border: thin #a0a0a0 solid;
-  width: 100%;
 }
 table.cfgTable input {
   width: 100%;
@@ -424,6 +423,30 @@ div#admin_bar a {
 }
 div#admin_bar a:hover {
   box-shadow: 0 0 1rem 1rem #f0f0f0;
+}
+
+form .requested {
+  font-style: italic;
+  color: green;
+  background-color: #fafafa;
+}
+form .failed {
+  font-weight: bold;
+  color: red;
+}
+
+dialog[open]#showerror {
+  position: fixed;
+  margin: auto;
+  margin-top: 5rem;
+  padding: 1rem;
+  border: thin solid red;
+  border-radius: 10px;
+  background-color: rgba(255, 240, 240, 0.9);
+  max-width: 100%;
+}
+dialog[open]#showerror:focus {
+  border: thin solid red;
 }
 
 @media (max-width: 50rem) {

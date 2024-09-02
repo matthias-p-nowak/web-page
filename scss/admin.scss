@@ -40,6 +40,35 @@ div#admin_bar {
     }
 }
 
+form {
+    .requested {
+        font-style: italic;
+        color: green;
+        background-color: #fafafa;
+    }
+    .failed {
+        font-weight: bold;
+        color: red;
+    }
+}
+
+
+dialog[open]#showerror {
+    position: fixed;
+    margin: auto;
+    margin-top: 5rem;
+    padding: 1rem;
+    border: thin solid red;
+    border-radius: 10px;
+    background-color: rgba($color: #fff0f0, $alpha: 0.9);
+    max-width: 100%;
+    // display: block;
+    &:focus {
+        border: thin solid red;
+    }
+}
+
+
 @media (max-width: 50rem) {
     div#admin_bar{
         display: none; // hiding on small screens

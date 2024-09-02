@@ -15,14 +15,18 @@ $content = '';
 $db = \WebApp\Db\DbCtx::GetInstance();
 $bgPic = '';
 $description = '';
-foreach ($db->FindRows('Page', ['PageId' => $arg->page2edit, 'IsActive' => 1]) as $row) {
-    error_log(__FILE__ . ':' . __LINE__ . ' ' . print_r($row, true));
-    $content = $row->Content;
-    $bgPic = $row->BackgroundPic ?? '';
-    $description = $row->Description;
-    $pagename = $row->Name;
+$versions=[];
+foreach ($db->FindRows('Page', ['PageId' => $arg->page2edit]) as $row) {
+    $versions[$row->Created]=$row->IsActive;
+    if($row->IsActive){
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . print_r($row, true));
+        $content = $row->Content;
+        $bgPic = $row->Picture ?? '';
+        $description = $row->Description;
+        $pagename = $row->Name;
+    }
 }
-
+$versions=array_reverse($versions);
 $mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
 $allFiles = \scandir($mediaDir);
 $approved_PictureExt = ['png', 'jpg', 'jpeg'];
@@ -44,24 +48,40 @@ foreach ($allFiles as $mf) {
 <form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
 <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
 <table class="cfgTable">
+    <tr>
+        <td class="right">
+            <label for="versionselect"></label>
+            past versions</td>
+        <td>
+        <form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
+        <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
+        <select name="version" id="versionselect" onchange="hxl_submit_form(event)">
+        <?php foreach ($versions as $dt => $active): ?>
+            <option value="<?= $dt ?>" <?= $active ? 'selected' : '' ?> ><?= $dt ?></option>
+        <?php endforeach;?>
+    </select>
+</form> 
+        </td>
+    </tr>
     <tr><td class="right">Description</td>
     <td>
         <!-- web-app/webapp/views/admin/editpage.php:<?=__LINE__?> 1724939984 -->
     <form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
         <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
-        <input type="text" name="Description"
+        <input type="text" name="description" id="description"
             placeholder="a good description what can be found on this page" value="<?=$description?>"
             onchange="hxl_submit_form(event)">
     </form>
     </td></tr>
-    <tr><td class="right">Background picture</td><td>
+    <tr><td class="right"><label for="picture">Background picture</label></td>
+    <td>
         <!-- web-app/webapp/views/admin/editpage.php:<?=__LINE__?> 1724939993 -->
     <form action="<?=$scriptURL . '/editpage'?>" onsubmit="return false;">
         <input type="hidden" name="page2edit" value="<?=$arg->page2edit?>">
-        <select name="Picture" id="bgPic"
+        <select name="picture" id="picture"
             onchange="hxl_submit_form(event)">
         <?php foreach ($mediaFiles as $mf): ?>
-            <option value="<?=$mf?>"><?=$mf?></option>
+            <option value="<?=$mf?>" <?= $mf===$bgPic ? 'selected' : '' ?> ><?=$mf?></option>
         <?php endforeach;?>
     </select></form>
 </td></tr>

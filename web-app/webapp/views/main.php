@@ -30,6 +30,7 @@ $sc = \WebApp\Config::GetConfig();
 </head>
 <body>
     <?=view('admin/adminbar', $arg)?>
+    <dialog id="showerror" onclick="document.getElementById('showerror').close();">no error</dialog>
  <header><?=view('header', $arg)?></header>
  <main>
  <?php

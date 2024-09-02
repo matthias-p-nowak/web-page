@@ -74,46 +74,64 @@ class EditPage
                 $pc->PageId = $pageId;
             }
             unset($pc->Created);
-            if (isset($_POST['content'])) {
-                error_log(__FILE__.':'.__LINE__ .' '. print_r($_POST, true));
-                $raw = $_POST['content'];
-                $temp_dom = new \DOMDocument('1.0', 'UTF-8');
-                $temp_dom->loadHTML('<?xml encoding="UTF-8">' . $raw);
-                $temp_dom->normalize();
-                $res = [];
-                foreach ($temp_dom->getElementsByTagName('body') as $body) {
-                    cleanNodes($body);
-                    foreach ($body->childNodes as $node) {
-                        // error_log(print_r($node,true));
-                        $res[] = $temp_dom->saveHTML($node);
+            switch($_POST['name']){
+                case 'content':{
+                    error_log(__FILE__.':'.__LINE__ .' '. print_r($_POST, true));
+                    $raw = $_POST['content'];
+                    $temp_dom = new \DOMDocument('1.0', 'UTF-8');
+                    $temp_dom->loadHTML('<?xml encoding="UTF-8">' . $raw);
+                    $temp_dom->normalize();
+                    $res = [];
+                    foreach ($temp_dom->getElementsByTagName('body') as $body) {
+                        cleanNodes($body);
+                        foreach ($body->childNodes as $node) {
+                            // error_log(print_r($node,true));
+                            $res[] = $temp_dom->saveHTML($node);
+                        }
                     }
+                    $res = \implode('', $res);
+                    $pc->Content = $res;
+                    $fn = strtolower($pageId);
+                    $fn = __DIR__ . '/content/page-' . $fn . '.html';
+                    file_put_contents($fn, $res);
+                    echo '<div x-action="replace" id="preview">' . $res . '</div>';    
                 }
-                $res = \implode('', $res);
-                $pc->Content = $res;
-                $fn = strtolower($pageId);
-                $fn = __DIR__ . '/content/page-' . $fn . '.html';
-                file_put_contents($fn, $res);
-                echo '<div x-action="replace" id="preview">' . $res . '</div>';
-            }
-            if (isset($_POST['Description'])) {
-                error_log(__FILE__ . ':' . __LINE__);
-                $pc->Description = $_POST['Description'];
-            }
-            if (isset($_POST['Picture'])) {
-                error_log(__FILE__ . ':' . __LINE__);
-                $pc->Picture = $_POST['Picture'];
+                    break;
+                case 'description': {
+                    error_log(__FILE__ . ':' . __LINE__);
+                    $pc->Description = $_POST['description'];    
+                }
+                break;
+                case 'picture':{
+                    error_log(__FILE__ . ':' . __LINE__);
+                    $pc->Picture = $_POST['picture'];
+                }
+                break;
+                case 'version':{
+                    $version=$_POST['version'];
+                    $sql='update ${prefix}Page set IsActive=0';
+                    $db->ExecuteSQL($sql, ['PageId'=>$pageId]);
+                    $sql='update ${prefix}Page set IsActive=1';
+                    $db->ExecuteSQL($sql, ['PageId'=>$pageId,'Created'=>$version]);
+                    $page = $db->FindRow('Page', [ 'PageId' => $pageId, 'IsActive' => 1 ]);
+                    $sc = \WebApp\Config::CreateInstance();
+                    require_once 'functions.php';
+                    \view('updates/editpage',$page);
+                    return;
+                }
+                break;
+                default:
+                error_log(__FILE__.':'.__LINE__ .' ## not implemented switch: '. print_r($_POST, true));
+                return;
             }
             $db->StoreRow($pc);
             $sql='update ${prefix}Page p join ${prefix}PageRang t on p.PageId=t.PageId and p.Created=t.Created set p.IsActive= t.rn=1;';
             $db->ExecuteSQL($sql, []);
-            $sc = \WebApp\Config::CreateInstance();
-            // \view('updates/logoupdate', $sc);
-            
+            $sc = \WebApp\Config::CreateInstance();            
         } else {
             Db\AppUser::EditorCheck();
             $view = new ShowView();
             if (isset($_GET['pg'])) {
-
                 $view->page2edit = $_GET['pg'];
                 $view->ShowForm('admin/editpage');
             } else {

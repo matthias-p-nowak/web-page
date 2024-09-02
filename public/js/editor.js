@@ -2,6 +2,7 @@ function editor_submit(event){
     let form = event.target.form ?? event.target.closest('form');
     let action = form.action;
     let formData = new FormData(form);
+    formData.append('name','content');
     formData.append('content',tinymce.activeEditor.getContent());
     fetch(action, { method: "POST", body: formData }).then(response => {
         if (response.status == 200) {

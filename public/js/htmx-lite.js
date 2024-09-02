@@ -1,6 +1,7 @@
 // add this to the input elements of the form that should commence the htmx-lite action
 function hxl_submit_form(event) {
     event.target.classList.add('requested');
+    event.target.classList.remove('failed');
     let form = event.target.form ?? event.target.closest('form');
     let action = form.action;
     let formData = new FormData(form);
@@ -15,6 +16,11 @@ function hxl_submit_form(event) {
         } else {
             event.target.classList.remove('requested');
             event.target.classList.add('failed');
+            let se=document.getElementById('showerror');
+            se.innerHTML='showing errors';
+            se.show();
+            event.target.Focus();
+            response.text().then( (text) => {se.innerHTML=text;});
             throw new Error('Network response was not ok');
         }
     }).then(data => {
