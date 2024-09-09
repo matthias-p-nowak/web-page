@@ -4,6 +4,17 @@
  * @var $scriptURL is the url of the index.php script
  */
 $sc = \WebApp\Config::GetConfig();
+$mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
+$allFiles = \scandir($mediaDir);
+$approved_PictureExt = ['png', 'jpg', 'jpeg','svg','gif'];
+$mediaFiles = [];
+foreach ($allFiles as $mf) {
+    $ext = \pathinfo($mf, PATHINFO_EXTENSION);
+    if (in_array($ext, $approved_PictureExt)) {
+        $mediaFiles[] = $mf;
+    }
+
+}
 ?>
 <!-- web-app/webapp/views/admin/siteconfig.php:<?= __LINE__ ?> 1724178372 -->
 <div>
@@ -13,14 +24,30 @@ $sc = \WebApp\Config::GetConfig();
 <div class="tableform">
 <div><span>Setting</span><span>Value</span><span>Modified</span></div>
 <form action="<?=$scriptURL . '/siteconfig'?>" onsubmit="return false;">
+<!-- web-app/webapp/views/admin/siteconfig.php:<?= __LINE__ ?> 1725786062 -->
 <label for="title">Title:</label>
 <span><input id="title" type="text" name="title" value="<?=$sc->title?>" onchange="hxl_submit_form(event);"> </span>
 <span id="title_date"><?=$sc->titleDate?></span>
 </form>
 <form action="<?=$scriptURL . '/siteconfig'?>" onsubmit="return false;">
+<!-- web-app/webapp/views/admin/siteconfig.php:<?= __LINE__ ?> 1725786078 -->
 <label for="logo">Logo:</label>
-<span><input id="logo" type="text" name="logo" value="<?=$sc->logo?>" onchange="hxl_submit_form(event);"></span>
+<span>
+    <!-- <input id="logo" type="text" name="logo" value="<?=$sc->logo?>" onchange="hxl_submit_form(event);"> -->
+    <select name="logo" id="logo"
+            onchange="hxl_submit_form(event)">
+        <?php foreach ($mediaFiles as $mf): ?>
+            <option value="<?=$mf?>" <?= $mf===$sc->logo ? 'selected' : '' ?> ><?=$mf?></option>
+        <?php endforeach;?>
+    </select>
+</span>
 <span id="logo_date"><?=$sc->logoDate?></span>
+</form>
+<form action="<?=$scriptURL . '/siteconfig'?>" onsubmit="return false;">
+<!-- web-app/webapp/views/admin/siteconfig.php:<?= __LINE__ ?> 1725786084 -->
+<label for="slogan">Slogan:</label>
+<span><input id="slogan" type="text" name="slogan" value="<?=$sc->slogan?>" onchange="hxl_submit_form(event);"></span>
+<span id="slogan_date"><?=$sc->sloganDate?></span>
 </form>
 </div>
 

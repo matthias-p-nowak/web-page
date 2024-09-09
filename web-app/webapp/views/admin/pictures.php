@@ -3,6 +3,7 @@
  * @var $scriptURL contains the index.php
  * @var $baseURL root url
  */
+$approved_PictureExt = ['png', 'jpg', 'jpeg','svg','gif'];
 ?>
 <!-- picture.php -->
 <div>
@@ -21,8 +22,9 @@
 </form>
 
 <h3>Existing pictures and files</h3>
+<!-- web-app/webapp/views/admin/pictures.php:<?= __LINE__ ?> 1725787248 -->
 <div id="filetab" class="tableform">
-<div><span>File</span><span>Delete</span></div>
+<div><span>File</span><span>Delete</span><span>Thumbnail</span></div>
 <?php
 $destDir = dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
 $files = scandir($destDir);
@@ -31,11 +33,16 @@ foreach ($files as $file):
         continue;
     }
   ?>
-  <form method="post" action="<?= $scriptURL ?>/pictures">
+  <form method="post" id="<?= idHash($file) ?>" action="<?= $scriptURL ?>/pictures">
+    <input type="hidden" name="file" value="<?= $file ?>" >
     <a href="<?= $baseURL ?>/media/<?= $file ?>"><?= $file ?></a>
-    <span>
+    <span class="center">
       <input type="submit" name="del" value="x" style="color: red" title="delete this file" >
     </span>
+    <span><?php $ext = \pathinfo($file, PATHINFO_EXTENSION);
+    if (in_array($ext, $approved_PictureExt)): ?>
+    <img class="thumbnail" src="<?= $baseURL ?>/media/<?= $file ?>" alt="<?= $file ?>" >
+      <?php endif; ?></span>
   </form>
   <?php
   endforeach;

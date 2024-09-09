@@ -131,15 +131,15 @@ h5 {
   margin-left: 0.8rem;
 }
 
-header div.logoline img {
+header div.headline img {
   height: 6rem;
 }
-header div.logoline h1 {
+header div.headline h1 {
   display: inline;
   margin-top: auto;
   margin-bottom: auto;
 }
-header div.logoline a {
+header div.headline a {
   text-decoration: none;
   color: inherit;
 }
@@ -188,6 +188,13 @@ div.tableform {
 }
 div.tableform * {
   padding: 0.2rem;
+}
+div.tableform span.center {
+  text-align: center;
+}
+div.tableform img.thumbnail {
+  max-width: 10rem;
+  max-height: 10rem;
 }
 div.tableform form {
   display: table-row;
@@ -326,7 +333,7 @@ body#tinymce blockquote {
 }
 
 @media (min-width: 50rem) {
-  div.logoline {
+  div.headline {
     display: flex;
   }
   header details {
@@ -334,7 +341,7 @@ body#tinymce blockquote {
   }
 }
 @media not all and (min-width: 50rem) {
-  div.logoline h1 {
+  div.headline h1 {
     font-size: 1rem;
   }
   div.topnav nav {

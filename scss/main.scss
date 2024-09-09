@@ -75,7 +75,7 @@ h4 { margin-left: 0.6rem;}
 h5 { margin-left: 0.8rem;}
 
 header {
-    div.logoline {
+    div.headline {
         img {
             height: 6rem;
         }
@@ -150,6 +150,15 @@ div.tableform {
     // border: $border;
     * {
         padding: 0.2rem;
+    }
+
+    span.center {
+        text-align: center;
+    }
+
+    img.thumbnail {
+        max-width: 10rem;
+        max-height: 10rem;
     }
 
     form {
@@ -307,7 +316,7 @@ body#tinymce {
 }
 
 @media (min-width: 50rem) {
-    div.logoline {
+    div.headline {
         display: flex;
     }
 
@@ -317,7 +326,7 @@ body#tinymce {
 }
 
 @media not all and (min-width: 50rem) {
-    div.logoline {
+    div.headline {
         h1 {
             font-size: 1rem;
         }

@@ -93,20 +93,20 @@ class Admin
                 $sc = \WebApp\Config::CreateInstance();
                 \view('updates/titleupdate', $sc);
                 return;
-            } else if (isset($_POST['logo'])) {
+            } else if (isset($_POST['slogan'])) {
                 error_log(__FILE__.':'.__LINE__);
-                $configValue = $db->FindRow('SiteConfig', ['Name' => 'logo']);
+                $configValue = $db->FindRow('SiteConfig', ['Name' => 'slogan']);
                 error_log(__FILE__.':'.__LINE__ .' '. print_r($configValue, true));
                 if (!$configValue) {
                     $configValue = new SiteConfig();
-                    $configValue->Name = 'logo';
+                    $configValue->Name = 'slogan';
                 }
-                $configValue->Value = Sanitizer::PlainText($_POST['logo']);
+                $configValue->Value = Sanitizer::PlainText($_POST['slogan']);
                 $configValue->Modified = date('Y-m-d H:i:s');
                 $db->StoreRow($configValue);
                 // recreates from db
                 $sc = \WebApp\Config::CreateInstance();
-                \view('updates/logoupdate', $sc);
+                \view('updates/sloganupdate', $sc);
                 return;
             } else if (isset($_POST['pageid'])) {
                 error_log(__FILE__.':'.__LINE__);
@@ -169,12 +169,16 @@ class Admin
     {
         // \WebApp\Config::CreateInstance();
         // TODO: handling uploaded pictures
+        $sv = new ShowView();
         error_log(__FILE__.':'.__LINE__ .' '. print_r($_POST, true));
         if (isset($_FILES['files'])) {
             $files = $_FILES['files']; // same name as the file-input field
             $l = count($files['tmp_name']);
             $destDir = dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
-            mkdir($destDir, 0511, true);
+            if(! \is_dir($destDir)){
+                error_log('creating directory '.$destDir);
+                mkdir($destDir, 0511, true);
+            }
             for ($i = 0; $i < $l; $i++) {
                 if (in_array($files['type'][$i], $this->good_types)) {
                     $dest = $destDir . DIRECTORY_SEPARATOR . $files['name'][$i];
@@ -188,7 +192,9 @@ class Admin
             // TODO adapt the views
             return;
         }
-        $sv = new ShowView();
+        if(isset($_POST['del'])){
+            return;
+        }
         $sv->ShowForm('admin/Pictures');
     }
 }

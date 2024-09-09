@@ -9,7 +9,7 @@ let d=document.getElementById('description');
 d.value = '<?= $arg->Description ?>';
 d=document.getElementById('picture');
 d.value = '<?= $arg->Picture ?>';
-debugger;
+// debugger;
 let data="<?= base64_encode($arg->Content) ?>";
 data=atob(data);
 data = escape(data);

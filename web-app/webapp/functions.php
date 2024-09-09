@@ -34,6 +34,10 @@ function view($fn, $arg)
     throw new \Exception("file $fn.php not found");
 }
 
+/**
+ * provides a xxh64 hash
+ * @param $arg the supplied string
+ */
 function idHash($arg)
 {
     return \hash('xxh64',$arg);

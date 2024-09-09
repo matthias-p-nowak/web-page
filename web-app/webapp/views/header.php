@@ -6,10 +6,13 @@
 $sc = \WebApp\Config::GetConfig();
 $pages = $sc->pages ?? [];
 ?>
-<!-- header.php -->
-<div class="logoline">
+ <!-- web-app/webapp/views/header.php:<?= __LINE__ ?> 1725782088 -->
+<div class="headline">
     <a href="<?= $scriptURL ?>">
-    <h1 id="logolinelogo"><?=$sc->logo ?? 'no logo defined'?></h1>
+<?php if(isset($sc->logo) && ! is_null($sc->logo)): ?>
+    <img src="<?= $sc->logo ?>" alt="<?= $sc->slogan ?>" />
+<?php endif; ?>
+    <h1 id="headline"><?=$sc->slogan ?? 'no slogan (aka catch phrase) defined'?></h1>
     </a>
 </div>
 <details id="menu_details">
