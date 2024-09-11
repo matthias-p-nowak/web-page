@@ -56,6 +56,7 @@ class Config{
         foreach($db->FetchRows($sql) as $page){
             $instance->pages[$page->Position]=(object)$page;
         }
+        $instance->mediaDir = dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
         file_put_contents(__DIR__. self::CacheFile, serialize($instance));
         self::$instance=$instance;
         return $instance;

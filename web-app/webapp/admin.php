@@ -4,6 +4,7 @@ namespace WebApp;
 
 require_once 'functions.php';
 
+use stdClass;
 use WebApp\Db\SiteConfig;
 
 /**
@@ -11,11 +12,11 @@ use WebApp\Db\SiteConfig;
  */
 class Admin
 {
-
+    
     private $good_types = ['image/svg+xml', 'image/png', 'image/jpeg', 'application/pdf'];
 
     // TODO: remove old users
-
+    
     function __construct()
     {
         // all admin functions require admin priviledges
@@ -170,11 +171,12 @@ class Admin
         // \WebApp\Config::CreateInstance();
         // TODO: handling uploaded pictures
         $sv = new ShowView();
+        $sc = Config::GetConfig();
         error_log(__FILE__.':'.__LINE__ .' '. print_r($_POST, true));
         if (isset($_FILES['files'])) {
             $files = $_FILES['files']; // same name as the file-input field
             $l = count($files['tmp_name']);
-            $destDir = dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
+            $destDir = $sc->mediaDir; 
             if(! \is_dir($destDir)){
                 error_log('creating directory '.$destDir);
                 mkdir($destDir, 0511, true);
@@ -192,7 +194,20 @@ class Admin
             // TODO adapt the views
             return;
         }
-        if(isset($_POST['del'])){
+        if(isset($_POST['name']) && ($_POST['name']==='del')){
+            $file= $sc->mediaDir . DIRECTORY_SEPARATOR . $_POST['file'];
+            $file=\realpath($file);
+            if (\file_exists($file) && \str_contains($file, $sc->mediaDir)){
+                $arg=new  stdClass();
+                $arg->file=$_POST['file'];
+                error_log(__FILE__.':'.__LINE__.' '.print_r($arg,true));
+                \view('updates/removedfile',$arg);
+                error_log('unlinking file '.$file);
+                // \unlink($file);
+                return;
+            }else{
+                echo '<body>no file deleted</body>';
+            }
             return;
         }
         $sv->ShowForm('admin/Pictures');

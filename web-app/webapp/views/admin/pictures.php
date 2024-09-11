@@ -4,6 +4,7 @@
  * @var $baseURL root url
  */
 $approved_PictureExt = ['png', 'jpg', 'jpeg','svg','gif'];
+$sc = WebApp\Config::GetConfig();
 ?>
 <!-- picture.php -->
 <div>
@@ -26,18 +27,17 @@ $approved_PictureExt = ['png', 'jpg', 'jpeg','svg','gif'];
 <div id="filetab" class="tableform">
 <div><span>File</span><span>Delete</span><span>Thumbnail</span></div>
 <?php
-$destDir = dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
-$files = scandir($destDir);
+$files = scandir($sc->mediaDir);
 foreach ($files as $file):
     if ($file == '.' || $file == '..') {
         continue;
     }
   ?>
-  <form method="post" id="<?= idHash($file) ?>" action="<?= $scriptURL ?>/pictures">
+  <form method="post" id="<?= idHash($file) ?>" action="<?= $scriptURL ?>/pictures" onsubmit="return false;">
     <input type="hidden" name="file" value="<?= $file ?>" >
     <a href="<?= $baseURL ?>/media/<?= $file ?>"><?= $file ?></a>
     <span class="center">
-      <input type="submit" name="del" value="x" style="color: red" title="delete this file" >
+      <input type="submit" name="del" value="x" style="color: red" title="delete this file" onclick="hxl_submit_form(event);"  >
     </span>
     <span><?php $ext = \pathinfo($file, PATHINFO_EXTENSION);
     if (in_array($ext, $approved_PictureExt)): ?>

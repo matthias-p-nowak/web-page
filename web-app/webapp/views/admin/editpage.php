@@ -27,8 +27,8 @@ foreach ($db->FindRows('Page', ['PageId' => $arg->page2edit]) as $row) {
     }
 }
 $versions=array_reverse($versions);
-$mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
-$allFiles = \scandir($mediaDir);
+// $mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
+$allFiles = \scandir($sc->mediaDir);
 $approved_PictureExt = ['png', 'jpg', 'jpeg','svg','gif'];
 $mediaFiles = [];
 foreach ($allFiles as $mf) {

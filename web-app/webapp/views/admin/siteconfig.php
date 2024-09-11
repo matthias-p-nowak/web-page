@@ -4,7 +4,7 @@
  * @var $scriptURL is the url of the index.php script
  */
 $sc = \WebApp\Config::GetConfig();
-$mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
+// $mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
 $allFiles = \scandir($mediaDir);
 $approved_PictureExt = ['png', 'jpg', 'jpeg','svg','gif'];
 $mediaFiles = [];
