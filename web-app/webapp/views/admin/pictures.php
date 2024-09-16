@@ -14,12 +14,12 @@ $sc = WebApp\Config::GetConfig();
 
 <h3>Upload pictures and files</h3>
 <form id="dropArea" class="borderbox" action="<?=$scriptURL . '/pictures'?>"
-  method="post" enctype="multipart/form-data" onsubmit="hxl_submit_form(event);">
+  method="post" enctype="multipart/form-data" onsubmit="return false;">
   <label for="files">Choose files or drop files here to upload:</label>
   <br />
   <input type="file" id="files" name="files[]" multiple>
   <br />
-  <input class="right_align" type="submit" value="Upload" name="submit" >
+  <input class="right_align" type="submit" value="Upload" name="submit" onclick="hxl_submit_form(event);" >
 </form>
 
 <h3>Existing pictures and files</h3>

@@ -164,6 +164,7 @@ class Admin
     }
 
     /**
+     * 
      * @return void
      */
     function Pictures(): void
@@ -181,29 +182,34 @@ class Admin
                 error_log('creating directory '.$destDir);
                 mkdir($destDir, 0511, true);
             }
+            $arg=new stdClass();
+            $arg->files=[];
             for ($i = 0; $i < $l; $i++) {
+                $fname= $files['name'][$i];
                 if (in_array($files['type'][$i], $this->good_types)) {
-                    $dest = $destDir . DIRECTORY_SEPARATOR . $files['name'][$i];
+                    $dest = $destDir . DIRECTORY_SEPARATOR . $fname ;
                     copy($files['tmp_name'][$i], $dest);
                     error_log('copied file ' . $dest);
+                    $arg->files[]=$fname;
                 } else {
                     $msg = 'ignoring file ' . $files['name'][$i] . ', type=' . $files['type'][$i];
                     error_log($msg);
                 }
             }
             // TODO adapt the views
+            \view('updates/addedfiles',$arg);
             return;
         }
         if(isset($_POST['name']) && ($_POST['name']==='del')){
             $file= $sc->mediaDir . DIRECTORY_SEPARATOR . $_POST['file'];
             $file=\realpath($file);
             if (\file_exists($file) && \str_contains($file, $sc->mediaDir)){
-                $arg=new  stdClass();
+                $arg=new stdClass();
                 $arg->file=$_POST['file'];
                 error_log(__FILE__.':'.__LINE__.' '.print_r($arg,true));
                 \view('updates/removedfile',$arg);
                 error_log('unlinking file '.$file);
-                // \unlink($file);
+                \unlink($file);
                 return;
             }else{
                 echo '<body>no file deleted</body>';

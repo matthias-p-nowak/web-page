@@ -398,11 +398,10 @@ div#admin_bar {
   position: fixed;
   left: 0px;
   top: 0px;
-  height: 100svh;
   display: block;
-  padding: 5px;
+  padding: 2px;
   z-index: 5;
-  min-width: 1rem;
+  min-width: 0.2rem;
 }
 div#admin_bar div {
   display: none;
@@ -454,6 +453,20 @@ dialog[open]#showerror {
 }
 dialog[open]#showerror:focus {
   border: thin solid red;
+}
+
+div#edithint {
+  background-color: brown;
+  height: 0rem;
+  width: 0rem;
+}
+div#edithint a {
+  position: relative;
+  top: -0.9rem;
+  text-decoration: none;
+  padding: 0.3rem;
+  background-color: white;
+  box-shadow: 0 0 1rem lightblue;
 }
 
 @media (max-width: 50rem) {

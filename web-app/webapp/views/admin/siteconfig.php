@@ -2,10 +2,11 @@
 /**
  * @var $baseURL is the base URL
  * @var $scriptURL is the url of the index.php script
+ * 
  */
 $sc = \WebApp\Config::GetConfig();
 // $mediaDir = \dirname($_SERVER["SCRIPT_FILENAME"]) . DIRECTORY_SEPARATOR . 'media';
-$allFiles = \scandir($mediaDir);
+$allFiles = \scandir($sc->mediaDir);
 $approved_PictureExt = ['png', 'jpg', 'jpeg','svg','gif'];
 $mediaFiles = [];
 foreach ($allFiles as $mf) {
