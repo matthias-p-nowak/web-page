@@ -9,9 +9,11 @@ $pages = $sc->pages ?? [];
  <!-- web-app/webapp/views/header.php:<?= __LINE__ ?> 1725782088 -->
 <div class="headline">
     <a href="<?= $scriptURL ?>">
-<?php if(isset($sc->logo) && ! is_null($sc->logo)): ?>
-    <img src="<?= $sc->logo ?>" alt="<?= $sc->slogan ?>" />
-<?php endif; ?>
+<?php if(isset($sc->logo) && ! is_null($sc->logo)){ ?>
+    <img id="headlogo" src="<?= $baseURL . '/media/' . $sc->logo ?>" alt="<?= $sc->slogan ?>" />
+<?php } else { ?>
+    <span id="headlogo" ></span>
+<?php } ?>
     <h1 id="headline"><?=$sc->slogan ?? 'no slogan (aka catch phrase) defined'?></h1>
     </a>
 </div>

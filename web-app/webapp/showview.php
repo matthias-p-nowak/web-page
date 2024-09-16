@@ -10,6 +10,7 @@ class ShowView
     public  $content;
     public  $background;
     public  $view;
+    public  $description;
 
     function __construct()
     {

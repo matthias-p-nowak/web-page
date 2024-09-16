@@ -77,11 +77,12 @@ h5 { margin-left: 0.8rem;}
 header {
     div.headline {
         img {
-            height: 6rem;
+            display: inline;
+            height: 4rem;
         }
 
         h1 {
-            display: inline;
+            display: inline-block;
             margin-top: auto;
             margin-bottom: auto;
         }

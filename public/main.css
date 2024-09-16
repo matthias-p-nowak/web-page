@@ -132,10 +132,11 @@ h5 {
 }
 
 header div.headline img {
-  height: 6rem;
+  display: inline;
+  height: 4rem;
 }
 header div.headline h1 {
-  display: inline;
+  display: inline-block;
   margin-top: auto;
   margin-bottom: auto;
 }

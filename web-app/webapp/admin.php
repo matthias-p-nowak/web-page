@@ -109,6 +109,22 @@ class Admin
                 $sc = \WebApp\Config::CreateInstance();
                 \view('updates/sloganupdate', $sc);
                 return;
+            } else if (isset($_POST['logo'])){
+                error_log(__FILE__.':'.__LINE__);
+                $configValue = $db->FindRow('SiteConfig', ['Name' => 'logo']);
+                error_log(__FILE__.':'.__LINE__ .' '. print_r($configValue, true));
+                if (!$configValue) {
+                    $configValue = new SiteConfig();
+                    $configValue->Name = 'logo';
+                }
+                $configValue->Value = $_POST['logo'];
+                $configValue->Modified = date('Y-m-d H:i:s');
+                $db->StoreRow($configValue);
+                // recreates from db
+                $sc = \WebApp\Config::CreateInstance();
+                \view('updates/logoupdate', $sc);
+                return;
+            
             } else if (isset($_POST['pageid'])) {
                 error_log(__FILE__.':'.__LINE__);
                 if ($_POST['pageid'] === 'new') {

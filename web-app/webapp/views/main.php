@@ -37,8 +37,11 @@ $sc = \WebApp\Config::GetConfig();
 if (!isset($arg->view) && isset($arg->content) && isset($_SESSION['Level']) && ($_SESSION['Level'] > 0)) {
     echo '<div id="edithint" class=autohide><a href="' . $scriptURL . '/editpage?pg=' . $arg->content . '">edit</a></div>';
 }
-
+if(isset($arg->background)) {
+    echo '<img id="background" src="'.$baseURL.'/media/'.$arg->background .'" alt="'. $arg->background .'" >';
+}
 ?>
+
 <?=isset($arg->content) ? show($arg->content) :
 (isset($arg->view) ?
     view($arg->view, $arg) :

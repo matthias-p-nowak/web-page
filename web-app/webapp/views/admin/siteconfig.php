@@ -39,7 +39,9 @@ foreach ($allFiles as $mf) {
             onchange="hxl_submit_form(event)">
         <?php foreach ($mediaFiles as $mf): ?>
             <option value="<?=$mf?>" <?= $mf===$sc->logo ? 'selected' : '' ?> ><?=$mf?></option>
-        <?php endforeach;?>
+        <?php endforeach; ?>
+        <option value="" <?= !isset($sc->logo) || strlen($sc->logo)<1 ? 'selected' : '' ?> ></option>
+        <?php ?>
     </select>
 </span>
 <span id="logo_date"><?=$sc->logoDate?></span>
