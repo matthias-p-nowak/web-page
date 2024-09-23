@@ -169,11 +169,10 @@ header details a {
 }
 
 body#tinymce {
-  width: 100svw;
-  height: 100svh;
   display: block;
   background-color: #fafafa;
   padding: 0.5rem;
+  margin: 1rem;
 }
 
 div.tox {
@@ -374,11 +373,15 @@ body#tinymce blockquote {
     filter: brightness(2);
     opacity: 0.5;
     z-index: 2;
+    margin-right: auto;
+    margin-left: auto;
   }
   body main article {
     padding: 1rem;
     opacity: 0.7;
     z-index: 3;
+    margin-left: auto;
+    margin-right: auto;
   }
   body main article em {
     font-style: italic;
@@ -430,6 +433,14 @@ div#admin_bar a {
 }
 div#admin_bar a:hover {
   box-shadow: 0 0 1rem 1rem #f0f0f0;
+}
+
+form.requested {
+  background-color: chartreuse;
+}
+
+form.failed {
+  background-color: darksalmon;
 }
 
 form .requested {

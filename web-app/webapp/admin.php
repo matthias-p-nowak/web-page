@@ -167,6 +167,32 @@ class Admin
                         \view('updates/updatepages', $sc);
                         return;
                     }
+                    if(isset($_POST['moved']) 
+                        && \str_starts_with($_POST['moved'],'pi-')
+                        && \str_starts_with($_POST['onto'],'pi-')){
+                        error_log(__FILE__.':'.__LINE__);
+                        $moved= \substr($_POST['moved'],3);
+                        $moved=(int)$moved;
+                        $onto = \substr($_POST['onto'],3);
+                        $onto=(int) $onto;
+                        error_log("putting $moved onto $onto");
+                        $criteria = ['PageId'=>$onto, 'IsActive'=>1];
+                        $ontoRow=$db->FindRow('Page',$criteria);
+                        $ontoPos=$ontoRow->Position;
+                        $criteria = ['PageId'=>$moved, 'IsActive'=>1];
+                        $row=$db->FindRow('Page',$criteria);
+                        $params=['onto' => $ontoPos];
+                        $sql='Update ${prefix}Page set Position=Position+1 where Position >= :onto and IsActive=1';
+                        $db->ExecuteSqlWithParams($sql, $params);
+                        $row->Position=$onto;
+                        $sql='Update ${prefix}Page set Position=:pos where PageId=:PageId and IsActive=1';
+                        $db->ExecuteSqlWithParams($sql,['PageId'=> $moved, 'pos'=>$ontoPos]);
+                        $sc = \WebApp\Config::CreateInstance();
+                        $sc->deletedPage=$row;
+                        $row->before=$_POST['onto'];
+                        $sc->moved=$row;
+                        \view('updates/updatepages', $sc);
+                    }
                     $name = Sanitizer::PlainText($name);
                 }
             } else {

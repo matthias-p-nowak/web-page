@@ -12,8 +12,8 @@ $baseURL = substr($scriptURL, 0, $i);
 
 // if the session cookie is set, the session is started
 if (isset($_COOKIE[session_name()])) {
-    error_log('starting session due to cookie');
-    error_log(__FILE__.':'.__LINE__ .' '. print_r($_COOKIE, true));
+    // error_log('starting session due to cookie');
+    // error_log(__FILE__.':'.__LINE__ .' '. print_r($_COOKIE, true));
     session_start();
 }
 

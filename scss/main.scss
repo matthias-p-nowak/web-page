@@ -125,11 +125,12 @@ header {
 }
 
 body#tinymce {
-    width: 100svw;
-    height: 100svh;
+    // min-width: 100svw;
+    // min-height: 100svh;
     display: block;
     background-color: #fafafa;
     padding: 0.5rem;
+    margin: 1rem;
 }
 
 div.tox {
@@ -363,11 +364,12 @@ body#tinymce {
                 max-width: 100%;
                 height: auto;
                 display: inline;
-
                 &.background_picture {
                     filter: brightness(2);
                     opacity: 0.5;
                     z-index: 2;
+                    margin-right: auto;
+                    margin-left: auto;
                 }
             }
 
@@ -375,7 +377,8 @@ body#tinymce {
                 padding: 1rem;
                 opacity: 0.7;
                 z-index: 3;
-
+                margin-left: auto;
+                margin-right: auto;
                 em {
                     font-style: italic;
                 }

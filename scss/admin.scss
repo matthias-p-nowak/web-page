@@ -44,6 +44,14 @@ div#admin_bar {
     }
 }
 
+form.requested {
+    background-color: chartreuse;
+}
+
+form.failed {
+    background-color: darksalmon;
+}
+
 form {
     .requested {
         font-style: italic;

@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  */
 namespace WebApp\Db;
 
@@ -193,7 +193,7 @@ class DbCtx
         foreach ($columns2store as $pos => $propName) {
             if (!property_exists($row, $propName)) {
                 unset($columns2store[$pos]);
-            }else if(\is_null($row->$propName)){
+            } else if (\is_null($row->$propName)) {
                 unset($columns2store[$pos]);
             }
         }
@@ -204,7 +204,7 @@ class DbCtx
             $stmt->bindValue(':' . $col, $row->$col);
         }
         if (!$stmt->execute()) {
-            error_log(__FILE__.':'.__LINE__ .' deleting row failed ' . $sql . ' row=' . print_r($row, true));
+            error_log(__FILE__ . ':' . __LINE__ . ' deleting row failed ' . $sql . ' row=' . print_r($row, true));
         }
     }
 
@@ -213,7 +213,7 @@ class DbCtx
      * @return PDOStatement|bool
      * @param array<int,mixed> $criteria
      */
-    private function FetchStmt(string $tableName, array $criteria): PDOStatement|bool
+    private function FetchStmt(string $tableName, array $criteria): PDOStatement | bool
     {
 
         $sql = 'select * from `' . $this->prefix . $tableName . '`';
@@ -224,10 +224,10 @@ class DbCtx
         }
         $stmt = $this->pdo->prepare($sql);
         foreach ($criteria as $key => $value) {
-            if($stmt->bindValue(':' . $key, $value)){
+            if ($stmt->bindValue(':' . $key, $value)) {
 
-            }else{
-                error_log(__FILE__.':'.__LINE__.' binding parameter '.$key.' failed');
+            } else {
+                error_log(__FILE__ . ':' . __LINE__ . ' binding parameter ' . $key . ' failed');
             };
         }
         $stmt->execute();
@@ -257,7 +257,7 @@ class DbCtx
     public function FindRow(string $tableName, array $criteria): mixed
     {
         $stmt = $this->FetchStmt($tableName, $criteria);
-        $obj=$stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
+        $obj = $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName);
         return $obj;
     }
 
@@ -278,10 +278,11 @@ class DbCtx
 
     /**
      * @param string $sql SQL statement to execute
-     * @param array<int,mixed> $criteria
+     * @param array<string,mixed> $criteria
      * @return void
      */
-    public function ExecuteSQL(string $sql, array $criteria): void {
+    public function ExecuteSQL(string $sql, array $criteria): void
+    {
         $sql = str_replace('${prefix}', $this->prefix, $sql);
         if (count($criteria) > 0) {
             $keys = array_keys($criteria);
@@ -290,6 +291,21 @@ class DbCtx
         }
         $stmt = $this->pdo->prepare($sql);
         foreach ($criteria as $key => $value) {
+            $stmt->bindValue(':' . $key, $value);
+        }
+        $stmt->execute();
+    }
+
+    /**
+     * @param string @sql complete SQL query with ${prefix}
+     * @param string $params array<string,mixed> $params
+     * @return void
+     */
+    public function ExecuteSqlWithParams(string $sql, array $params): void
+    {
+        $sql = str_replace('${prefix}', $this->prefix, $sql);
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($params as $key => $value) {
             $stmt->bindValue(':' . $key, $value);
         }
         $stmt->execute();

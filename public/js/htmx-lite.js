@@ -8,18 +8,22 @@ function hxl_submit_form(event) {
     if (event.target.hasAttribute('name')) {
         formData.append('name', event.target.getAttribute('name'));
     }
+    hxl_send_form(action, formData,event.target);
+}
+
+function hxl_send_form(action, formData, target){
     fetch(action, { method: "POST", body: formData }).then(response => {
         if (response.status == 200) {
-            event.target.classList.remove('requested');
-            event.target.classList.remove('failed');
+            target.classList.remove('requested');
+            target.classList.remove('failed');
             return response.text();
         } else {
-            event.target.classList.remove('requested');
-            event.target.classList.add('failed');
+            target.classList.remove('requested');
+            target.classList.add('failed');
             let se=document.getElementById('showerror');
             se.innerHTML='showing errors';
             se.show();
-            event.target.Focus();
+            target.Focus();
             response.text().then( (text) => {se.innerHTML=text;});
             throw new Error('Network response was not ok');
         }

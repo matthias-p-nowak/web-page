@@ -4,5 +4,5 @@
 <!-- footer.php -->
 <hr />
 <div class="tinyfooter">
-    this is the footer
+    <!-- this is the footer -->
 </div>
