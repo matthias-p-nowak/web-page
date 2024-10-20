@@ -1,0 +1,26 @@
+
+div#adminBox {
+  width: 3rem;
+  height: 3rem;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  display: block;
+  padding: 2px;
+  z-index: 5;
+  &.requested {
+    background-color: chartreuse;
+  }
+  &.failed {
+    background-color: crimson;
+  }
+  &:hover {
+    border: solid thin lightgrey;
+  }
+}
+
+div#topbox {
+    background-color: aqua;
+    position: fixed;
+    padding: 0.5rem;
+}
