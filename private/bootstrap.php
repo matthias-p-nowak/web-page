@@ -35,17 +35,23 @@ if (file_exists($dataFile)) {
         $data = unserialize($content);
     }
 }
+$data=$data ?? new stdClass();
 
 $scriptURL = $_SERVER['SCRIPT_NAME'];
 $i = stripos($scriptURL, basename(__FILE__));
 $baseURL = substr($scriptURL, 0, $i);
+
+if (isset($_COOKIE[session_name()])) {
+    session_start();
+}
 
 $res = $_SERVER['PATH_INFO'] ?? '/home';
 try {
     // routing section
     match ($res) {
         // '/home' => error_log('home'),
-        '/login' => (new Code\Login())->Login(),
+        '/makeeditor' => Code\MakeEditor::Add(),
+        '/login' => Code\Login::Login(),
         default => http_response_code(404),
     };
 } catch (Exception $ex) {
