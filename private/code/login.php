@@ -125,7 +125,15 @@ class Login
     {
         error_log("signing in user $user");
         session_start();
-        setcookie('simple-web','login',0,'/',httponly: false);
+        // setcookie('simple-web','login',0,'/',httponly: false);
+        setcookie('simple-web','login',[ 'expires' => 0, 'httponly'=> false, 'path' => '/', 'samesite' => 'None'] );
         MakeEditor::Add();
+    }
+
+    public static function Logout(): void
+    {
+        session_destroy();
+        setcookie('simple-web', '', time() - 3600);
+        MakeEditor::Remove();
     }
 }

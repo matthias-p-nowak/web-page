@@ -52,6 +52,7 @@ try {
         // '/home' => error_log('home'),
         '/makeeditor' => Code\MakeEditor::Add(),
         '/login' => Code\Login::Login(),
+        '/logout' => Code\Login::Logout(),
         default => http_response_code(404),
     };
 } catch (Exception $ex) {

@@ -1,3 +1,12 @@
+function addScript(url) {
+    const script = document.createElement("script");
+    script.src = url;
+    script.type = "text/javascript";
+    script.async = false; // Ensure script executes in order, if needed
+    document.body.appendChild(script);
+    return script;
+}
+
 window.onload = function () {
 
     function addAdminBox() {
@@ -29,10 +38,7 @@ window.onload = function () {
         addAdminBox();
     } else {
         console.log('adding htmx-lite script');
-        const s1 = document.createElement('script');
-        s1.src = 'js/htmx-lite.js';
-        s1.onload = addAdminBox;
-        document.head.appendChild(s1);
+        addScript('js/htmx-lite.js').onload=addAdminBox;
     }
 
 };
