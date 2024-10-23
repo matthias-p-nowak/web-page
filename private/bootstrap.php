@@ -50,9 +50,10 @@ try {
     // routing section
     match ($res) {
         // '/home' => error_log('home'),
-        '/makeeditor' => Code\MakeEditor::Add(),
+        '/editText' => Code\Editor::EditText(),
         '/login' => Code\Login::Login(),
         '/logout' => Code\Login::Logout(),
+        '/makeeditor' => Code\MakeEditor::Add(),
         default => http_response_code(404),
     };
 } catch (Exception $ex) {

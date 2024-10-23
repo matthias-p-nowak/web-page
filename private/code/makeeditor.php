@@ -19,12 +19,15 @@ class  MakeEditor{
         <div id="topbox" x-action="replace">
         <span onclick="topBoxPage()">Page</span>
         <span onclick="topBoxMedia()">Pictures/Media</span>
+        <span onclick="topBoxRewind()">Rewind</span>
         <span onclick="topBoxLogout()">Logout</span>
         </div>
         <script> 
         document.body.prepend(document.getElementById('topbox'));
         addScript('js/editor.js'); 
         </script>
+        <style id="editStyle" x-action="replace">
+        </style>
         EOM;
     }
     /**
@@ -34,6 +37,7 @@ class  MakeEditor{
     {
         echo <<< EOM
         <div id="topbox" x-action="remove"></div>
+        <style id="editStyle" x-action="remove"></style>
         EOM;
     }
 }
