@@ -8,13 +8,7 @@ class  MakeEditor{
      */
     public static function  Add(): void{
         error_log('showing topbox');
-        if(session_status() != PHP_SESSION_ACTIVE){
-            http_response_code(404);
-            echo <<< EOM
-            please login
-            EOM;
-            return;
-        }
+        Login::Check();
         echo <<< EOM
         <div id="topbox" x-action="replace">
         <span onclick="topBoxPage()">Page</span>
@@ -24,9 +18,13 @@ class  MakeEditor{
         </div>
         <script> 
         document.body.prepend(document.getElementById('topbox'));
+        addScript('tinymce/tinymce.min.js');
         addScript('js/editor.js'); 
         </script>
         <style id="editStyle" x-action="replace">
+        #_page { cursor: crosshair; }
+        #_page [id] { cursor: context-menu; }
+        #_page [contenteditable]{ cursor: text; }  
         </style>
         EOM;
     }

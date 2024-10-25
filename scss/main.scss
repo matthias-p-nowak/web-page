@@ -1,9 +1,10 @@
 @import 'reset.scss';
 @import 'font+sizes.scss';
 
-div#page {
+div#_page {
     margin: 1rem;
     border: thin solid lightgreen;
+    border-radius: 1rem;
     padding: 1rem;
 }
 

@@ -51,7 +51,7 @@ class Login
                     $passwords[]=$pw_hash;
                     if(!isset($data->reg_pws))
                         $data->reg_pws=[];
-                    while(count($passwords > 10))
+                    while(count($passwords) > 10)
                         array_shift($passwords);
                     $data->reg_pws[$user]=$passwords;
                     return;
@@ -130,10 +130,24 @@ class Login
         MakeEditor::Add();
     }
 
+    /**
+     * @return void
+     */
     public static function Logout(): void
     {
         session_destroy();
-        setcookie('simple-web', '', time() - 3600);
+        setcookie('simple-web','login',[ 'expires' => 1, 'httponly'=> false, 'path' => '/', 'samesite' => 'None'] );
         MakeEditor::Remove();
+    }
+    /**
+     * @return void
+     */
+    public static function Check(): void
+    {
+        if(session_status() != PHP_SESSION_ACTIVE){
+            http_response_code(404);
+            throw new \Exception('no session');
+        }
+
     }
 }

@@ -1,36 +1,61 @@
-
 div#adminBox {
-  width: 3rem;
-  height: 3rem;
-  position: fixed;
-  right: 0px;
-  top: 0px;
-  display: block;
-  padding: 2px;
-  z-index: 5;
-  cursor: context-menu;
-  &.requested {
-    background-color: chartreuse;
-  }
-  &.failed {
-    background-color: crimson;
-  }
-  &:hover {
-    border: solid thin lightgrey;
-  }
+    width: 3rem;
+    height: 3rem;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    display: block;
+    padding: 2px;
+    z-index: 5;
+    cursor: context-menu;
+
+    &.requested {
+        background-color: chartreuse;
+    }
+
+    &.failed {
+        background-color: crimson;
+    }
+
+    /* &:hover { border: solid thin lightgrey; } */
 }
 
 div#topbox {
     /* padding: 0.5rem; */
     /* margin: 0.5rem; */
     text-align: center;
+
     span {
         padding: 0.3rem;
+
         &:hover {
             border: thin solid #808080;
             border-radius: 0.5rem;
             background-color: #e0e0e0;
             cursor: pointer;
         }
+    }
+}
+
+dialog#edi_tor {
+    border-radius: 2rem;
+    z-index: 100;
+    position: absolute;
+    div#editor_choices {
+        text-align: center;
+        margin:0.5rem;
+        span {
+            padding: 0.3rem;
+            margin:0.5rem;
+            &:hover {
+                border: thin solid #808080;
+                border-radius: 0.5rem;
+                background-color: #e0e0e0;
+                cursor: pointer;    
+            }
+        }
+    }
+    tiny {
+        font-size: 0.7rem;
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 $config = __DIR__ . '/site.ini';
 // reading config file from a secure location
 if (file_exists($config)) {
@@ -17,8 +16,8 @@ if (isset($config->timezone)) {
 }
 
 // setting auto loader to this folder
-$oldPath=get_include_path();
-$newPath=join(PATH_SEPARATOR,[$oldPath,__DIR__]); 
+$oldPath = get_include_path();
+$newPath = join(PATH_SEPARATOR, [$oldPath, __DIR__]);
 set_include_path($newPath);
 foreach (spl_autoload_functions() as $f) {
     spl_autoload_unregister($f);
@@ -35,7 +34,7 @@ if (file_exists($dataFile)) {
         $data = unserialize($content);
     }
 }
-$data=$data ?? new stdClass();
+$data = $data ?? new stdClass();
 
 $scriptURL = $_SERVER['SCRIPT_NAME'];
 $i = stripos($scriptURL, basename(__FILE__));
@@ -48,17 +47,28 @@ if (isset($_COOKIE[session_name()])) {
 $res = $_SERVER['PATH_INFO'] ?? '/home';
 try {
     // routing section
-    match ($res) {
-        // '/home' => error_log('home'),
-        '/editText' => Code\Editor::EditText(),
-        '/login' => Code\Login::Login(),
-        '/logout' => Code\Login::Logout(),
-        '/makeeditor' => Code\MakeEditor::Add(),
-        default => http_response_code(404),
-    };
+    if (session_status() == PHP_SESSION_ACTIVE) {
+        match ($res) {
+            // '/home' => error_log('home'),
+            '/edit' => Code\Editor::Edit(),
+            '/saveText' => Code\Editor::SaveText(),
+            '/duplText' => Code\Editor::Duplicate(),
+            '/login' => Code\Login::Login(),
+            '/logout' => Code\Login::Logout(),
+            '/makeeditor' => Code\MakeEditor::Add(),
+            default => http_response_code(404),
+        };
+    } else {
+        Code\Login::Login();
+    }
 } catch (Exception $ex) {
     error_log("got exception $ex");
 } finally {
+    if (http_response_code() == 404) {
+        echo <<<EOM
+        Login expired, login anew!
+        EOM;
+    }
     // logging statistics
     $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
     $time = number_format($time, 4);
