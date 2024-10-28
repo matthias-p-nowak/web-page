@@ -17,39 +17,38 @@ function topBoxRewind() {
 
 function dealWithInput(event) {
     let elem = event.target;
-    elem.oninput = gotInput;
     elem.onblur = null;
     let formData = new FormData();
-    // let admin=getAdminUrl();
-    formData.append('saving', elem.id);
-    formData.append('text', elem.innerText);
+    formData.append('id', elem.id);
     formData.append('location', window.location.pathname);
+    formData.append('text', elem.innerText);
     hxl_send_form('admin.php/saveText', formData, elem);
 }
 
-function saveEditorContent(event){
+function saveEditorContent(event) {
     let elem = event.target;
     let formData = new FormData();
-    let id= elem.getAttribute('saving');
-    formData.append('saving',id);
-    formData.append('content',tinymce.activeEditor.getContent());
+    let id = elem.getAttribute('saving');
+    formData.append('id', id);
     formData.append('location', window.location.pathname);
+    formData.append('content', tinymce.activeEditor.getContent());
     hxl_send_form('admin.php/saveText', formData, elem);
 }
 
-function makeDuplicate(event){
+function makeDuplicate(event) {
+    let elem = event.target;
     let formData = new FormData();
-    let id= elem.getAttribute('saving');
-    formData.append('duplicate',id);
+    let id = elem.getAttribute('from');
+    formData.append('id', id);
     formData.append('location', window.location.pathname);
     hxl_send_form('admin.php/duplText', formData, elem);
 }
 
 function gotInput(event) {
-    console.log('got input');
     let elem = event.target;
-    elem.oninput = null;
-    elem.onblur = dealWithInput;
+    if (elem.onblur == null) {
+        elem.onblur = dealWithInput;
+    }
 }
 
 function showContextMenu(event) {
@@ -102,9 +101,9 @@ function startEditor() {
     ec.onclick = stopEditor;
     let em = document.getElementById('editor_more');
     let next = em.getAttribute('next');
-    if(next == ''){
+    if (next == '') {
         em.remove();
-    }else{
+    } else {
         em.onclick = function () {
             let fd = new FormData();
             fd.append('id', next);
@@ -113,23 +112,25 @@ function startEditor() {
             hxl_send_form('admin.php/edit', fd, em);
         };
     }
-    let es=document.getElementById('editor_save');
-    es.onclick=saveEditorContent;
-    let md=document.getElementById('make_duplicate');
-    md.onclick=makeDuplicate;
+    let es = document.getElementById('editor_save');
+    es.onclick = saveEditorContent;
+    let md = document.getElementById('make_duplicate');
+    md.onclick = makeDuplicate;
 }
 
 
 {
+    // runs when it is loaded
     let page = document.getElementById('_page');
     if (page != null) {
         page.querySelectorAll('[id]').forEach(element => {
-            // Check if the element has exactly one child node and that node is a text node
             if (element.childNodes.length === 1 && element.firstChild.nodeType === Node.TEXT_NODE) {
                 element.setAttribute('contenteditable', 'true');
-                element.oninput = gotInput;
+
             }
-            element.oncontextmenu = showContextMenu;
+            // element.oncontextmenu = showContextMenu;
         });
     }
+    page.oninput = gotInput;
+    page.oncontextmenu = showContextMenu;
 }
