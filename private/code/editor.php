@@ -7,7 +7,9 @@ use DOMElement;
 class Editor
 {
     const ALFABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ23456789';
-    private string $fn; // determined filename 
+    const IgnoreIDelements = ['hr','br'];
+
+    private string $fn; // determined filename
     private DOMDocument $srcDoc; // complete loaded document
     private ?DOMElement $srcElem; // specified source element
     private string $id; // specified id
@@ -24,15 +26,45 @@ class Editor
     {
         Login::Check();
         error_log('edit text: ' . print_r($_POST, true));
-        $editor=new Editor();
+        $editor = new Editor();
         $editor->fetch();
-    }
+        if($editor->srcElem == null){
+            http_response_code(500);
+            echo "can't pick the right element for editing";
+            return;
+        }
+        if (isset($_POST['text'])) {
+            $str = trim($_POST['text']);
+            $editor->srcElem->textContent = $str;
+            $editor->srcDoc->saveHTMLFile($editor->fn);
+        }
+        if(isset($_POST['content'])){
+            $newDoc = new \DOMDocument();
+            $newDoc->encoding = 'utf-8';
+            libxml_clear_errors();
+            $newDoc->loadHTML($_POST['content'], LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $node=$newDoc->firstChild;
+            $newElem=$editor->srcDoc->importNode($node,true);
+            $editor->srcElem->replaceWith($newElem);
+            $editor->srcDoc->saveHTMLFile($editor->fn);
+            $editor->srcElem=$newElem;
+            echo <<< EOM
+            <dialog id="edi_tor" x-action="remove"></dialog>
+            EOM;
+        }
+        $editor->srcElem->setAttribute('x-action', 'replace');
+        echo ($editor->srcDoc->saveHTML($editor->srcElem));
+        echo <<< EOM
+        <script>makeEditable();</script>
+        EOM;
+        return;
+}
 
     public static function Edit(): void
     {
         Login::Check();
         error_log(print_r($_POST, true));
-        $editor=new Editor();
+        $editor = new Editor();
         $editor->fetch();
         if (isset($_POST['start'])) {
             $str = $editor->srcDoc->saveHTML($editor->srcElem);
@@ -47,8 +79,8 @@ class Editor
                     break;
                 }
             }
-            $tag=$editor->srcElem->tagName;
-            $path=$editor->fn . ': '. $editor->srcElem->tagName .'#'. $editor->id;
+            $tag = $editor->srcElem->tagName;
+            $path = $editor->fn . ': ' . $editor->srcElem->tagName . '#' . $editor->id;
             self::showEditor($str, $more_id, $editor->id, $path);
             return;
         } else {
@@ -62,9 +94,8 @@ class Editor
     public static function Duplicate(): void
     {
         Login::Check();
-        $editor=new Editor();
+        $editor = new Editor();
         $editor->fetch();
-        // $newElem= $srcDoc->importNode($srcElem, true);
         $newElem = $editor->srcElem->cloneNode(true);
         if ($newElem) {
             self::ReplaceIds($newElem);
@@ -81,7 +112,6 @@ class Editor
             echo $src;
             return;
         }
-
     }
 
     public static function ReplaceIds(\DOMElement $node): void
@@ -97,6 +127,8 @@ class Editor
         }
     }
 
+
+
     public static function GetRandomId(): string
     {
         $l = strlen(SELF::ALFABET);
@@ -106,6 +138,23 @@ class Editor
             $rv .= SELF::ALFABET[$i];
         }
         return $rv;
+    }
+
+    /**
+     * @return void
+     */
+    public static function AddMissingIds(\DOMElement $node): void{
+        if(!in_array($node->tagName, self::IgnoreIDelements))
+        {
+            $id= $node->getAttribute('id');
+            if($id == null)
+             $node->setAttribute('id', '_'. self::GetRandomId());
+        }
+        foreach ($node->childNodes as $cn) {
+            if ($cn instanceof \DOMElement) {
+                self::AddMissingIds($cn);
+            }
+        }
     }
 
     private static function showEditor(string $content, string $more_id, string $id, string $path): void
@@ -133,7 +182,7 @@ class Editor
     {
         global $htmlDir;
         $this->id = $_POST['id'];
-        $loc = $_POST['loc'];
+        $loc = $_POST['location'];
         $urlPath = explode('/', $loc);
         $fn = $urlPath[count($urlPath) - 1];
         if ($fn == "") {

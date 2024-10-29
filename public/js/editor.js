@@ -118,8 +118,7 @@ function startEditor() {
     md.onclick = makeDuplicate;
 }
 
-
-{
+function makeEditable(){
     // runs when it is loaded
     let page = document.getElementById('_page');
     if (page != null) {
@@ -134,3 +133,5 @@ function startEditor() {
     page.oninput = gotInput;
     page.oncontextmenu = showContextMenu;
 }
+
+makeEditable();
