@@ -7,7 +7,7 @@ use DOMElement;
 class Editor
 {
     const ALFABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ23456789';
-    const IgnoreIDelements = ['hr','br'];
+    const IgnoreIDelements = ['hr', 'br'];
 
     private string $fn; // determined filename
     private DOMDocument $srcDoc; // complete loaded document
@@ -27,38 +27,39 @@ class Editor
         Login::Check();
         error_log('edit text: ' . print_r($_POST, true));
         $editor = new Editor();
-        $editor->fetch();
-        if($editor->srcElem == null){
-            http_response_code(500);
-            echo "can't pick the right element for editing";
-            return;
-        }
-        if (isset($_POST['text'])) {
-            $str = trim($_POST['text']);
-            $editor->srcElem->textContent = $str;
-            $editor->srcDoc->saveHTMLFile($editor->fn);
-        }
-        if(isset($_POST['content'])){
-            $newDoc = new \DOMDocument();
-            $newDoc->encoding = 'utf-8';
-            libxml_clear_errors();
-            $newDoc->loadHTML($_POST['content'], LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-            $node=$newDoc->firstChild;
-            $newElem=$editor->srcDoc->importNode($node,true);
-            $editor->srcElem->replaceWith($newElem);
-            $editor->srcDoc->saveHTMLFile($editor->fn);
-            $editor->srcElem=$newElem;
-            echo <<< EOM
-            <dialog id="edi_tor" x-action="remove"></dialog>
-            EOM;
-        }
-        $editor->srcElem->setAttribute('x-action', 'replace');
-        echo ($editor->srcDoc->saveHTML($editor->srcElem));
+        $editor->storeContent();
+        // $editor->fetch();
+        // if($editor->srcElem == null){
+        //     http_response_code(500);
+        //     echo "can't pick the right element for editing";
+        //     return;
+        // }
+        // if (isset($_POST['text'])) {
+        //     $str = trim($_POST['text']);
+        //     $editor->srcElem->textContent = $str;
+        //     $editor->srcDoc->saveHTMLFile($editor->fn);
+        // }
+        // if(isset($_POST['content'])){
+        //     $newDoc = new \DOMDocument();
+        //     $newDoc->encoding = 'utf-8';
+        //     libxml_clear_errors();
+        //     $newDoc->loadHTML($_POST['content'], LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        //     $node=$newDoc->firstChild;
+        //     $newElem=$editor->srcDoc->importNode($node,true);
+        //     $editor->srcElem->replaceWith($newElem);
+        //     $editor->srcDoc->saveHTMLFile($editor->fn);
+        //     $editor->srcElem=$newElem;
+        // }
         echo <<< EOM
+        <dialog id="edi_tor" x-action="remove"></dialog>
         <script>makeEditable();</script>
         EOM;
+        if ($editor->srcElem != null) {
+            $editor->srcElem->setAttribute('x-action', 'replace');
+            echo ($editor->srcDoc->saveHTML($editor->srcElem));
+        }
         return;
-}
+    }
 
     public static function Edit(): void
     {
@@ -127,8 +128,6 @@ class Editor
         }
     }
 
-
-
     public static function GetRandomId(): string
     {
         $l = strlen(SELF::ALFABET);
@@ -143,12 +142,13 @@ class Editor
     /**
      * @return void
      */
-    public static function AddMissingIds(\DOMElement $node): void{
-        if(!in_array($node->tagName, self::IgnoreIDelements))
-        {
-            $id= $node->getAttribute('id');
-            if($id == null)
-             $node->setAttribute('id', '_'. self::GetRandomId());
+    public static function AddMissingIds(\DOMElement $node): void
+    {
+        if (!in_array($node->tagName, self::IgnoreIDelements)) {
+            $id = $node->getAttribute('id');
+            if ($id == null) {
+                $node->setAttribute('id', '_' . self::GetRandomId());
+            }
         }
         foreach ($node->childNodes as $cn) {
             if ($cn instanceof \DOMElement) {
@@ -196,6 +196,42 @@ class Editor
         libxml_clear_errors();
         $this->srcDoc->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $this->srcElem = $this->srcDoc->getElementById($this->id);
+    }
+    /**
+     * @return void
+     */
+    private function storeContent(): void
+    {
+        global $htmlDir;
+        $this->id = $_POST['id'];
+        $newDoc = new \DOMDocument();
+        $newDoc->encoding = 'utf-8';
+        libxml_clear_errors();
+        $newDoc->loadHTML($_POST['content'], LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $xp = new \DOMXPath($newDoc);
+        foreach ($xp->query('//*[@contenteditable]') as $n) {
+            $n->removeAttribute('contenteditable');
+        }
+        $node = $newDoc->firstChild;
+        self::AddMissingIds($node);
+        foreach (glob($htmlDir . DIRECTORY_SEPARATOR . '*.html', GLOB_NOSORT) as $fn) {
+            if (is_link($fn)) {
+                continue;
+            }
+            $content = file_get_contents($fn);
+            $content = mb_convert_encoding($content, 'HTML-ENTITIES', "UTF-8");
+            $this->srcDoc = new \DOMDocument();
+            $this->srcDoc->encoding = 'utf-8';
+            libxml_clear_errors();
+            $this->srcDoc->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $this->srcElem = $this->srcDoc->getElementById($this->id);
+            if ($this->srcElem != null) {
+                $newElem = $this->srcDoc->importNode($node, true);
+                $this->srcElem->replaceWith($newElem);
+                $this->srcDoc->saveHTMLFile($fn);
+                $this->srcElem=$newElem;
+            }
+        }
     }
 
 }

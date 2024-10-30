@@ -41,6 +41,7 @@ dialog#edi_tor {
     border-radius: 2rem;
     z-index: 100;
     position: absolute;
+    overflow: visible;
     div#editor_choices {
         text-align: center;
         margin:0.5rem;

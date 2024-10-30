@@ -21,7 +21,7 @@ function dealWithInput(event) {
     let formData = new FormData();
     formData.append('id', elem.id);
     formData.append('location', window.location.pathname);
-    formData.append('text', elem.innerText);
+    formData.append('content', elem.outerHTML);
     hxl_send_form('admin.php/saveText', formData, elem);
 }
 
@@ -45,6 +45,8 @@ function makeDuplicate(event) {
 }
 
 function gotInput(event) {
+    event.preventDefault();
+    event.stopPropagation();
     let elem = event.target;
     if (elem.onblur == null) {
         elem.onblur = dealWithInput;
@@ -118,16 +120,14 @@ function startEditor() {
     md.onclick = makeDuplicate;
 }
 
-function makeEditable(){
+function makeEditable() {
     // runs when it is loaded
     let page = document.getElementById('_page');
     if (page != null) {
         page.querySelectorAll('[id]').forEach(element => {
-            if (element.childNodes.length === 1 && element.firstChild.nodeType === Node.TEXT_NODE) {
+            if (element.childNodes.length >= 1 && element.firstChild.nodeType === Node.TEXT_NODE && element.firstChild.nodeValue.trim() != '')  {
                 element.setAttribute('contenteditable', 'true');
-
             }
-            // element.oncontextmenu = showContextMenu;
         });
     }
     page.oninput = gotInput;
