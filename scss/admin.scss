@@ -20,7 +20,7 @@ div#adminBox {
     /* &:hover { border: solid thin lightgrey; } */
 }
 
-dialog#showerror {
+dialog#show_error {
     border-radius: 0.3rem;
     // border: 3px solid red;
     border: none;
@@ -90,19 +90,25 @@ dialog#show_help {
 
 dialog#show_page {
     border: none;
-    border-radius: 2rem;
-    outline: thick solid lightgreen;
+    border-radius: 1rem;
+    outline: none;
     min-width: 50%;
 }
 
 div.formtable {
 
-    background-color: antiquewhite;
     display: table;
     border-collapse: collapse;
     $border: thin #a0a0a0 solid;
     margin-top: 0.5rem;
-
+    div {
+        display: table-row;
+        span{
+            display: table-cell;
+            text-align: center;
+            border: $border;
+        }
+    }
     form {
         display: table-row;
 
