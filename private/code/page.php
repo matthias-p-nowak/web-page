@@ -35,7 +35,7 @@ class Page
                 $tn = $p->doc->createElement('title', htmlentities($title));
                 $head = $p->doc->getElementsByTagName('head')[0];
                 $head->append($tn);
-            } else { 
+            } else {
                 $tn = $tns[0];
                 $tn->textContent = htmlentities($title);
             }
@@ -45,6 +45,36 @@ class Page
             $tn->setAttribute('x-id', 'head');
             $p->show($tn);
             $p->showTitleForm(true);
+            return;
+        }
+        if (isset($_POST['description'])) {
+            $p->description = $_POST['description'];
+            $xp = new \DOMXPath($p->doc);
+            $metas = $xp->query('//meta[@name="description"]');
+            if ($metas->length == 0) {
+                $dn = $p->doc->createElement('meta');
+                $dn->setAttribute('name', 'description');
+                $head = $p->doc->getElementsByTagName('head')[0];
+                $head->append($dn);
+            } else {
+                $dn = $metas[0];
+            }
+            $dn->setAttribute('content', htmlspecialchars($p->description));
+            $dn->setAttribute('id', '_descr_');
+            $p->save();
+            $dn->setAttribute('x-action', 'replace');
+            $dn->setAttribute('x-id', 'head');
+            $p->show($dn);
+            $p->showDescriptionForm(true);
+            return;
+        }
+        if (isset($_POST['filename'])) {
+            $fn = $_POST['filename'];
+            $p->SafeRename($fn);
+            return;
+        }
+        if (isset($_POST['name'])) {
+            error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
             return;
         }
         $p->showDialog();
@@ -74,8 +104,14 @@ class Page
         $tn = $this->doc->getElementsByTagName('title');
         $this->title = $tn[0]?->nodeValue ?? '';
         $xp = new \DOMXPath($this->doc);
-        $dn = $xp->query('/head/meta[name="description"]');
-        $this->description = $dn[0]?->nodeValue ?? '';
+        $metas = $xp->query('//meta[@name="description"]');
+        if ($metas->length > 0) {
+            $dn = $metas[0];
+            $descr = $dn->getAttribute('content');
+            $this->description = $descr ?? '';
+        } else {
+            $this->description = '';
+        }
         $this->saved = date("Y-m-d H:i:s", filemtime($this->fn));
     }
     /**
@@ -87,7 +123,7 @@ class Page
 
         echo <<< EOM
         <dialog id="show_page" x-action="replace">
-        <h1>Page data '$this->sn'</h1>
+        <h1>Page data for '$this->sn'</h1>
         Page details:
         <div class="formtable">
         <div>
@@ -98,7 +134,13 @@ class Page
         EOM;
         $this->showTitleForm(false);
         $this->showDescriptionForm(false);
+        $this->showFileName(false);
         echo <<< EOM
+        </div>
+        <div>
+        <form action="$scriptURL/page" onsubmit="return false">
+        <span name="duplicate" onclick="hxl_submit_form(event)">Duplicate</span>
+        </form>
         </div>
         </dialog>
         <script>
@@ -114,7 +156,9 @@ class Page
     {
         $this->doc->saveHTMLFile($this->fn);
         $this->saved = date("Y-m-d H:i:s");
+        register_shutdown_function([Archive::class, 'SaveState']);
     }
+
     /**
      * @return void
      */
@@ -147,11 +191,56 @@ class Page
         $strReplace = $replace ? 'x-action="replace"' : '';
         echo <<< EOM
         <form id="form_description" action="$scriptURL/page" onsubmit="return false;" $strReplace>
-        <label for="description">Description </label>
-        <input id="description" name="description" placeholder="description used by search engines" value="$description" 
+        <label for="description">Description</label>
+        <input id="description" name="description" placeholder="description used by search engines" value="$description"
         onchange="hxl_submit_form(event)">
         <span>$this->saved</span>
         </form>
         EOM;
+    }
+    private function showFileName(bool $replace)
+    {
+        global $scriptURL;
+        $strReplace = $replace ? 'x-action="replace"' : '';
+        $filename = htmlentities($this->sn);
+        echo <<< EOM
+        <form id="form_filename" action="$scriptURL/page" onsubmit="return false;" $strReplace>
+        <label for="filename">Filename</label>
+        <input id="filename" name="filename" placeholder="filename - is part of url" value="$filename"
+        title="be careful, this changes the filename on the server"
+        onchange="hxl_submit_form(event)">
+        <span>$this->saved</span>
+        </form>
+        EOM;
+    }
+
+    private function SafeRename($fn)
+    {
+        global $htmlDir;
+        if(str_contains($fn,'..')){
+            http_response_code(400);
+            echo 'attempting to reach parent directory';
+            return;
+        }
+        $newFn = implode(DIRECTORY_SEPARATOR, [$htmlDir, $fn]);
+        if(! str_starts_with($newFn,$htmlDir)){
+            http_response_code(400);
+            echo 'attempting move file to '.$newFn;
+            return;
+        }
+        if(file_exists($newFn)){
+            http_response_code(400);
+            echo 'attempting to overwrite '. $newFn;
+            return;
+        }
+        if($this->isHome){
+            http_response_code(400);
+            echo 'attempting to change landing page';
+            return;
+        }
+        if(rename($this->fn,$newFn)){
+            $this->fn=$newFn;
+        }
+        
     }
 }

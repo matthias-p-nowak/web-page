@@ -25,6 +25,7 @@ dialog#show_error {
     // border: 3px solid red;
     border: none;
     outline: 3px solid red;
+    z-index: 100;
 }
 
 div#topbox {
@@ -101,24 +102,47 @@ div.formtable {
     border-collapse: collapse;
     $border: thin #a0a0a0 solid;
     margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.4rem;
     div {
         display: table-row;
         span{
             display: table-cell;
             text-align: center;
             border: $border;
+            font-weight: bolder;
         }
     }
     form {
         display: table-row;
-
+        border: $border;
+       
         >* {
             padding: 0.5rem;
             border: $border;
             display: table-cell;
         }
-        input {
-            min-width: 40rem;
+        label {
+            text-align: right;
         }
+        input {
+            padding: 0.3rem;
+            margin: 0.5rem;
+            min-width: 40rem;
+            border: none; // thin solid red;
+        }
+    }
+}
+
+form span[onclick]{
+    color: black;
+    padding: 0.5rem;
+    &:hover {
+        color: white;
+        text-shadow: 0px 0px 1px #000, 0px 0px 1.2rem #000;
+        border: thin solid #808080;
+        border-radius: 0.5rem;
+        background-color: #a0a0a0;
+        cursor: pointer;
     }
 }

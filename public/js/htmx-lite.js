@@ -26,11 +26,15 @@ async function hxl_send_form(action, formData, target) {
         } else {
             target.classList.remove('requested');
             target.classList.add('failed');
+            const activeDialog = document.querySelector('dialog[open]');
+            if (activeDialog) {
+                activeDialog.close();
+            }
             let se = document.getElementById('show_error');
             se.innerHTML = 'showing errors';
-            se.show();
             let text = await response.text();
             se.innerHTML = text;
+            se.showModal();
             target?.Focus?.();
         }
     }
@@ -55,10 +59,10 @@ function hxl_process_body(body) {
             // for replacements/deletes
             var sameId = document.getElementById(n.id);
         }
-        let oid='';
+        var oid = '';
         if (n.hasAttribute('x-id')) {
             // for related elements
-            let oid = n.getAttribute('x-id');
+            oid = n.getAttribute('x-id');
             var otherId = document.getElementById(oid);
         }
         switch (attr) {
