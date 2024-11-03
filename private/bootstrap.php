@@ -26,7 +26,7 @@ spl_autoload_extensions('.php');
 spl_autoload_register();
 
 // get old state into memory
-$dataFile = join(DIRECTORY_SEPARATOR, [__DIR__, $config->dataFile]);
+$dataFile = join(DIRECTORY_SEPARATOR, [__DIR__, $config->dataFile ?? 'data/data.bin']);
 if (file_exists($dataFile)) {
     $content = file_get_contents($dataFile);
     if ($content) {
@@ -35,6 +35,7 @@ if (file_exists($dataFile)) {
     }
 }
 $data = $data ?? new stdClass();
+$archive= join(DIRECTORY_SEPARATOR, [__DIR__, $config->archive ?? 'data/archive.zip']);
 
 $scriptURL = $_SERVER['SCRIPT_NAME'];
 $i = stripos($scriptURL, basename(__FILE__));
@@ -51,11 +52,14 @@ try {
         match ($res) {
             // '/home' => error_log('home'),
             '/edit' => Code\Editor::Edit(),
-            '/saveText' => Code\Editor::SaveText(),
             '/duplText' => Code\Editor::Duplicate(),
+            '/help' => Code\Help::ShowHelp(),
             '/login' => Code\Login::Login(),
             '/logout' => Code\Login::Logout(),
             '/makeeditor' => Code\MakeEditor::Add(),
+            '/page' => Code\Page::Handle(),
+            '/saveState' => Code\Archive::SaveState(),
+            '/saveText' => Code\Editor::SaveText(),
             default => http_response_code(404),
         };
     } else {

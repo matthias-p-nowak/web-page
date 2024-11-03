@@ -15,6 +15,7 @@ class  MakeEditor{
         <span onclick="topBoxMedia()">Pictures/Media</span>
         <span onclick="topBoxRewind()">Rewind</span>
         <span onclick="topBoxLogout()">Logout</span>
+        <span onclick="topBoxHelp()">Help</span>
         </div>
         <script> 
         document.body.prepend(document.getElementById('topbox'));

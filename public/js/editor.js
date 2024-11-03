@@ -1,5 +1,7 @@
 function topBoxPage() {
-    alert('topBoxPage function');
+    let topBox = document.getElementById('topbox');
+    let formData=new FormData();
+    hxl_send_form('admin.php/page',formData,topBox);
 }
 
 function topBoxMedia() {
@@ -15,12 +17,16 @@ function topBoxRewind() {
     alert('topBoxRewind function');
 }
 
+function topBoxHelp(){
+    let topBox = document.getElementById('topbox');
+    hxl_send_form('admin.php/help', null, topBox);
+}
+
 function dealWithInput(event) {
     let elem = event.target;
     elem.onblur = null;
     let formData = new FormData();
     formData.append('id', elem.id);
-    formData.append('location', window.location.pathname);
     formData.append('content', elem.outerHTML);
     hxl_send_form('admin.php/saveText', formData, elem);
 }
@@ -30,7 +36,6 @@ function saveEditorContent(event) {
     let formData = new FormData();
     let id = elem.getAttribute('saving');
     formData.append('id', id);
-    formData.append('location', window.location.pathname);
     formData.append('content', tinymce.activeEditor.getContent());
     hxl_send_form('admin.php/saveText', formData, elem);
 }
@@ -40,7 +45,6 @@ function makeDuplicate(event) {
     let formData = new FormData();
     let id = elem.getAttribute('from');
     formData.append('id', id);
-    formData.append('location', window.location.pathname);
     hxl_send_form('admin.php/duplText', formData, elem);
 }
 
@@ -60,7 +64,6 @@ function showContextMenu(event) {
     let fd = new FormData();
     fd.append('id', t.id);
     fd.append('start', true);
-    fd.append('loc', window.location);
     hxl_send_form('admin.php/edit', fd, t);
 }
 
@@ -110,7 +113,6 @@ function startEditor() {
             let fd = new FormData();
             fd.append('id', next);
             fd.append('start', true);
-            fd.append('loc', window.location);
             hxl_send_form('admin.php/edit', fd, em);
         };
     }

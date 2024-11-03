@@ -1,4 +1,14 @@
 function addScript(url) {
+    found = false;
+    document.getElementsByName('script').forEach((s) => {
+        if (s.src == url)
+            found = s;
+    });
+    if (found) {
+        console.log('found script ' + url);
+        return null;
+    }
+    console.log('adding script ' + url);
     const script = document.createElement("script");
     script.src = url;
     script.type = "text/javascript";
@@ -32,13 +42,9 @@ window.onload = function () {
             hxl_send_form('admin.php/makeeditor', null, adminBox);
         }
     }
-
-    if (typeof hxl_send_form === 'function') {
-        console.log('htmx-lite was there already');
+    let s=addScript('js/htmx-lite.js');
+    if(s != null)
+        s.onload= addAdminBox;
+    else
         addAdminBox();
-    } else {
-        console.log('adding htmx-lite script');
-        addScript('js/htmx-lite.js').onload=addAdminBox;
-    }
-
 };

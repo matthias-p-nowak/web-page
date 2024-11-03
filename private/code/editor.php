@@ -16,7 +16,7 @@ class Editor
 
     private function __construct()
     {
-        error_log('creating an object');
+        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
     }
 
     /**
@@ -28,28 +28,6 @@ class Editor
         error_log('edit text: ' . print_r($_POST, true));
         $editor = new Editor();
         $editor->storeContent();
-        // $editor->fetch();
-        // if($editor->srcElem == null){
-        //     http_response_code(500);
-        //     echo "can't pick the right element for editing";
-        //     return;
-        // }
-        // if (isset($_POST['text'])) {
-        //     $str = trim($_POST['text']);
-        //     $editor->srcElem->textContent = $str;
-        //     $editor->srcDoc->saveHTMLFile($editor->fn);
-        // }
-        // if(isset($_POST['content'])){
-        //     $newDoc = new \DOMDocument();
-        //     $newDoc->encoding = 'utf-8';
-        //     libxml_clear_errors();
-        //     $newDoc->loadHTML($_POST['content'], LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        //     $node=$newDoc->firstChild;
-        //     $newElem=$editor->srcDoc->importNode($node,true);
-        //     $editor->srcElem->replaceWith($newElem);
-        //     $editor->srcDoc->saveHTMLFile($editor->fn);
-        //     $editor->srcElem=$newElem;
-        // }
         echo <<< EOM
         <dialog id="edi_tor" x-action="remove"></dialog>
         <script>makeEditable();</script>
@@ -182,7 +160,7 @@ class Editor
     {
         global $htmlDir;
         $this->id = $_POST['id'];
-        $loc = $_POST['location'];
+        $loc = $_SERVER["HTTP_REFERER"];;
         $urlPath = explode('/', $loc);
         $fn = $urlPath[count($urlPath) - 1];
         if ($fn == "") {
@@ -232,6 +210,7 @@ class Editor
                 $this->srcElem=$newElem;
             }
         }
+        register_shutdown_function([Archive::class,'SaveState']);
     }
 
 }

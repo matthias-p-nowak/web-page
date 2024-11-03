@@ -20,18 +20,29 @@ div#adminBox {
     /* &:hover { border: solid thin lightgrey; } */
 }
 
+dialog#showerror {
+    border-radius: 0.3rem;
+    // border: 3px solid red;
+    border: none;
+    outline: 3px solid red;
+}
+
 div#topbox {
     /* padding: 0.5rem; */
     /* margin: 0.5rem; */
     text-align: center;
+    font-size: 0.9rem;
 
     span {
         padding: 0.3rem;
+        color: black;
 
         &:hover {
+            color: white;
+            text-shadow: 0px 0px 1px #000, 0px 0px 1.2rem #000;
             border: thin solid #808080;
             border-radius: 0.5rem;
-            background-color: #e0e0e0;
+            background-color: #a0a0a0;
             cursor: pointer;
         }
     }
@@ -42,21 +53,66 @@ dialog#edi_tor {
     z-index: 100;
     position: absolute;
     overflow: visible;
+    border: none;
+    outline: none;
+
     div#editor_choices {
         text-align: center;
-        margin:0.5rem;
+        margin: 0.5rem;
+
         span {
             padding: 0.3rem;
-            margin:0.5rem;
+            margin: 0.5rem;
+
             &:hover {
                 border: thin solid #808080;
                 border-radius: 0.5rem;
                 background-color: #e0e0e0;
-                cursor: pointer;    
+                cursor: pointer;
             }
         }
     }
+
     tiny {
         font-size: 0.7rem;
+    }
+
+    div.tox-tinymce {
+        resize: both;
+    }
+}
+
+dialog#show_help {
+    border-radius: 1rem;
+    border: none;
+    outline: thin solid lightgreen;
+}
+
+dialog#show_page {
+    border: none;
+    border-radius: 2rem;
+    outline: thick solid lightgreen;
+    min-width: 50%;
+}
+
+div.formtable {
+
+    background-color: antiquewhite;
+    display: table;
+    border-collapse: collapse;
+    $border: thin #a0a0a0 solid;
+    margin-top: 0.5rem;
+
+    form {
+        display: table-row;
+
+        >* {
+            padding: 0.5rem;
+            border: $border;
+            display: table-cell;
+        }
+        input {
+            min-width: 40rem;
+        }
     }
 }
