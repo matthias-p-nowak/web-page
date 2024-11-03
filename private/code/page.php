@@ -119,12 +119,11 @@ class Page
      */
     private function showDialog(): void
     {
-        global $scriptURL;
-
+        global $scriptURL, $htmlDir,$baseURL;
         echo <<< EOM
         <dialog id="show_page" x-action="replace">
         <h1>Page data for '$this->sn'</h1>
-        Page details:
+        <h2>Page details:</h2>
         <div class="formtable">
         <div>
         <span>Setting</span>
@@ -137,10 +136,28 @@ class Page
         $this->showFileName(false);
         echo <<< EOM
         </div>
+        <h2>Further actions</h2>
         <div>
         <form action="$scriptURL/page" onsubmit="return false">
         <span name="duplicate" onclick="hxl_submit_form(event)">Duplicate</span>
+        <span name="edit_style" onclick="hxl_submit_form(event)">Edit page style</span>
+        <span name="delete_page" onclick="hxl_submit_form(event)">Delete this page</span>
         </form>
+        </div>
+        <div>
+        <h2>Existing pages:</h2>
+        <ul>
+        EOM;
+        foreach (glob($htmlDir . DIRECTORY_SEPARATOR . '*.html') as $fn) {
+            if (is_link($fn)) {
+                continue;
+            }
+            $path = explode(DIRECTORY_SEPARATOR, $fn);
+            $sn = $path[count($path) - 1];
+            echo "<li><a href=\"$baseURL/$sn\">$sn</a></li>";
+        }
+        echo <<< EOM
+        </ul>
         </div>
         </dialog>
         <script>
@@ -217,30 +234,30 @@ class Page
     private function SafeRename($fn)
     {
         global $htmlDir;
-        if(str_contains($fn,'..')){
+        if (str_contains($fn, '..')) {
             http_response_code(400);
             echo 'attempting to reach parent directory';
             return;
         }
         $newFn = implode(DIRECTORY_SEPARATOR, [$htmlDir, $fn]);
-        if(! str_starts_with($newFn,$htmlDir)){
+        if (!str_starts_with($newFn, $htmlDir)) {
             http_response_code(400);
-            echo 'attempting move file to '.$newFn;
+            echo 'attempting move file to ' . $newFn;
             return;
         }
-        if(file_exists($newFn)){
+        if (file_exists($newFn)) {
             http_response_code(400);
-            echo 'attempting to overwrite '. $newFn;
+            echo 'attempting to overwrite ' . $newFn;
             return;
         }
-        if($this->isHome){
+        if ($this->isHome) {
             http_response_code(400);
             echo 'attempting to change landing page';
             return;
         }
-        if(rename($this->fn,$newFn)){
-            $this->fn=$newFn;
+        if (rename($this->fn, $newFn)) {
+            $this->fn = $newFn;
         }
-        
+
     }
 }

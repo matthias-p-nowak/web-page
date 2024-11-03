@@ -38,7 +38,8 @@ $data = $data ?? new stdClass();
 $archive= join(DIRECTORY_SEPARATOR, [__DIR__, $config->archive ?? 'data/archive.zip']);
 
 $scriptURL = $_SERVER['SCRIPT_NAME'];
-$i = stripos($scriptURL, basename(__FILE__));
+$bn=basename($scriptURL);
+$i = stripos($scriptURL, $bn);
 $baseURL = substr($scriptURL, 0, $i);
 
 if (isset($_COOKIE[session_name()])) {
