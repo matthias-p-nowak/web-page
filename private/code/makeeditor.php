@@ -18,14 +18,15 @@ class  MakeEditor{
         <span onclick="topBoxHelp()">Help</span>
         </div>
         <script> 
-        document.body.prepend(document.getElementById('topbox'));
+        // document.body.prepend(document.getElementById('topbox'));
         addScript('tinymce/tinymce.min.js');
         addScript('js/editor.js'); 
         </script>
-        <style id="editStyle" x-action="replace">
-        #_page { cursor: crosshair; }
-        #_page [id] { cursor: context-menu; }
-        #_page [contenteditable]{ cursor: text; }  
+        <style id="edit_style" x-action="replace">
+        body { cursor: crosshair; }
+        body [id] { cursor: context-menu; }
+        body [contenteditable]{ cursor: text; }  
+        body::before { content: ""; display: block; height: 1rem; }
         </style>
         EOM;
     }
@@ -36,7 +37,7 @@ class  MakeEditor{
     {
         echo <<< EOM
         <div id="topbox" x-action="remove"></div>
-        <style id="editStyle" x-action="remove"></style>
+        <style id="edit_style" x-action="remove"></style>
         EOM;
     }
 }

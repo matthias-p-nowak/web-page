@@ -3,20 +3,26 @@ namespace Code;
 
 use DOMDocument;
 use DOMElement;
+use DOMNode;
 
 class Editor
 {
     const ALFABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ23456789';
     const IgnoreIDelements = ['hr', 'br'];
-
-    private string $fn; // determined filename
+    /** determined filename */
+    private string $fn; 
     private DOMDocument $srcDoc; // complete loaded document
     private ?DOMElement $srcElem; // specified source element
-    private string $id; // specified id
+    private string $id;
+
+    /**
+     * @var DOMNode|bool[]
+     */
+    private array $newNodes;
 
     private function __construct()
     {
-        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
     }
 
     /**
@@ -32,9 +38,18 @@ class Editor
         <dialog id="edi_tor" x-action="remove"></dialog>
         <script>makeEditable();</script>
         EOM;
-        if ($editor->srcElem != null) {
-            $editor->srcElem->setAttribute('x-action', 'replace');
-            echo ($editor->srcDoc->saveHTML($editor->srcElem));
+        if ($editor->newNodes) {
+            foreach ($editor->newNodes as $nn) {
+                if (isset($preNode)) {
+                    $nn->setAttribute('x-action', 'after');
+                    $nn->setAttribute('x-id', $preNode);
+                } else {
+                    $nn->setAttribute('x-action', 'replace');
+                }
+                $rt = $editor->srcDoc->saveHTML($nn);
+                $preNode = $nn->getAttribute('id');
+                echo ($rt);
+            }
         }
         return;
     }
@@ -45,6 +60,7 @@ class Editor
         error_log(print_r($_POST, true));
         $editor = new Editor();
         $editor->fetch();
+        $editor->checkMissingIds();
         if (isset($_POST['start'])) {
             $str = $editor->srcDoc->saveHTML($editor->srcElem);
             $more_id = '';
@@ -120,17 +136,15 @@ class Editor
     /**
      * @return void
      */
-    public static function AddMissingIds(\DOMElement $node): void
+    public static function AddMissingIds(\DOMNode $node): void
     {
-        if (!in_array($node->tagName, self::IgnoreIDelements)) {
-            $id = $node->getAttribute('id');
-            if ($id == null) {
-                $node->setAttribute('id', '_' . self::GetRandomId());
-            }
-        }
-        foreach ($node->childNodes as $cn) {
-            if ($cn instanceof \DOMElement) {
-                self::AddMissingIds($cn);
+        $xp = new \DOMXPath($node->ownerDocument);
+        $nodes = $xp->query('//*[not(@id)]', $node);
+        if ($nodes) {
+            foreach ($nodes as $node) {
+                if (!in_array($node->tagName, self::IgnoreIDelements)) {
+                    $node->setAttribute('id', '_' . self::GetRandomId());
+                }
             }
         }
     }
@@ -160,7 +174,7 @@ class Editor
     {
         global $htmlDir;
         $this->id = $_POST['id'];
-        $loc = $_SERVER["HTTP_REFERER"];;
+        $loc = $_SERVER["HTTP_REFERER"];
         $urlPath = explode('/', $loc);
         $fn = $urlPath[count($urlPath) - 1];
         if ($fn == "") {
@@ -175,6 +189,7 @@ class Editor
         $this->srcDoc->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $this->srcElem = $this->srcDoc->getElementById($this->id);
     }
+
     /**
      * @return void
      */
@@ -190,27 +205,52 @@ class Editor
         foreach ($xp->query('//*[@contenteditable]') as $n) {
             $n->removeAttribute('contenteditable');
         }
-        $node = $newDoc->firstChild;
-        self::AddMissingIds($node);
         foreach (glob($htmlDir . DIRECTORY_SEPARATOR . '*.html', GLOB_NOSORT) as $fn) {
             if (is_link($fn)) {
                 continue;
             }
             $content = file_get_contents($fn);
             $content = mb_convert_encoding($content, 'HTML-ENTITIES', "UTF-8");
-            $this->srcDoc = new \DOMDocument();
-            $this->srcDoc->encoding = 'utf-8';
+            $srcDoc = new \DOMDocument();
+            $srcDoc->encoding = 'utf-8';
             libxml_clear_errors();
-            $this->srcDoc->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-            $this->srcElem = $this->srcDoc->getElementById($this->id);
-            if ($this->srcElem != null) {
-                $newElem = $this->srcDoc->importNode($node, true);
-                $this->srcElem->replaceWith($newElem);
-                $this->srcDoc->saveHTMLFile($fn);
-                $this->srcElem=$newElem;
+            $srcDoc->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $tn = $srcDoc->getElementById($this->id);
+            if ($tn == null) {
+                continue;
+            }
+            $newNodes = [];
+            foreach ($newDoc->childNodes as $nn) {
+                $n = $srcDoc->importNode($nn, true);
+                self::AddMissingIds($n);
+                $newNodes[] = $n;
+            }
+            $this->srcDoc = $srcDoc;
+            $tn->replaceWith(...$newNodes);
+            $this->srcDoc->saveHTMLFile($fn);
+            $this->newNodes = $newNodes;
+        }
+        register_shutdown_function([Archive::class, 'SaveState']);
+    }
+    /**
+     * @return void
+     */
+    private function checkMissingIds(): void
+    {
+        $xp=new \DOMXPath($this->srcDoc);
+        $have2save=false;
+        $nodes=$xp->query('//body//*[not(@id)]');
+        if ($nodes) {
+            foreach ($nodes as $node) {
+                if (!in_array($node->tagName, self::IgnoreIDelements)) {
+                    $node->setAttribute('id', '_' . self::GetRandomId());
+                    $have2save=true;
+                }
             }
         }
-        register_shutdown_function([Archive::class,'SaveState']);
+        if($have2save){
+            $this->srcDoc->saveHTMLFile($this->fn);
+        }
     }
 
 }

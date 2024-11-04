@@ -119,7 +119,7 @@ class Page
      */
     private function showDialog(): void
     {
-        global $scriptURL, $htmlDir,$baseURL;
+        global $scriptURL, $htmlDir, $baseURL;
         echo <<< EOM
         <dialog id="show_page" x-action="replace">
         <h1>Page data for '$this->sn'</h1>
@@ -141,23 +141,23 @@ class Page
         <form action="$scriptURL/page" onsubmit="return false">
         <span name="duplicate" onclick="hxl_submit_form(event)">Duplicate</span>
         <span name="edit_style" onclick="hxl_submit_form(event)">Edit page style</span>
-        <span name="delete_page" onclick="hxl_submit_form(event)">Delete this page</span>
+        EOM;
+        if ($this->isHome) {
+
+        } else {
+            echo <<< EOM
+            <span name="delete_page" onclick="hxl_submit_form(event)">Delete this page</span>
+            <span name="make_home" onclick="hxl_submit_form(event)">Make this the home page</span>
+            EOM;
+        }
+        echo <<<EOM
         </form>
         </div>
         <div>
         <h2>Existing pages:</h2>
-        <ul>
         EOM;
-        foreach (glob($htmlDir . DIRECTORY_SEPARATOR . '*.html') as $fn) {
-            if (is_link($fn)) {
-                continue;
-            }
-            $path = explode(DIRECTORY_SEPARATOR, $fn);
-            $sn = $path[count($path) - 1];
-            echo "<li><a href=\"$baseURL/$sn\">$sn</a></li>";
-        }
+        $this->showAllHtmls(false);
         echo <<< EOM
-        </ul>
         </div>
         </dialog>
         <script>
@@ -259,5 +259,21 @@ class Page
             $this->fn = $newFn;
         }
 
+    }
+
+    private function showAllHtmls(bool $replace)
+    {
+        global $htmlDir, $baseURL;
+        $strReplace = $replace ? 'x-action="replace"' : '';
+        echo "<ul id=\"html_list\" $strReplace>";
+        foreach (glob($htmlDir . DIRECTORY_SEPARATOR . '*.html') as $fn) {
+            if (is_link($fn)) {
+                continue;
+            }
+            $path = explode(DIRECTORY_SEPARATOR, $fn);
+            $sn = $path[count($path) - 1];
+            echo "<li><a href=\"$baseURL/$sn\">$sn</a></li>";
+        }
+        echo "</ul>";
     }
 }
