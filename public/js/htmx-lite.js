@@ -79,7 +79,10 @@ function hxl_process_body(body) {
                 otherId.prepend(n);
                 break;
             case 'remove':
-                sameId.remove();
+                if (sameId != null)
+                    sameId.remove();
+                else
+                    console.log(`element ${n.id} was not found`);
                 break;
             case 'replace':
                 if (sameId != null)

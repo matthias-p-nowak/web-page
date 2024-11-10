@@ -19,7 +19,7 @@ class  MakeEditor{
         </div>
         <script> 
         // document.body.prepend(document.getElementById('topbox'));
-        addScript('tinymce/tinymce.min.js');
+        // addScript('tinymce/tinymce.min.js');
         addScript('js/editor.js'); 
         </script>
         <style id="edit_style" x-action="replace">

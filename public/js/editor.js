@@ -75,9 +75,10 @@ function stopEditor(event) {
     editor.remove();
 }
 
-function startEditor() {
+async function startEditor() {
     let editor = document.getElementById('edi_tor');
     editor.showModal();
+    await addScript('tinymce/tinymce.min.js');
     tinymce.remove();
     tinymce.init(
         {
@@ -124,16 +125,16 @@ function startEditor() {
 
 function makeEditable() {
     // runs when it is loaded
-    let page = document.getElementById('_page');
+    let page = document.querySelector('div.page');
     if (page != null) {
-        page.querySelectorAll('[id]').forEach(element => {
+        document.querySelectorAll('div.page [id]').forEach(element => {
             if (element.childNodes.length >= 1 && element.firstChild.nodeType === Node.TEXT_NODE && element.firstChild.nodeValue.trim() != '')  {
                 element.setAttribute('contenteditable', 'true');
             }
         });
+        page.oninput = gotInput;
+        page.oncontextmenu = showContextMenu;
     }
-    page.oninput = gotInput;
-    page.oncontextmenu = showContextMenu;
 }
 
 makeEditable();

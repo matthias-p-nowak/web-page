@@ -59,9 +59,10 @@ try {
             '/logout' => Code\Login::Logout(),
             '/makeeditor' => Code\MakeEditor::Add(),
             '/page' => Code\Page::Handle(),
+            '/reindex' => Code\HtmlDoc::ReIndex(),
             '/saveState' => Code\Archive::SaveState(),
             '/saveText' => Code\Editor::SaveText(),
-            default => http_response_code(404),
+            default => noDefault(),
         };
     } else {
         Code\Login::Login();
@@ -69,11 +70,6 @@ try {
 } catch (Exception $ex) {
     error_log("got exception $ex");
 } finally {
-    if (http_response_code() == 404) {
-        echo <<<EOM
-        Login expired, login anew!
-        EOM;
-    }
     // logging statistics
     $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
     $time = number_format($time, 4);
@@ -83,4 +79,11 @@ try {
     error_log("used  $time seconds and $incCnt files: $files");
     // saving state to datafile
     file_put_contents($dataFile, serialize($data));
+}
+
+function noDefault(){
+    http_response_code(404);
+    echo <<< EOM
+    no default action, try login
+    EOM;
 }

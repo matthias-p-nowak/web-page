@@ -8,6 +8,8 @@ use DOMElement;
 class Page
 {
 
+    const ALFABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ23456789';
+
     /** determined filename (long) */
     private string $fn;
     /** short name */
@@ -70,7 +72,12 @@ class Page
         }
         if (isset($_POST['filename'])) {
             $fn = $_POST['filename'];
-            $p->SafeRename($fn);
+            $p->SafeRename($fn);            
+            return;
+        }
+        if ($_POST['name'] == 'duplicate') {
+            $p->Duplicate();
+            $p->showAllHtmls(true);
             return;
         }
         if (isset($_POST['name'])) {
@@ -114,6 +121,7 @@ class Page
         }
         $this->saved = date("Y-m-d H:i:s", filemtime($this->fn));
     }
+
     /**
      * @return void
      */
@@ -200,7 +208,9 @@ class Page
     {
         echo ($this->doc->saveHTML($node));
     }
-
+    /**
+     * @return void
+     */
     private function showDescriptionForm(bool $replace)
     {
         global $scriptURL;
@@ -215,6 +225,9 @@ class Page
         </form>
         EOM;
     }
+    /**
+     * @return void
+     */
     private function showFileName(bool $replace)
     {
         global $scriptURL;
@@ -230,10 +243,12 @@ class Page
         </form>
         EOM;
     }
-
+    /**
+     * @return void
+     */
     private function SafeRename($fn)
     {
-        global $htmlDir;
+        global $htmlDir,$baseURL;
         if (str_contains($fn, '..')) {
             http_response_code(400);
             echo 'attempting to reach parent directory';
@@ -257,10 +272,15 @@ class Page
         }
         if (rename($this->fn, $newFn)) {
             $this->fn = $newFn;
+            echo <<< EOM
+            <script>window.location.href= '${baseURL}${fn}';</script>
+            EOM;
         }
 
     }
-
+    /**
+     * @return void
+     */
     private function showAllHtmls(bool $replace)
     {
         global $htmlDir, $baseURL;
@@ -272,8 +292,43 @@ class Page
             }
             $path = explode(DIRECTORY_SEPARATOR, $fn);
             $sn = $path[count($path) - 1];
-            echo "<li><a href=\"$baseURL/$sn\">$sn</a></li>";
+            echo "<li><a href=\"${baseURL}${sn}\">$sn</a></li>";
         }
         echo "</ul>";
     }
+
+    /**
+     * @return void
+     */
+    private function Duplicate()
+    {
+        $fn = $this->fn;
+        $dir = dirname($fn);
+        $p = '/^(.+?)(\d*)\.(.*)$/';
+        preg_match($p, $this->sn, $matches);
+        $n = (int) $matches[2];
+        do {
+            $n += 1;
+            $tn = $dir . DIRECTORY_SEPARATOR . sprintf('%s%03d.%s', $matches[1], $n, $matches[3]);
+        } while (file_exists($tn));
+        error_log("duplicating $fn onto $tn");
+        // copy($fn,$tn); - need to load and replace _id's
+        $xp=new \DOMXPath($this->doc);
+        $nodes=$xp->query('//*[@id[starts-with(.,"_")]]');
+        foreach($nodes as $node){
+            $node->setAttribute('id','_'.Editor::GetRandomId());
+        }
+    }
+
+    public function GetRandomId(): string
+    {
+        $l = strlen(SELF::ALFABET);
+        $rv = '';
+        for ($j = 0; $j < 16; $j += 1) {
+            $i = random_int(0, $l - 1);
+            $rv .= SELF::ALFABET[$i];
+        }
+        return $rv;
+    }
+
 }
