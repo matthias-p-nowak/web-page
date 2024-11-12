@@ -25,7 +25,7 @@ class Editor
     public static function Edit(): void
     {
         Login::Check();
-        error_log(print_r($_POST, true));
+        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' '.print_r($_POST, true));
         $editor = new Editor();
         if (is_null($editor->doc)) {
             http_response_code(404);

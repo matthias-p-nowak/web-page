@@ -113,7 +113,7 @@ class Editor
     {
         $id = $node->getAttribute('id');
         if ($id != null && str_starts_with($id, '_')) {
-            $node->setAttribute('id', '_' . self::GetRandomId());
+            $node->setAttribute('id', '_' . self::getRandomId());
         }
         foreach ($node->childNodes as $cn) {
             if ($cn instanceof \DOMElement) {
@@ -143,7 +143,7 @@ class Editor
         if ($nodes) {
             foreach ($nodes as $node) {
                 if (!in_array($node->tagName, self::IgnoreIDelements)) {
-                    $node->setAttribute('id', '_' . self::GetRandomId());
+                    $node->setAttribute('id', '_' . self::getRandomId());
                 }
             }
         }
@@ -243,7 +243,7 @@ class Editor
         if ($nodes) {
             foreach ($nodes as $node) {
                 if (!in_array($node->tagName, self::IgnoreIDelements)) {
-                    $node->setAttribute('id', '_' . self::GetRandomId());
+                    $node->setAttribute('id', '_' . self::getRandomId());
                     $have2save=true;
                 }
             }

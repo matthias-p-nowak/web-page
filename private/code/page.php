@@ -2,7 +2,6 @@
 
 namespace Code;
 
-use DOMDocument;
 use DOMElement;
 
 class Page
@@ -10,14 +9,7 @@ class Page
 
     const ALFABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ23456789';
 
-    /** determined filename (long) */
-    private string $fn;
-    /** short name */
-    private string $sn;
-    /** index.html is linked to this */
-    private bool $isHome;
-
-    private DOMDocument $doc;
+    private HtmlDoc $doc;
     private $title;
     private $description;
 
@@ -28,55 +20,64 @@ class Page
      */
     public static function Handle(): void
     {
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
         $p = new Page();
         if (isset($_POST['title'])) {
             $title = $_POST['title'];
             $p->title = $title;
-            $tns = $p->doc->getElementsByTagName('title');
+            $tns = $p->doc->get('//title');
+            $doc = $p->doc->document;
+            // $tns = $p->doc->getElementsByTagName('title');
             if ($tns->length == 0) {
-                $tn = $p->doc->createElement('title', htmlentities($title));
-                $head = $p->doc->getElementsByTagName('head')[0];
+                $tn = $doc->createElement('title', htmlentities($title));
+                $head=$p->doc->get('//head')[0];
                 $head->append($tn);
             } else {
-                $tn = $tns[0];
-                $tn->textContent = htmlentities($title);
+
             }
-            $tn->setAttribute('id', '_title_');
-            $p->save();
-            $tn->setAttribute('x-action', 'replace');
-            $tn->setAttribute('x-id', 'head');
-            $p->show($tn);
-            $p->showTitleForm(true);
+            //     $tn = $p->doc->
+            //     $head = $p->doc->getElementsByTagName('head')[0];
+            //     $head->append($tn);
+            // } else {
+            //     $tn = $tns[0];
+            //     $tn->textContent = htmlentities($title);
+            // }
+            // $tn->setAttribute('id', '_title_');
+            // $p->save();
+            // $tn->setAttribute('x-action', 'replace');
+            // $tn->setAttribute('x-id', 'head');
+            // $p->show($tn);
+            // $p->showTitleForm(true);
             return;
         }
         if (isset($_POST['description'])) {
-            $p->description = $_POST['description'];
-            $xp = new \DOMXPath($p->doc);
-            $metas = $xp->query('//meta[@name="description"]');
-            if ($metas->length == 0) {
-                $dn = $p->doc->createElement('meta');
-                $dn->setAttribute('name', 'description');
-                $head = $p->doc->getElementsByTagName('head')[0];
-                $head->append($dn);
-            } else {
-                $dn = $metas[0];
-            }
-            $dn->setAttribute('content', htmlspecialchars($p->description));
-            $dn->setAttribute('id', '_descr_');
-            $p->save();
-            $dn->setAttribute('x-action', 'replace');
-            $dn->setAttribute('x-id', 'head');
-            $p->show($dn);
-            $p->showDescriptionForm(true);
+            // $p->description = $_POST['description'];
+            // $xp = new \DOMXPath($p->doc);
+            // $metas = $xp->query('//meta[@name="description"]');
+            // if ($metas->length == 0) {
+            //     $dn = $p->doc->createElement('meta');
+            //     $dn->setAttribute('name', 'description');
+            //     $head = $p->doc->getElementsByTagName('head')[0];
+            //     $head->append($dn);
+            // } else {
+            //     $dn = $metas[0];
+            // }
+            // $dn->setAttribute('content', htmlspecialchars($p->description));
+            // $dn->setAttribute('id', '_descr_');
+            // $p->save();
+            // $dn->setAttribute('x-action', 'replace');
+            // $dn->setAttribute('x-id', 'head');
+            // $p->show($dn);
+            // $p->showDescriptionForm(true);
             return;
         }
         if (isset($_POST['filename'])) {
             $fn = $_POST['filename'];
-            $p->SafeRename($fn);            
+            $p->safeRename($fn);
             return;
         }
-        if ($_POST['name'] == 'duplicate') {
-            $p->Duplicate();
+        if ($_POST['name'] ?? '' == 'duplicate') {
+            $p->createDuplicate();
             $p->showAllHtmls(true);
             return;
         }
@@ -92,34 +93,17 @@ class Page
         global $htmlDir;
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
         $loc = $_SERVER["HTTP_REFERER"];
-        $urlPath = explode('/', $loc);
-        $fn = $urlPath[count($urlPath) - 1];
-        $ih = readlink($htmlDir . DIRECTORY_SEPARATOR . 'index.html');
-        if ($fn == "") {
-            $fn = $ih;
+        $doc = HtmlDoc::fromUrl($loc);
+        if (is_null($doc)) {
+            return;
         }
-        $this->sn = $fn;
-        $this->isHome = $ih == $this->sn;
-        $this->fn = $htmlDir . DIRECTORY_SEPARATOR . $fn;
-        //
-        $content = file_get_contents($this->fn);
-        $content = mb_convert_encoding($content, 'HTML-ENTITIES', "UTF-8");
-        $this->doc = new \DOMDocument();
-        $this->doc->encoding = 'utf-8';
-        libxml_clear_errors();
-        $this->doc->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $tn = $this->doc->getElementsByTagName('title');
-        $this->title = $tn[0]?->nodeValue ?? '';
-        $xp = new \DOMXPath($this->doc);
-        $metas = $xp->query('//meta[@name="description"]');
-        if ($metas->length > 0) {
-            $dn = $metas[0];
-            $descr = $dn->getAttribute('content');
-            $this->description = $descr ?? '';
-        } else {
-            $this->description = '';
-        }
-        $this->saved = date("Y-m-d H:i:s", filemtime($this->fn));
+
+        $this->doc = $doc;
+        $tns = $doc->get('//title');
+        $this->title = $tns[0]?->nodeValue ?? '';
+        $metas = $doc->get('//meta[@name="description"]');
+        $this->description = $metas?->item(0)?->getAttribute('content') ?? '';
+        $this->saved = date("Y-m-d H:i:s", filemtime($this->doc->filename));
     }
 
     /**
@@ -127,10 +111,10 @@ class Page
      */
     private function showDialog(): void
     {
-        global $scriptURL, $htmlDir, $baseURL;
+        global $scriptURL;
         echo <<< EOM
         <dialog id="show_page" x-action="replace">
-        <h1>Page data for '$this->sn'</h1>
+        <h1>Page data for '{$this->doc->shortName}'</h1>
         <h2>Page details:</h2>
         <div class="formtable">
         <div>
@@ -150,7 +134,7 @@ class Page
         <span name="duplicate" onclick="hxl_submit_form(event)">Duplicate</span>
         <span name="edit_style" onclick="hxl_submit_form(event)">Edit page style</span>
         EOM;
-        if ($this->isHome) {
+        if ($this->doc->isIndex) {
 
         } else {
             echo <<< EOM
@@ -211,7 +195,7 @@ class Page
     /**
      * @return void
      */
-    private function showDescriptionForm(bool $replace)
+    private function showDescriptionForm(bool $replace): void
     {
         global $scriptURL;
         $description = htmlentities($this->description);
@@ -228,11 +212,11 @@ class Page
     /**
      * @return void
      */
-    private function showFileName(bool $replace)
+    private function showFileName(bool $replace): void
     {
         global $scriptURL;
         $strReplace = $replace ? 'x-action="replace"' : '';
-        $filename = htmlentities($this->sn);
+        $filename = htmlentities($this->doc->shortName);
         echo <<< EOM
         <form id="form_filename" action="$scriptURL/page" onsubmit="return false;" $strReplace>
         <label for="filename">Filename</label>
@@ -245,10 +229,11 @@ class Page
     }
     /**
      * @return void
+     * @param mixed $fn
      */
-    private function SafeRename($fn)
+    private function safeRename($fn): void
     {
-        global $htmlDir,$baseURL;
+        global $htmlDir, $baseURL;
         if (str_contains($fn, '..')) {
             http_response_code(400);
             echo 'attempting to reach parent directory';
@@ -271,7 +256,7 @@ class Page
             return;
         }
         if (rename($this->fn, $newFn)) {
-            $this->fn = $newFn;
+            // $this->fn = $newFn;
             echo <<< EOM
             <script>window.location.href= '${baseURL}${fn}';</script>
             EOM;
@@ -281,7 +266,7 @@ class Page
     /**
      * @return void
      */
-    private function showAllHtmls(bool $replace)
+    private function showAllHtmls(bool $replace): void
     {
         global $htmlDir, $baseURL;
         $strReplace = $replace ? 'x-action="replace"' : '';
@@ -300,7 +285,7 @@ class Page
     /**
      * @return void
      */
-    private function Duplicate()
+    private function createDuplicate(): void
     {
         $fn = $this->fn;
         $dir = dirname($fn);
@@ -313,22 +298,11 @@ class Page
         } while (file_exists($tn));
         error_log("duplicating $fn onto $tn");
         // copy($fn,$tn); - need to load and replace _id's
-        $xp=new \DOMXPath($this->doc);
-        $nodes=$xp->query('//*[@id[starts-with(.,"_")]]');
-        foreach($nodes as $node){
-            $node->setAttribute('id','_'.Editor::GetRandomId());
-        }
-    }
-
-    public function GetRandomId(): string
-    {
-        $l = strlen(SELF::ALFABET);
-        $rv = '';
-        for ($j = 0; $j < 16; $j += 1) {
-            $i = random_int(0, $l - 1);
-            $rv .= SELF::ALFABET[$i];
-        }
-        return $rv;
+        // $xp=new \DOMXPath($this->doc);
+        // $nodes=$xp->query('//*[@id[starts-with(.,"_")]]');
+        // foreach($nodes as $node){
+        //     $node->setAttribute('id','_'.Editor::getRandomId());
+        // }
     }
 
 }

@@ -2,6 +2,8 @@
 namespace Code;
 
 use DOMDocument;
+use DOMNodeList;
+use DOMXPath;
 
 class HtmlDoc
 {
@@ -10,8 +12,13 @@ class HtmlDoc
     const ALFABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ23456789';
     const IgnoreIdElements = ['hr', 'br'];
 
-    private string $filename;
+    /** full path */
+    public string $filename;
     public DOMDocument $document;
+    private DOMXPath $xp;
+    public bool $isIndex;
+    /** last part of filename */
+    public string $shortName;
 
     public function __construct(private string $content)
     {
@@ -28,13 +35,26 @@ class HtmlDoc
      */
     public static function fromFile($filename): ?HtmlDoc
     {
+        global $htmlDir;
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
+        $indexPath = realpath($htmlDir . DIRECTORY_SEPARATOR . 'index.html');
+        if (!str_starts_with($filename, DIRECTORY_SEPARATOR)) {
+
+            if ($filename == "") {
+                $filename = $indexPath;
+            } else {
+                $filename = $htmlDir . DIRECTORY_SEPARATOR . $filename;
+            }
+        }
         if (!file_exists($filename)) {
             return null;
         }
         $content = file_get_contents($filename);
-        $hd=new HtmlDoc($content);
-        $hd->filename=$filename;
+        $hd = new HtmlDoc($content);
+        $hd->filename = $filename;
+        $hd->isIndex = $filename == $indexPath;
+        $path=explode(DIRECTORY_SEPARATOR, $filename );
+        $hd->shortName=$path[count($path)-1];
         return $hd;
     }
 
@@ -100,6 +120,14 @@ class HtmlDoc
      */
     public function save2file(): void
     {
+        $xp = new \DOMXPath($this->document);
+        foreach ($xp->query('//*[@contenteditable]') as $n) {
+            $n->removeAttribute('contenteditable');
+        }
+        $xp = new \DOMXPath($this->document);
+        foreach ($xp->query('//*[@x-action]') as $n) {
+            $n->removeAttribute('x-action');
+        }
         $this->document->saveHTMLFile($this->filename);
         register_shutdown_function([Archive::class, 'SaveState']);
     }
@@ -109,7 +137,7 @@ class HtmlDoc
     public static function ReIndex(): void
     {
         global $htmlDir;
-        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
         foreach (glob($htmlDir . DIRECTORY_SEPARATOR . '*.html', GLOB_NOSORT) as $fn) {
             if (is_link($fn)) {
                 continue;
@@ -123,9 +151,28 @@ class HtmlDoc
      * @param mixed $node
      * @return string|bool
      */
-    public function getNodeOuterHtml($node): string|bool
+    public function getNodeOuterHtml($node): string | bool
     {
-        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
         return $this->document->saveHTML($node);
+    }
+    /**
+     * @return ?HtmlDoc
+     * @param mixed $loc the url to find the right file
+     */
+    public static function fromUrl($loc): ?HtmlDoc
+    {
+        $urlPath = explode('/', $loc);
+        $fn = $urlPath[count($urlPath) - 1];
+        return HtmlDoc::fromFile($fn);
+    }
+    /**
+     * executes a XPath query and returns a list
+     * @return DOMNodeList|bool
+     */
+    public function get(string $query): DOMNodeList | bool
+    {
+        $xp = $this->xp ?? ($this->xp = new \DOMXPath($this->document));
+        return $xp->query($query);
     }
 }
