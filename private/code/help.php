@@ -14,10 +14,6 @@ class Help{
         </ul>
         Press 'Escape' to get out of editor or this help!
         </dialog>
-        <script>
-        let d=document.getElementById('show_help');
-        d.showModal();
-        </script>
         EOM;
     }
 }

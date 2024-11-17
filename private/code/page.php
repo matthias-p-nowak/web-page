@@ -8,11 +8,13 @@ class Page
 {
 
     const ALFABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ23456789';
-
+    /** all about one html file */
     private HtmlDoc $doc;
+    /** title of the document */
     private $title;
+    /** the meta name=description content */
     private $description;
-
+    /** date and time of last saving */
     private string $saved;
 
     /**
@@ -22,53 +24,45 @@ class Page
     {
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
         $p = new Page();
+        $doc = $p->doc->document;
+        $head = $p->doc->get('//head')->item(0);
         if (isset($_POST['title'])) {
             $title = $_POST['title'];
             $p->title = $title;
             $tns = $p->doc->get('//title');
-            $doc = $p->doc->document;
             // $tns = $p->doc->getElementsByTagName('title');
             if ($tns->length == 0) {
                 $tn = $doc->createElement('title', htmlentities($title));
-                $head=$p->doc->get('//head')[0];
                 $head->append($tn);
             } else {
-
+                $tn = $tns->item(0);
+                $tn->textContent = htmlentities($title);
             }
-            //     $tn = $p->doc->
-            //     $head = $p->doc->getElementsByTagName('head')[0];
-            //     $head->append($tn);
-            // } else {
-            //     $tn = $tns[0];
-            //     $tn->textContent = htmlentities($title);
-            // }
-            // $tn->setAttribute('id', '_title_');
-            // $p->save();
-            // $tn->setAttribute('x-action', 'replace');
-            // $tn->setAttribute('x-id', 'head');
-            // $p->show($tn);
-            // $p->showTitleForm(true);
+            $tn->setAttribute('id', '_title_');
+            $p->save();
+            $tn->setAttribute('x-action', 'replace');
+            $tn->setAttribute('x-id', 'head');
+            echo ($p->doc->document->saveHTML($tn));
+            $p->showTitleForm(true);
             return;
         }
         if (isset($_POST['description'])) {
-            // $p->description = $_POST['description'];
-            // $xp = new \DOMXPath($p->doc);
-            // $metas = $xp->query('//meta[@name="description"]');
-            // if ($metas->length == 0) {
-            //     $dn = $p->doc->createElement('meta');
-            //     $dn->setAttribute('name', 'description');
-            //     $head = $p->doc->getElementsByTagName('head')[0];
-            //     $head->append($dn);
-            // } else {
-            //     $dn = $metas[0];
-            // }
-            // $dn->setAttribute('content', htmlspecialchars($p->description));
-            // $dn->setAttribute('id', '_descr_');
-            // $p->save();
-            // $dn->setAttribute('x-action', 'replace');
-            // $dn->setAttribute('x-id', 'head');
-            // $p->show($dn);
-            // $p->showDescriptionForm(true);
+            $p->description = $_POST['description'];
+            $metas = $p->doc->get('//meta[@name="description"]');
+            if ($metas->length == 0) {
+                $dn = $doc->createElement('meta');
+                $dn->setAttribute('name', 'description');
+                $head->append($dn);
+            } else {
+                $dn = $metas->item(0);
+            }
+            $dn->setAttribute('content', htmlspecialchars($p->description));
+            $dn->setAttribute('id', '_descr_');
+            $p->save();
+            $dn->setAttribute('x-action', 'replace');
+            $dn->setAttribute('x-id', 'head');
+            echo( $p->doc->document->saveHTML($dn));
+            $p->showDescriptionForm(true);
             return;
         }
         if (isset($_POST['filename'])) {
@@ -76,9 +70,23 @@ class Page
             $p->safeRename($fn);
             return;
         }
-        if ($_POST['name'] ?? '' == 'duplicate') {
+        $postName=$_POST['name'] ?? '';
+        if ($postName == 'duplicate') {
             $p->createDuplicate();
             $p->showAllHtmls(true);
+            return;
+        }
+        if($postName=='delete_page'){
+            if($p->doc->isIndex){
+                http_response_code(403);
+                echo "can't delete homepage";
+                return;
+            }
+            $p->deletePage();
+            return;
+        }
+        if($postName == 'make_home'){
+            $p->makeHome();
             return;
         }
         if (isset($_POST['name'])) {
@@ -152,10 +160,6 @@ class Page
         echo <<< EOM
         </div>
         </dialog>
-        <script>
-        let dialog=document.getElementById('show_page');
-        dialog.showModal();
-        </script>
         EOM;
     }
     /**
@@ -163,7 +167,7 @@ class Page
      */
     private function save(): void
     {
-        $this->doc->saveHTMLFile($this->fn);
+        $this->doc->save2file();
         $this->saved = date("Y-m-d H:i:s");
         register_shutdown_function([Archive::class, 'SaveState']);
     }
@@ -185,13 +189,7 @@ class Page
         </form>
         EOM;
     }
-    /**
-     * @return void
-     */
-    private function show(DOMElement $node): void
-    {
-        echo ($this->doc->saveHTML($node));
-    }
+
     /**
      * @return void
      */
@@ -250,20 +248,30 @@ class Page
             echo 'attempting to overwrite ' . $newFn;
             return;
         }
-        if ($this->isHome) {
-            http_response_code(400);
-            echo 'attempting to change landing page';
-            return;
-        }
-        if (rename($this->fn, $newFn)) {
-            // $this->fn = $newFn;
+        if (rename($this->doc->filename, $newFn)) {
             echo <<< EOM
             <script>window.location.href= '${baseURL}${fn}';</script>
             EOM;
+        }else{
+            error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__." Can't rename the file $this->doc->filename");
+            return;
         }
-
+        if ($this->doc->isIndex) {
+            $indexFn=implode(DIRECTORY_SEPARATOR,[$htmlDir, 'index.html']);
+            if(is_link($indexFn)){
+                if(!unlink($indexFn)){
+                    error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' can\'t unlink index.html');
+                    return;
+                }
+                if(!symlink($newFn,$indexFn)){
+                    error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' can\'t link');
+                    return;
+                }
+            }
+        }
     }
     /**
+     * shows a list of html files
      * @return void
      */
     private function showAllHtmls(bool $replace): void
@@ -287,22 +295,62 @@ class Page
      */
     private function createDuplicate(): void
     {
-        $fn = $this->fn;
+        $fn = $this->doc->filename;
         $dir = dirname($fn);
         $p = '/^(.+?)(\d*)\.(.*)$/';
-        preg_match($p, $this->sn, $matches);
+        preg_match($p, $this->doc->shortName, $matches);
         $n = (int) $matches[2];
         do {
             $n += 1;
             $tn = $dir . DIRECTORY_SEPARATOR . sprintf('%s%03d.%s', $matches[1], $n, $matches[3]);
         } while (file_exists($tn));
         error_log("duplicating $fn onto $tn");
-        // copy($fn,$tn); - need to load and replace _id's
-        // $xp=new \DOMXPath($this->doc);
-        // $nodes=$xp->query('//*[@id[starts-with(.,"_")]]');
-        // foreach($nodes as $node){
-        //     $node->setAttribute('id','_'.Editor::getRandomId());
-        // }
+        $this->doc->filename=$tn;
+        $this->doc->replaceAllLocalIds();
+        $this->doc->save2file();
+    }
+    /**
+     * @return void
+     */
+    private function deletePage(): void
+    {
+        global $baseURL;
+        $fn=$this->doc->filename;
+        if(is_link($fn)){
+            http_response_code(403);
+            echo "can't delete a link";
+            return;
+        }
+        if(!unlink($fn)){
+            http_response_code(409);
+            echo "unlink failed";
+            return;
+        }
+        echo <<<EOM
+        <script>window.location.href = "$baseURL";</script>
+        EOM;
+    }
+    /**
+     * @return void
+     */
+    private function makeHome()
+    {
+        global $htmlDir,$baseURL;
+        $indexFn=implode(DIRECTORY_SEPARATOR,[$htmlDir, 'index.html']);
+        if(is_link($indexFn)){
+            if(!unlink($indexFn)){
+                error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' can\'t unlink index.html');
+                return;
+            }
+            if(!symlink($this->doc->filename,$indexFn)){
+                error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' can\'t link');
+                return;
+            }
+            echo <<<EOM
+            <script>window.location.href = "$baseURL";</script>
+            EOM;
+        }
+
     }
 
 }

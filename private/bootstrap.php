@@ -58,6 +58,7 @@ try {
             '/login' => Code\Login::Login(),
             '/logout' => Code\Login::Logout(),
             '/makeeditor' => Code\MakeEditor::Add(),
+            '/media' => Code\Media::Handle(),
             '/page' => Code\Page::Handle(),
             '/reindex' => Code\HtmlDoc::ReIndex(),
             '/saveState' => Code\Archive::SaveState(),
@@ -83,7 +84,8 @@ try {
 
 function noDefault(){
     http_response_code(404);
+    $p=$_SERVER['PATH_INFO'];
     echo <<< EOM
-    no default action, try login
+    no default action, try login, got $p
     EOM;
 }

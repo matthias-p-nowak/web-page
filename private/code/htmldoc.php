@@ -2,6 +2,7 @@
 namespace Code;
 
 use DOMDocument;
+use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 
@@ -51,6 +52,7 @@ class HtmlDoc
         }
         $content = file_get_contents($filename);
         $hd = new HtmlDoc($content);
+        $filename=realpath($filename);
         $hd->filename = $filename;
         $hd->isIndex = $filename == $indexPath;
         $path=explode(DIRECTORY_SEPARATOR, $filename );
@@ -105,6 +107,7 @@ class HtmlDoc
         $e = $this->document->getElementById($id);
         return $this->document->saveHTML($e);
     }
+
     /**
      * @return void
      */
@@ -116,6 +119,7 @@ class HtmlDoc
         }
     }
     /**
+     * saves the html document to the stored filename
      * @return void
      */
     public function save2file(): void

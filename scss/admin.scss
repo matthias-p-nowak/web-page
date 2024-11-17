@@ -96,6 +96,39 @@ dialog#show_page {
     min-width: 50%;
 }
 
+dialog#media_picture {
+    border: none;
+    border-radius: 1rem;
+    outline: thin blue solid;
+
+    form#drop_Area {
+        border: thin #a0a0a0 solid;
+        padding: 0.5rem;
+        margin: 2rem;
+        box-shadow: 0 0 0.2rem 0.1rem #a0a0a0;
+        border-radius: 0.5rem;
+        * {
+            margin: 0.5rem;
+        }
+
+        input#files {
+            border: none; // thin green solid;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            display: block;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            display: block;
+            margin-left: auto;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            
+        }
+    }
+}
+
 div.formtable {
 
     display: table;
@@ -124,6 +157,8 @@ div.formtable {
             padding: 0.5rem;
             border: $border;
             display: table-cell;
+            margin-top: auto;
+            margin-bottom: auto;
         }
 
         label {
@@ -133,8 +168,13 @@ div.formtable {
         input {
             padding: 0.3rem;
             margin: 0.5rem;
-            min-width: 40rem;
+            // min-width: 40rem;
             border: none; // thin solid red;
+        }
+        img {
+            max-width: 8rem;
+            max-height: 5rem;
+            border: none;
         }
     }
 }

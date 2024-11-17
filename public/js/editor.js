@@ -1,11 +1,13 @@
 function topBoxPage() {
     let topBox = document.getElementById('topbox');
-    let formData=new FormData();
-    hxl_send_form('admin.php/page',formData,topBox);
+    let formData = new FormData();
+    hxl_send_form('admin.php/page', formData, topBox);
 }
 
 function topBoxMedia() {
-    alert('topBoxMedia function');
+    let topBox = document.getElementById('topbox');
+    let formData = new FormData();
+    hxl_send_form('admin.php/media', formData, topBox);
 }
 
 function topBoxLogout() {
@@ -17,7 +19,7 @@ function topBoxRewind() {
     alert('topBoxRewind function');
 }
 
-function topBoxHelp(){
+function topBoxHelp() {
     let topBox = document.getElementById('topbox');
     hxl_send_form('admin.php/help', null, topBox);
 }
@@ -69,7 +71,6 @@ function showContextMenu(event) {
 
 function stopEditor(event) {
     let editor = document.getElementById('edi_tor');
-    editor.showModal();
     tinymce.remove();
     editor.close();
     editor.remove();
@@ -77,7 +78,6 @@ function stopEditor(event) {
 
 async function startEditor() {
     let editor = document.getElementById('edi_tor');
-    editor.showModal();
     await addScript('tinymce/tinymce.min.js');
     tinymce.remove();
     tinymce.init(
@@ -128,7 +128,7 @@ function makeEditable() {
     let page = document.querySelector('div.page');
     if (page != null) {
         document.querySelectorAll('div.page [id]').forEach(element => {
-            if (element.childNodes.length >= 1 && element.firstChild.nodeType === Node.TEXT_NODE && element.firstChild.nodeValue.trim() != '')  {
+            if (element.childNodes.length >= 1 && element.firstChild.nodeType === Node.TEXT_NODE && element.firstChild.nodeValue.trim() != '') {
                 element.setAttribute('contenteditable', 'true');
             }
         });

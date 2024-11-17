@@ -15,35 +15,39 @@ class Archive
             return;
         }
         self::$savedAlready = true;
-        error_log('got to save state to ' . $archive);
         if (file_exists($archive)) {
             $lm = filemtime($archive);
         } else {
             $lm = 0;
         }
+        $mfs = $config->maxArchive ?? 10e8;
         try {
             $ds = date('YmdHi');
-            foreach (['*.html', '*.css'] as $fpattern) {
+            $media = 'media' . DIRECTORY_SEPARATOR . '*.*';
+            $p = explode(DIRECTORY_SEPARATOR, $htmlDir);
+            $htmlLen = count($p);
+            foreach (['*.html', '*.css', $media] as $fpattern) {
                 foreach (glob($htmlDir . DIRECTORY_SEPARATOR . $fpattern, GLOB_NOSORT) as $fn) {
                     if (is_link($fn)) {
                         continue;
                     }
                     if (filemtime($fn) > $lm) {
+                        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' ' . $fn);
                         if (is_null($za)) {
                             $za = new \ZipArchive();
                             $za->open($archive, \ZipArchive::CREATE);
-                            $mfs = $config->maxArchive ?? 10e8;
                             if (filesize($archive) > $mfs) {
-                                $cnt = $za->count;
-                                $cnt = $cnt / 20;
+                                error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' ' . filesize($archive));
+                                $cnt = $za->count();
+                                $cnt = $cnt / 20 + 2;
                                 for ($i = 0; $i < $cnt; $i += 1) {
-                                    if (!$za->deleteIndex(0)) {
+                                    if (!$za->deleteIndex($i)) {
                                         error_log("can't delete index 0 the $i time");
                                     };
                                 }
                             }
                         }
-                        $p = explode(DIRECTORY_SEPARATOR, $fn);
+                        $p = explode(DIRECTORY_SEPARATOR, $fn, $htmlLen + 1);
                         $sn = $p[count($p) - 1] . '-' . $ds;
                         // $sn = $p[count($p) -1];
                         if (!$za->addFile($fn, $sn, 0, 0, \ZipArchive::FL_OVERWRITE)) {
@@ -53,8 +57,8 @@ class Archive
                 }
             }
         } finally {
-            if ($za != null) {
-                $za->close();
+            if(isset($za)){
+                $za?->close();
             }
         }
     }

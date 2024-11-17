@@ -99,6 +99,9 @@ function hxl_process_body(body) {
             default:
                 console.log('had no action defined for ', n);
         }
+        if(n.tagName == 'DIALOG'){
+            n.showModal();
+        }
     }
     for (const n of div.getElementsByTagName('script')) {
         eval(n.innerText);
