@@ -10,7 +10,6 @@ class Login
      */
     const ALFABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ23456789';
 
-
     public static function Login(): void
     {
         global $config, $data;
@@ -22,43 +21,49 @@ class Login
                 return;
             }
             if (empty($pw)) {
-                if(($data->last_pw_sent ?? 0) < (time() - 300)){
+                if (($data->last_pw_sent ?? 0) < (time() - 300)) {
                     self::SendNewPassword($user);
-                    $data->last_pw_sent=time();
-                }else{
+                    $data->last_pw_sent = time();
+                } else {
                     self::Unauthorized();
                     return;
                 }
                 return;
             }
-            $passwords=$data->reg_pws[$user] ?? [];
-            foreach($passwords as $idx => $pw_hash){
-                if(password_verify($pw,$pw_hash)){
+            $passwords = $data->reg_pws[$user] ?? [];
+            foreach ($passwords as $idx => $pw_hash) {
+                if (password_verify($pw, $pw_hash)) {
                     self::SignIn($user);
                     unset($passwords[$idx]);
-                    $passwords[]=$pw_hash;
-                    $data->reg_pws[$user]=$passwords;
+                    $passwords[] = $pw_hash;
+                    $data->reg_pws[$user] = $passwords;
                     return;
                 }
             }
-            $pwList=$data->sent_pws ?? [];
-            $t_user=''; // to prevent warning on following line
-            foreach($pwList as [$t_user,$pw_hash]){
-                if($t_user != $user)
-                continue;
-                if(password_verify($pw, $pw_hash)){
+            $pwList = $data->sent_pws ?? [];
+            $t_user = ''; // to prevent warning on following line
+            foreach ($pwList as [$t_user, $pw_hash]) {
+                if ($t_user != $user) {
+                    continue;
+                }
+
+                if (password_verify($pw, $pw_hash)) {
                     self::SignIn($user);
-                    $passwords[]=$pw_hash;
-                    if(!isset($data->reg_pws))
-                        $data->reg_pws=[];
-                    while(count($passwords) > 10)
+                    $passwords[] = $pw_hash;
+                    if (!isset($data->reg_pws)) {
+                        $data->reg_pws = [];
+                    }
+
+                    while (count($passwords) > 10) {
                         array_shift($passwords);
-                    $data->reg_pws[$user]=$passwords;
+                    }
+
+                    $data->reg_pws[$user] = $passwords;
                     return;
                 }
-                
+
             }
-            
+
         }
         self::Unauthorized();
         // echo <<< EOM
@@ -66,7 +71,7 @@ class Login
         // EOM;
     }
 
-    private  static function Unauthorized(): void
+    private static function Unauthorized(): void
     {
         global $config;
         http_response_code(401);
@@ -109,8 +114,8 @@ class Login
             <script>alert('An email has been sent. Wait for email and try again.');</script>
             EOM;
             $data->sent_pws = $pws;
-            
-        }else{
+
+        } else {
             http_response_code(500);
             echo <<< EOM
             Could not send an email to $email.
@@ -126,7 +131,7 @@ class Login
         error_log("signing in user $user");
         session_start();
         // setcookie('simple-web','login',0,'/',httponly: false);
-        setcookie('simple-web','login',[ 'expires' => 0, 'httponly'=> false, 'path' => '/', 'samesite' => 'None'] );
+        setcookie('simple-web', 'login', ['expires' => 0, 'httponly' => false, 'path' => '/', 'samesite' => 'None']);
         MakeEditor::Add();
     }
 
@@ -136,7 +141,7 @@ class Login
     public static function Logout(): void
     {
         session_destroy();
-        setcookie('simple-web','login',[ 'expires' => 1, 'httponly'=> false, 'path' => '/', 'samesite' => 'None'] );
+        setcookie('simple-web', 'login', ['expires' => 1, 'httponly' => false, 'path' => '/', 'samesite' => 'None']);
         MakeEditor::Remove();
     }
     /**
@@ -144,10 +149,9 @@ class Login
      */
     public static function Check(): void
     {
-        if(session_status() != PHP_SESSION_ACTIVE){
+        if (session_status() != PHP_SESSION_ACTIVE) {
             http_response_code(404);
             throw new \Exception('no session');
         }
-
     }
 }

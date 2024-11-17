@@ -99,7 +99,7 @@ function hxl_process_body(body) {
             default:
                 console.log('had no action defined for ', n);
         }
-        if(n.tagName == 'DIALOG'){
+        if(n.tagName == 'DIALOG' && attr != 'remove'){
             n.showModal();
         }
     }

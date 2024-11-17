@@ -7,7 +7,6 @@ class  MakeEditor{
      * @return void
      */
     public static function  Add(): void{
-        error_log('showing topbox');
         Login::Check();
         echo <<< EOM
         <div id="topbox" x-action="replace">

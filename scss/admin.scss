@@ -129,6 +129,24 @@ dialog#media_picture {
     }
 }
 
+dialog#show_style{
+    border: none;
+    border-radius: 1rem;
+    outline: none;
+    min-width: 50svw;
+    div {
+        text-align: center;
+        margin: 0.5rem;
+    }
+    textarea {
+        width: 100%;
+        min-height: 50vh;
+        outline: none;
+        border: thin solid lightgrey;
+        border-radius: 0.3rem;
+    }
+}
+
 div.formtable {
 
     display: table;

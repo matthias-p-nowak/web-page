@@ -16,6 +16,7 @@ class Media
             self::Show();
             return;
         }
+        Login::Check();
         if (isset($_FILES) && count($_FILES) > 0) {
             error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
             $files=$_FILES['files'];

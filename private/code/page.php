@@ -2,8 +2,6 @@
 
 namespace Code;
 
-use DOMElement;
-
 class Page
 {
 
@@ -22,6 +20,7 @@ class Page
      */
     public static function Handle(): void
     {
+        Login::Check();
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
         $p = new Page();
         $doc = $p->doc->document;
@@ -30,7 +29,6 @@ class Page
             $title = $_POST['title'];
             $p->title = $title;
             $tns = $p->doc->get('//title');
-            // $tns = $p->doc->getElementsByTagName('title');
             if ($tns->length == 0) {
                 $tn = $doc->createElement('title', htmlentities($title));
                 $head->append($tn);
@@ -89,8 +87,23 @@ class Page
             $p->makeHome();
             return;
         }
-        if (isset($_POST['name'])) {
-            error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
+        if($postName=='edit_style'){
+            error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
+            $p->showStyle();
+            return;
+        }
+        if($postName=='save_style'){
+            error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
+            $p->saveStyle();
+            echo <<< EOM
+            <script>
+            window.location.reload();
+            </script>
+            EOM;
+            return;
+        }
+        if (strlen($postName)>0) {
+            error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__.' name='.$_POST['name']);
             return;
         }
         $p->showDialog();
@@ -105,7 +118,6 @@ class Page
         if (is_null($doc)) {
             return;
         }
-
         $this->doc = $doc;
         $tns = $doc->get('//title');
         $this->title = $tns[0]?->nodeValue ?? '';
@@ -333,7 +345,7 @@ class Page
     /**
      * @return void
      */
-    private function makeHome()
+    private function makeHome(): void
     {
         global $htmlDir,$baseURL;
         $indexFn=implode(DIRECTORY_SEPARATOR,[$htmlDir, 'index.html']);
@@ -352,5 +364,54 @@ class Page
         }
 
     }
-
+    /**
+     * @return void
+     */
+    private function showStyle(): void
+    {
+        global $scriptURL;
+        $style='';
+        foreach($this->doc->get('//style') as $sn){
+            $style .= $sn->textContent;
+        }
+        $style=str_replace("\n",' ',$style);
+        $style=str_replace("\r",' ',$style);
+        $style=str_replace("\t",' ',$style);
+        $style=str_replace('  ',' ',$style);
+        $style=str_replace(';',";\n",$style);
+        $style=str_replace('}',"}\n",$style);
+        $style=trim($style);
+        echo <<< EOM
+        <dialog id="show_page" x-action="remove"></dialog>
+        <dialog id="show_style" x-action="replace">
+        <h1>Page style for '{$this->doc->shortName}'</h1>
+        <form id="form_filename" action="$scriptURL/page" onsubmit="return false;">
+        <div><span name="save_style" onclick="hxl_submit_form(event)">Save</span></div>
+        <textarea name="style"> 
+        $style
+        </textarea>
+        </form>
+        </dialog>
+        EOM;
+    }
+    /**
+     * @return void
+     */
+    private function saveStyle(): void
+    {
+        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
+        foreach($this->doc->get('//style') as $sn){
+            $sn->remove();
+        }
+        $style=trim($_POST['style']);
+        if(strlen($style)>0){
+            $se=$this->doc->document->createElement('style',$style);
+            foreach($this->doc->get('//head') as $head){
+                $head->append($se);
+                break;
+            }
+        }
+        $this->doc->save2file();
+    }
+    
 }

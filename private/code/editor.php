@@ -11,6 +11,7 @@ class Editor
     public function __construct()
     {
         global $htmlDir;
+        Login::Check();
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
         $loc = $_SERVER['HTTP_REFERER'];
         $urlPath = explode('/', $loc);

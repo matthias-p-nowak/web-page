@@ -2,7 +2,6 @@
 namespace Code;
 
 use DOMDocument;
-use DOMNode;
 use DOMNodeList;
 use DOMXPath;
 
@@ -124,15 +123,20 @@ class HtmlDoc
      */
     public function save2file(): void
     {
-        $xp = new \DOMXPath($this->document);
-        foreach ($xp->query('//*[@contenteditable]') as $n) {
+        Login::Check();
+        foreach ($this->get('//*[@contenteditable]') as $n) {
             $n->removeAttribute('contenteditable');
         }
-        $xp = new \DOMXPath($this->document);
-        foreach ($xp->query('//*[@x-action]') as $n) {
+        foreach ($this->get('//*[@x-action]') as $n) {
             $n->removeAttribute('x-action');
         }
-        $this->document->saveHTMLFile($this->filename);
+        foreach($this->get('//text()[not(normalize-space())]') as $en){
+            $en->remove();
+        }
+        $this->document->preserveWhiteSpace = false; 
+        $this->document->formatOutput = true;
+        file_put_contents($this->filename, $this->document->saveHTML());
+        // $this->document->saveHTMLFile($this->filename);
         register_shutdown_function([Archive::class, 'SaveState']);
     }
     /**
