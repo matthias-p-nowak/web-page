@@ -16,7 +16,8 @@ function topBoxLogout() {
 }
 
 function topBoxRewind() {
-    alert('topBoxRewind function');
+    let topBox = document.getElementById('topbox');
+    hxl_send_form('admin.php/rewind', null, topBox);
 }
 
 function topBoxHelp() {

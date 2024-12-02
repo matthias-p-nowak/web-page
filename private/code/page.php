@@ -387,9 +387,7 @@ class Page
         <h1>Page style for '{$this->doc->shortName}'</h1>
         <form id="form_filename" action="$scriptURL/page" onsubmit="return false;">
         <div><span name="save_style" onclick="hxl_submit_form(event)">Save</span></div>
-        <textarea name="style"> 
-        $style
-        </textarea>
+        <textarea name="style">$style</textarea>
         </form>
         </dialog>
         EOM;

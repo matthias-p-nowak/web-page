@@ -147,6 +147,16 @@ dialog#show_style{
     }
 }
 
+dialog#rewind {
+    border: none;
+    border-radius: 1rem;
+    outline: none;
+    min-width: 30svw;
+    select {
+        min-width: 10rem;
+    }
+}
+
 div.formtable {
 
     display: table;

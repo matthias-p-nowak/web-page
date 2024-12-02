@@ -61,6 +61,7 @@ try {
             '/media' => Code\Media::Handle(),
             '/page' => Code\Page::Handle(),
             '/reindex' => Code\HtmlDoc::ReIndex(),
+            '/rewind' => Code\Rewind::Rewind(),
             '/saveState' => Code\Archive::SaveState(),
             '/saveText' => Code\Editor::SaveText(),
             default => noDefault(),
