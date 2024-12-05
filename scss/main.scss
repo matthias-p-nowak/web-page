@@ -1,5 +1,6 @@
-@import 'reset.scss';
-@import 'font+sizes.scss';
+@use 'reset.scss';
+@use 'font+sizes.scss' as fs;
+@use 'admin.scss';
 
 div.page {
     margin: 1rem;
@@ -7,5 +8,3 @@ div.page {
     border-radius: 1rem;
     padding: 1rem;
 }
-
-@import 'admin.scss';

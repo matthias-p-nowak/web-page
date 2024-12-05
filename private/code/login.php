@@ -13,9 +13,9 @@ class Login
     public static function Login(): void
     {
         global $config, $data;
-        if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+        if (isset($_SERVER['PHP_AUTH_USER'])) {
             $user = $_SERVER['PHP_AUTH_USER'];
-            $pw = $_SERVER['PHP_AUTH_PW'];
+            $pw = $_SERVER['PHP_AUTH_PW'] ?? '';
             if (!in_array($user, $config->editors)) {
                 self::Unauthorized();
                 return;
@@ -97,7 +97,7 @@ class Login
         $message = <<< MESSAGE_END
             Hello,
 
-            please use the following password next time '$pw'. (Remove the quotes).
+            please use the following password next time '$pw' (Remove the quotes).
 
             Greetings from the admin
             MESSAGE_END;
