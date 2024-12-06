@@ -7,7 +7,7 @@ div#adminBox {
     display: block;
     padding: 2px;
     z-index: 5;
-    cursor: context-menu;
+    cursor: progress;
 
     &.requested {
         background-color: chartreuse;

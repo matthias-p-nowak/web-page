@@ -14,6 +14,8 @@ Layout, styles like font families, font sizes, font style, colors and similar ar
 
 User administration does not justify advanced management system, since those function are rarely used.
 
+## Installation
+
 ## Overview
 
 The following outlines how the system works. 
