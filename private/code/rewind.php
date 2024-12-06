@@ -18,7 +18,7 @@ class Rewind
         <label for="rewind_select">Select date/time</label>
         <select name="rewind" id="rewind_select">
         EOM;
-
+        $mtimes=Archive::ReadMtimes();
         echo <<< EOM
         </select>
         <input type="submit" value="Submit" onclick="hxl_submit_form(event)">

@@ -62,5 +62,25 @@ class Archive
             }
         }
     }
+    /**
+     * @return void
+     */
+    public static function ReadMtimes(): void
+    {
+        global $archive;
+     
+        $za = new \ZipArchive();
+        try{
+
+            $za->open($archive, \ZipArchive::RDONLY);
+            $cnt=$za->count();
+            for($i=0;$i<$cnt; $i+=1){
+                
+            }
+        }
+        finally{
+            $za->close();
+        }
+    }
 
 }

@@ -5,3 +5,4 @@ public/main.css
 *.css.map
 public/index.html
 public/tmp
+private/data
