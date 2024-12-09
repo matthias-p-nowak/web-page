@@ -129,9 +129,8 @@ class Login
     private static function SignIn($user): void
     {
         error_log("signing in user $user");
+        setcookie('simple-web', 'login', ['expires' =>  time()+60*60*24*30 , 'httponly' => false, 'path' => '/']);
         session_start();
-        // setcookie('simple-web','login',0,'/',httponly: false);
-        setcookie('simple-web', 'login', ['expires' => 0, 'httponly' => false, 'path' => '/', 'samesite' => 'None']);
         MakeEditor::Add();
     }
 
@@ -141,7 +140,7 @@ class Login
     public static function Logout(): void
     {
         session_destroy();
-        setcookie('simple-web', 'login', ['expires' => 1, 'httponly' => false, 'path' => '/', 'samesite' => 'None']);
+        setcookie('simple-web', 'login', ['expires' => 1, 'httponly' => false, 'path' => '/']);
         MakeEditor::Remove();
     }
     /**
