@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 100 100">
+ <g transform="rotate(135, 50, 50)">
+  <!-- Pencil body -->
+  <rect x="20" y="40" width="50" height="15" fill="#f4b400" /> 
+  <!-- Pencil tip -->
+  <polygon points="70,40 85,47.5 70,55" fill="#6d4c41" />  
+  <!-- Pencil eraser -->
+  <rect x="10" y="40" width="10" height="15" fill="#e57373" />  
+  <!-- Highlight on pencil body -->
+  <rect x="20" y="42" width="50" height="2" fill="#ffe082" />
+ </g>
+</svg>

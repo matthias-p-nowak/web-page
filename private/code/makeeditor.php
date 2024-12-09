@@ -23,8 +23,8 @@ class  MakeEditor{
         </script>
         <style id="edit_style" x-action="replace">
         body { cursor: crosshair; }
-        body [id] { cursor: context-menu; }
-        body [contenteditable]{ cursor: text; }  
+        body .page [id] { cursor: url(./assets/pencil.svg) 10 10 ,progress; }
+        body .page [contenteditable]{ cursor: text; }  
         body::before { content: ""; display: block; height: 1rem; }
         </style>
         EOM;

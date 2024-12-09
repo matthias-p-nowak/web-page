@@ -7,7 +7,7 @@ div#adminBox {
     display: block;
     padding: 2px;
     z-index: 5;
-    cursor: progress;
+    cursor: url(../assets/login.svg) 8 8 , progress;
 
     &.requested {
         background-color: chartreuse;
